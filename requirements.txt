@@ -1,0 +1,5 @@
+discord.py
+jishaku
+humanize
+websockets
+python-dotenv
