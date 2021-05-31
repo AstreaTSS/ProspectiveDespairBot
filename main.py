@@ -97,7 +97,7 @@ class ProspectiveDespairBot(commands.Bot):
         self.init_load = False
 
         activity = discord.Activity(
-            name="over some Realms Plus realms", type=discord.ActivityType.watching
+            name="over Prospective Despair", type=discord.ActivityType.watching
         )
 
         try:
@@ -107,7 +107,7 @@ class ProspectiveDespairBot(commands.Bot):
 
     async def on_resumed(self):
         activity = discord.Activity(
-            name="over some Realms Plus realms", type=discord.ActivityType.watching
+            name="over Prospective Despair", type=discord.ActivityType.watching
         )
         await self.change_presence(activity=activity)
 
