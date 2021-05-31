@@ -26,7 +26,7 @@ class Card:
         return f"{self.oc_name}, the Ultimate {self.oc_talent}"
 
     def get_status(self):
-        return self.status if self.status != Status.HOST else "ALIVE"
+        return self.status.name if self.status != Status.HOST else "ALIVE"
 
     async def as_embed(self, bot: discord.Client):
         member = await bot.fetch_user(
