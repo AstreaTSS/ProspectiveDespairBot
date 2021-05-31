@@ -38,9 +38,12 @@ class CardHandling(commands.Cog):
                 await profile_chan.send(embed=embed)
                 await asyncio.sleep(1)
 
+            embed = discord.Embed(timestamp=datetime.utcnow())
+            embed.set_footer(text="Last Updated")
+
             await profile_chan.send("All participant cards should be in alphabetical order and easily searchable.\n" +
             #"All host cards should be displayed in the order in which they were revealed.\n"
-            "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.")
+            "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.",embed=embed)
 
         await ctx.reply("Done!")
 

@@ -116,7 +116,7 @@ rita_card = Card(
     user_id=333099173677105153,
     oc_name="Rita Toscani",
     oc_talent="Fashion Historian",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239782621610044/RitaToscaniCard.png",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/849046091802083398/RitaToscaniCard.png",
 )
 takuya_card = Card(
     user_id=288772793460457473,
