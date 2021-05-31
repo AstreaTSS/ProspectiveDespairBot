@@ -36,7 +36,7 @@ class Card:
             self.user_id
         )  # we're assuming this will never fail because i double check everything
         embed = discord.Embed(
-            title=self.title_name(),
+            title=self.title_name,
             description=f"By: {member.mention} ({str(member)})\nStatus: **{self.get_status}**",
         )
         embed.set_image(url=self.card_url)
