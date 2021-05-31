@@ -25,13 +25,16 @@ class Card:
     def title_name(self):
         return f"{self.oc_name}, the Ultimate {self.oc_talent}"
 
+    def get_status(self):
+        return self.status if self.status != Status.HOST else "ALIVE"
+
     async def as_embed(self, bot: discord.Client):
         member = await bot.fetch_user(
             self.user_id
         )  # we're assuming this will never fail because i double check everything
         embed = discord.Embed(
             title=self.title_name(),
-            description=f"By: {member.mention} ({str(member)})\nStatus: **{self.status.name}**",
+            description=f"By: {member.mention} ({str(member)})\nStatus: **{self.get_status()}**",
         )
         embed.set_image(url=self.card_url)
         embed.color = self.status.value
