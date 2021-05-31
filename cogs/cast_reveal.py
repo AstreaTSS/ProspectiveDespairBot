@@ -15,7 +15,6 @@ import common.cards as cards
 class CastReveal(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.shuffled_participants: List[cards.Card] = shuffle(deepcopy(cards.participants))
 
     @commands.command()
     @commands.is_owner()
@@ -29,14 +28,17 @@ class CastReveal(commands.Cog):
         applied = discord.Object(786619063023566899)
         alive_player = discord.Object(786610731826544670)
 
+        shuffled_participants = deepcopy(cards.participants)
+        shuffle(shuffled_participants)
+
         async with ctx.typing():
             await asyncio.sleep(10) # because otherwise it would be done a bit too fast
 
-            for card in self.shuffled_participants:
+            for card in shuffled_participants:
                 after_cooldown = datetime.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(ctx.bot)
-                await ctx.send(f"**{card.title_name()}**\nBy: {card.mention}", embed=embed)
+                await ctx.send(f"**{card.title_name}**\nBy: {card.mention}", embed=embed)
                 await ctx.send("```\n \n```")  # looks neater
 
                 member = ctx.guild.get_member(card.user_id)
