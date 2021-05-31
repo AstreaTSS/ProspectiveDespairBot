@@ -27,16 +27,16 @@ class CardHandling(commands.Cog):
             await profile_chan.send("```\nKG Hosts\n```")
 
             for host_card in cards.hosts:
-                embed = await host_card.as_embed(ctx.guild)
+                embed = await host_card.as_embed(ctx.bot)
                 await profile_chan.send(embed=embed)
-                await asyncio.sleep(0.5) # ratelimits
+                await asyncio.sleep(1) # ratelimits
 
             await profile_chan.send("```\nParticipants\n```")
 
             for participant_card in cards.participants:
-                embed = await participant_card.as_embed(ctx.guild)
+                embed = await participant_card.as_embed(ctx.bot)
                 await profile_chan.send(embed=embed)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)
 
             await profile_chan.send("All participant cards should be in alphabetical order and easily searchable.\n" +
             #"All host cards should be displayed in the order in which they were revealed.\n"

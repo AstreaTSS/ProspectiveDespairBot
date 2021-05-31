@@ -26,7 +26,7 @@ class Card:
         return f"{self.oc_name}, the Ultimate {self.oc_talent}"
 
     async def as_embed(self, bot: discord.Client):
-        member = await bot.get_user(
+        member = await bot.fetch_user(
             self.user_id
         )  # we're assuming this will never fail because i double check everything
         embed = discord.Embed(

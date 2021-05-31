@@ -35,7 +35,7 @@ class CastReveal(commands.Cog):
             for card in self.shuffled_participants:
                 after_cooldown = datetime.utcnow() + timedelta(seconds=60)
 
-                embed = await card.as_embed(ctx.guild)
+                embed = await card.as_embed(ctx.bot)
                 await ctx.send(f"**{card.title_name()}**\nBy: {card.mention}", embed=embed)
                 await ctx.send("```\n \n```")  # looks neater
 
