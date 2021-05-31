@@ -46,7 +46,7 @@ class CastReveal(commands.Cog):
                 await discord.utils.sleep_until(after_cooldown)
 
         await ctx.send("**All participants have been revealed.**\nWe apologize if you didn't get in, " +
-        "but there were quite a number of applications this season (35+, in fact). " +
+        "but there were quite a number of applications this season (39, in fact). " +
         "Sonic will be sending a concluding message shortly about backups and other details.")
 
 

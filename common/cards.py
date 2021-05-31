@@ -49,6 +49,9 @@ drake_card = Card(
 hosts = [drake_card]
 
 
+# order of these cards do not represent anything whatsoever
+# they're just like that
+# everything gets sorted by oc name anyways
 bat_card = Card(
     user_id=770866874468270092,
     oc_name="Bat Allan-Poe",
@@ -60,12 +63,6 @@ david_card = Card(
     oc_name="David Joseph Russell",
     oc_talent="Social Engineer",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239706654244922/DavidJosephRussellCard.png",
-)
-ema_card = Card(
-    user_id=543853525038530561,
-    oc_name="Ema Isaru",
-    oc_talent="Confectioner",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239711159189534/EmaIsaruCard.png",
 )
 fausto_card = Card(
     user_id=140543419104755712,
@@ -127,11 +124,59 @@ tokumei_card = Card(
     oc_talent="War Strategist",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239786925359184/TokumeiSakkakuCard.png",
 )
+akira_card = Card(
+    user_id=397994270226907136,
+    oc_name="Akira Yakou",
+    oc_talent="Yarn Bomber",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963484569960508/AkiraYakouCard.png",
+)
+aradia_card = Card(
+    user_id=447899165373235200,
+    oc_name="Aradia Boswell",
+    oc_talent="Wood Carver",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963495571357714/AradiaBoswellCard.png",
+)
+benjamin_card = Card(
+    user_id=422447246060158996,
+    oc_name="Benjamin Wood",
+    oc_talent="Detective",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963505213145138/BenjaminWoodCard.png",
+)
+dvorah_card = Card(
+    user_id=293549819828633600,
+    oc_name="D'vorah Kokatsu",
+    oc_talent="Scientist",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963532396953620/DvorahKokatsuCard.png",
+)
+luna_card = Card(
+    user_id=673944515417079847,
+    oc_name="Luna",
+    oc_talent="Pathological Liar",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963577276006500/LunaCard.png",
+)
+maigo_card = Card(
+    user_id=328149026266677248,
+    oc_name="Maigo",
+    oc_talent="Hunter",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963587929145344/MaigoCard.png",
+)
+otto_card = Card(
+    user_id=486181655837671425,
+    oc_name="Otto Birch",
+    oc_talent="Archer",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963619139747901/OttoBirchCard.png",
+)
+kai_card = Card(
+    user_id=475324575815565332,
+    oc_name="Kai Yazzie",
+    oc_talent="Polymath",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848966598358073354/KaiYazzieCard.png",
+)
+
 
 participants = [
     bat_card,
     david_card,
-    ema_card,
     fausto_card,
     hikaru_card,
     jack_card,
@@ -142,5 +187,13 @@ participants = [
     rita_card,
     takuya_card,
     tokumei_card,
+    akira_card,
+    aradia_card,
+    benjamin_card,
+    dvorah_card,
+    luna_card,
+    maigo_card,
+    otto_card,
+    kai_card
 ]
 participants.sort(key=lambda card: card.oc_name)
