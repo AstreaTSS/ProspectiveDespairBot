@@ -38,7 +38,7 @@ class CastReveal(commands.Cog):
                 after_cooldown = datetime.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(ctx.bot)
-                await ctx.send(f"**{card.title_name}**\nBy: {card.mention}", embed=embed)
+                await ctx.send(f"**Welcome {card.title_name}!**\nBy: {card.mention}", embed=embed)
                 await ctx.send("```\n \n```")  # looks neater
 
                 member = ctx.guild.get_member(card.user_id)
