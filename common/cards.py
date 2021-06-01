@@ -110,7 +110,7 @@ noriko_card = Card(
     user_id=248410976808992768,
     oc_name="Noriko Nakai",
     oc_talent="Cup Stacker",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239779682451506/NorikoNakaiCard.png",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/849310483294584892/NorikoNakaiCard.png",
 )
 rita_card = Card(
     user_id=333099173677105153,
