@@ -52,6 +52,13 @@ drake_card = Card(
     card_url="https://cdn.discordapp.com/attachments/786719895051304980/818595354416775249/DrakeAeliusCard.png",
     status=Status.HOST
 )
+talia_card = Card(
+    user_id=229350299909881876,
+    oc_name="Talia Aelius",
+    oc_talent="Online Advertiser",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/849342731213471764/TaliaAeliusCard.png",
+    status=Status.HOST
+) # soon
 hosts = [drake_card]
 
 
