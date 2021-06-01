@@ -1,4 +1,4 @@
-# Prospective Despair's Bot
+# Prospective Despair Bot
 
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/465547475839746058/849170688093847572/PDLogo.png" alt="Prospective Despair's Logo" width="700"/>
