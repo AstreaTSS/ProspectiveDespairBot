@@ -58,8 +58,15 @@ talia_card = Card(
     oc_talent="Online Advertiser",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/849342731213471764/TaliaAeliusCard.png",
     status=Status.HOST
-) # soon
-hosts = [drake_card]
+)
+goro_card = Card(
+    user_id=588749122643951616,
+    oc_name="Goro Ryuu",
+    oc_talent="Cult Leader",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/851209451998150688/GoroRyuuCard.png",
+    status=Status.HOST
+)
+hosts = [drake_card, talia_card, goro_card]
 
 
 # order of these cards do not represent anything whatsoever
