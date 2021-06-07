@@ -204,7 +204,10 @@ class FuzzyMemberConverter(FuzzyConverter):
 
         if result == None:
             result = await self.extract_from_list(
-                ctx, argument, ctx.guild.members, (self.get_display_name, self.get_name)
+                ctx,
+                argument.lower(),
+                ctx.guild.members,
+                (self.get_display_name, self.get_name),
             )
 
         if result is None:
@@ -240,7 +243,10 @@ class FuzzyOCNameConverter(FuzzyConverter):
     async def convert(self, ctx, argument) -> discord.Object:
         result = None
         result = await self.extract_from_list(
-            ctx, argument, tuple(cards.participants + cards.hosts), [self.get_name]
+            ctx,
+            argument.lower(),
+            tuple(cards.participants + cards.hosts),
+            [self.get_name],
         )
 
         if result is None:
