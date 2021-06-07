@@ -40,12 +40,15 @@ class AutoAnnouncements(commands.Cog):
             The mess hall will close in a few minutes. Move out of it quickly: it would be rather \
             pathetic if you died just by being in it.
                 
-            Remember: all you have to do to escape is kill... and I heard night time's the *perfect* time to kill."""
+            Remember: all you have to do to escape is kill... and I heard night time's the \
+            *perfect* time to kill."""
         else:
             embed.description = """Wake up, idiots.
-            It's now 9 AM. Unless you're a lazy ass, you should probably get ready for the day. And yeah, the mess hall has been unlocked too.
+            It's now 9 AM. Unless you're a lazy ass, you should probably get ready for the day. \
+            And yeah, the mess hall has been unlocked too.
 
-            Remember: if you want to escape, all you have to do is kill. If you can't convince yourself to do that... how weak."""
+            Remember: if you want to escape, all you have to do is kill. If you can't convince \
+            yourself to do that... how weak."""
 
         await self.webhook.send(embed=embed)
 
