@@ -1,11 +1,13 @@
 import importlib
 from datetime import datetime
+from typing import Union
 
 import discord
 import asyncio
 from discord.ext import commands
 
 import common.cards as cards
+import common.fuzzys as fuzzys
 
 class CardHandling(commands.Cog):
     def __init__(self, bot):
@@ -46,6 +48,16 @@ class CardHandling(commands.Cog):
             "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.",embed=embed)
 
         await ctx.reply("Done!")
+
+    @commands.command()
+    async def search(self, ctx: commands.Context, querty: Union[fuzzys.FuzzyMemberConverter, fuzzys.FuzzyOCNameConverter]):
+        card: cards.Card = discord.utils.get(cards.participants, user_id=querty.id)
+
+        if not card:
+            await ctx.reply("That user does not have a card!")
+        else:
+            embed = await card.as_embed(self.bot)
+            await ctx.reply(embed=embed)
 
 
 def setup(bot):
