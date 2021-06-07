@@ -96,4 +96,6 @@ class CardHandling(commands.Cog):
 
 def setup(bot):
     importlib.reload(cards)
+    importlib.reload(utils)
+    importlib.reload(fuzzys)
     bot.add_cog(CardHandling(bot))
