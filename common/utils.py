@@ -2,8 +2,8 @@
 import collections
 import logging
 import traceback
-from typing import Union
 from pathlib import Path
+from typing import Union
 
 import aiohttp
 import discord

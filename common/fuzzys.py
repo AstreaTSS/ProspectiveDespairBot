@@ -7,8 +7,8 @@ from discord.ext import commands
 from rapidfuzz import fuzz
 from rapidfuzz import process
 
-import common.utils as utils
 import common.cards as cards
+import common.utils as utils
 
 
 class FuzzyConverter(commands.IDConverter):

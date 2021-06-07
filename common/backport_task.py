@@ -1,8 +1,6 @@
 """A backport of the `discord.ext.tasks` used in d.py 2.0, which have a `time` parameter that is very useful.
 Credit to this pull request for allowing me to find an un-type-hinted (and so 100% 1.x friendly) version of it:
 https://github.com/Rapptz/discord.py/pull/6892"""
-
-
 """
 The MIT License (MIT)
 Copyright (c) 2015-present Rapptz
@@ -22,24 +20,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
-
 import asyncio
 import datetime
-import aiohttp
-import discord
 import inspect
 import logging
 import sys
 import traceback
-
 from collections.abc import Sequence
+
+import aiohttp
+import discord
 from discord.backoff import ExponentialBackoff
 
 log = logging.getLogger(__name__)
 
-__all__ = (
-    'loop',
-)
+__all__ = ("loop",)
 
 # thanks to https://github.com/Rapptz/discord.py/pull/6456
 # for this, which was added to discord.utils in 2.0
@@ -51,7 +46,7 @@ def compute_timedelta(dt: datetime.datetime):
 
 
 class SleepHandle:
-    __slots__ = ('future', 'loop', 'handle')
+    __slots__ = ("future", "loop", "handle")
 
     def __init__(self, dt, *, loop):
         self.loop = loop
@@ -79,6 +74,7 @@ class Loop:
     """A background task helper that abstracts the loop and reconnection logic for you.
     The main interface to create this is through :func:`loop`.
     """
+
     def __init__(self, coro, seconds, hours, minutes, time, count, reconnect, loop):
         self.coro = coro
         self.reconnect = reconnect
@@ -103,7 +99,7 @@ class Loop:
         self._stop_next_iteration = False
 
         if self.count is not None and self.count <= 0:
-            raise ValueError('count must be greater than 0 or None.')
+            raise ValueError("count must be greater than 0 or None.")
 
         self.change_interval(seconds=seconds, minutes=minutes, hours=hours, time=time)
         self._last_iteration_failed = False
@@ -111,10 +107,12 @@ class Loop:
         self._next_iteration = None
 
         if not inspect.iscoroutinefunction(self.coro):
-            raise TypeError(f'Expected coroutine function, not {type(self.coro).__name__!r}.')
+            raise TypeError(
+                f"Expected coroutine function, not {type(self.coro).__name__!r}."
+            )
 
     async def _call_loop_function(self, name, *args, **kwargs):
-        coro = getattr(self, '_' + name)
+        coro = getattr(self, "_" + name)
         if coro is None:
             return
 
@@ -129,7 +127,7 @@ class Loop:
 
     async def _loop(self, *args, **kwargs):
         backoff = ExponentialBackoff()
-        await self._call_loop_function('before_loop')
+        await self._call_loop_function("before_loop")
         sleep_until = discord.utils.sleep_until
         self._last_iteration_failed = False
         if self._time is not None:
@@ -154,7 +152,7 @@ class Loop:
                     await asyncio.sleep(backoff.delay())
                 else:
                     await self._try_sleep_until(self._next_iteration)
-                    
+
                     if self._stop_next_iteration:
                         return
 
@@ -173,10 +171,10 @@ class Loop:
             raise
         except Exception as exc:
             self._has_failed = True
-            await self._call_loop_function('error', exc)
+            await self._call_loop_function("error", exc)
             raise exc
         finally:
-            await self._call_loop_function('after_loop')
+            await self._call_loop_function("after_loop")
             self._handle.cancel()
             self._is_being_cancelled = False
             self._current_loop = 0
@@ -188,13 +186,13 @@ class Loop:
             return self
 
         copy = Loop(
-            self.coro, 
-            seconds=self._seconds, 
-            hours=self._hours, 
+            self.coro,
+            seconds=self._seconds,
+            hours=self._hours,
             minutes=self._minutes,
             count=self.count,
-            time=self._time, 
-            reconnect=self.reconnect, 
+            time=self._time,
+            reconnect=self.reconnect,
             loop=self.loop,
         )
         copy._injected = obj
@@ -211,7 +209,7 @@ class Loop:
         .. versionadded:: 2.0
         """
         return self._seconds
-    
+
     @property
     def minutes(self):
         """Optional[:class:`float`]: Read-only value for the number of minutes
@@ -219,7 +217,7 @@ class Loop:
         .. versionadded:: 2.0
         """
         return self._minutes
-    
+
     @property
     def hours(self):
         """Optional[:class:`float`]: Read-only value for the number of hours
@@ -289,7 +287,7 @@ class Loop:
         """
 
         if self._task is not None and not self._task.done():
-            raise RuntimeError('Task is already launched and is not completed.')
+            raise RuntimeError("Task is already launched and is not completed.")
 
         if self._injected is not None:
             args = (self._injected, *args)
@@ -364,9 +362,9 @@ class Loop:
 
         for exc in exceptions:
             if not inspect.isclass(exc):
-                raise TypeError(f'{exc!r} must be a class.')
+                raise TypeError(f"{exc!r} must be a class.")
             if not issubclass(exc, BaseException):
-                raise TypeError(f'{exc!r} must inherit from BaseException.')
+                raise TypeError(f"{exc!r} must inherit from BaseException.")
 
         self._valid_exception = (*self._valid_exception, *exceptions)
 
@@ -389,7 +387,9 @@ class Loop:
             Whether all exceptions were successfully removed.
         """
         old_length = len(self._valid_exception)
-        self._valid_exception = tuple(x for x in self._valid_exception if x not in exceptions)
+        self._valid_exception = tuple(
+            x for x in self._valid_exception if x not in exceptions
+        )
         return len(self._valid_exception) == old_length - len(exceptions)
 
     def get_task(self):
@@ -414,8 +414,13 @@ class Loop:
 
     async def _error(self, *args):
         exception = args[-1]
-        print(f'Unhandled exception in internal background task {self.coro.__name__!r}.', file=sys.stderr)
-        traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
+        print(
+            f"Unhandled exception in internal background task {self.coro.__name__!r}.",
+            file=sys.stderr,
+        )
+        traceback.print_exception(
+            type(exception), exception, exception.__traceback__, file=sys.stderr
+        )
 
     def before_loop(self, coro):
         """A decorator that registers a coroutine to be called before the loop starts running.
@@ -433,7 +438,9 @@ class Loop:
         """
 
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError(f'Expected coroutine function, received {coro.__class__.__name__!r}.')
+            raise TypeError(
+                f"Expected coroutine function, received {coro.__class__.__name__!r}."
+            )
 
         self._before_loop = coro
         return coro
@@ -456,7 +463,9 @@ class Loop:
         """
 
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError(f'Expected coroutine function, received {coro.__class__.__name__!r}.')
+            raise TypeError(
+                f"Expected coroutine function, received {coro.__class__.__name__!r}."
+            )
 
         self._after_loop = coro
         return coro
@@ -477,7 +486,9 @@ class Loop:
             The function was not a coroutine.
         """
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError(f'Expected coroutine function, received {coro.__class__.__name__!r}.')
+            raise TypeError(
+                f"Expected coroutine function, received {coro.__class__.__name__!r}."
+            )
 
         self._error = coro
         return coro
@@ -490,13 +501,19 @@ class Loop:
             self._time_index = 0
             if self._current_loop == 0:
                 # if we're at the last index on the first iteration, we need to sleep until tomorrow
-                return datetime.datetime.combine(datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1), self._time[0])
+                return datetime.datetime.combine(
+                    datetime.datetime.now(datetime.timezone.utc)
+                    + datetime.timedelta(days=1),
+                    self._time[0],
+                )
 
         next_time = self._time[self._time_index]
 
         if self._current_loop == 0:
             self._time_index += 1
-            return datetime.datetime.combine(datetime.datetime.now(datetime.timezone.utc), next_time)
+            return datetime.datetime.combine(
+                datetime.datetime.now(datetime.timezone.utc), next_time
+            )
 
         next_date = self._last_iteration
         if self._time_index == 0:
@@ -511,7 +528,9 @@ class Loop:
         # to calculate the next time index from
 
         # pre-condition: self._time is set
-        time_now = (now or datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)).timetz()
+        time_now = (
+            now or datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+        ).timetz()
         for idx, time in enumerate(self._time):
             if time >= time_now:
                 self._time_index = idx
@@ -519,22 +538,28 @@ class Loop:
         else:
             self._time_index = 0
 
-    def _get_time_parameter(self, time, *, inst=isinstance, dt=datetime.time, utc=datetime.timezone.utc):
+    def _get_time_parameter(
+        self, time, *, inst=isinstance, dt=datetime.time, utc=datetime.timezone.utc
+    ):
         if inst(time, dt):
             ret = time if time.tzinfo is not None else time.replace(tzinfo=utc)
             return [ret]
         if not inst(time, Sequence):
-            raise TypeError(f'Expected datetime.time or a sequence of datetime.time for ``time``, received {type(time)!r} instead.')
+            raise TypeError(
+                f"Expected datetime.time or a sequence of datetime.time for ``time``, received {type(time)!r} instead."
+            )
         if not time:
-            raise ValueError('time parameter must not be an empty sequence.')
+            raise ValueError("time parameter must not be an empty sequence.")
 
         ret = []
         for index, t in enumerate(time):
             if not inst(t, dt):
-                raise TypeError(f'Expected a sequence of {dt!r} for ``time``, received {type(t).__name__!r} at index {index} instead.')
+                raise TypeError(
+                    f"Expected a sequence of {dt!r} for ``time``, received {type(t).__name__!r} at index {index} instead."
+                )
             ret.append(t if t.tzinfo is not None else t.replace(tzinfo=utc))
 
-        ret = sorted(set(ret)) # de-dupe and sort times
+        ret = sorted(set(ret))  # de-dupe and sort times
         return ret
 
     def change_interval(self, *, seconds=0, minutes=0, hours=0, time=None):
@@ -567,7 +592,7 @@ class Loop:
         if time is None:
             sleep = seconds + (minutes * 60.0) + (hours * 3600.0)
             if sleep < 0:
-                raise ValueError('Total number of seconds cannot be less than zero.')
+                raise ValueError("Total number of seconds cannot be less than zero.")
 
             self._sleep = sleep
             self._seconds = float(seconds)
@@ -576,7 +601,7 @@ class Loop:
             self._time = None
         else:
             if any((seconds, minutes, hours)):
-                raise TypeError('Cannot mix explicit time with relative time')
+                raise TypeError("Cannot mix explicit time with relative time")
             self._time = self._get_time_parameter(time)
             self._sleep = self._seconds = self._minutes = self._hours = None
 
@@ -591,7 +616,9 @@ class Loop:
                 self._handle.recalculate(self._next_iteration)
 
 
-def loop(*, seconds=0, minutes=0, hours=0, count=None, time=None, reconnect=True, loop=None):
+def loop(
+    *, seconds=0, minutes=0, hours=0, count=None, time=None, reconnect=True, loop=None
+):
     """A decorator that schedules a task in the background for you with
     optional reconnect logic. The decorator returns a :class:`Loop`.
     Parameters
@@ -605,7 +632,7 @@ def loop(*, seconds=0, minutes=0, hours=0, count=None, time=None, reconnect=True
     time: Union[:class:`datetime.time`, Sequence[:class:`datetime.time`]]
         The exact times to run this loop at. Either a non-empty list or a single
         value of :class:`datetime.time` should be passed. Timezones are supported.
-        If no timezone is given for the times, it is assumed to represent UTC time. 
+        If no timezone is given for the times, it is assumed to represent UTC time.
         This cannot be used in conjunction with the relative time parameters.
         .. note::
             Duplicate times will be ignored, and only run once.
@@ -628,15 +655,17 @@ def loop(*, seconds=0, minutes=0, hours=0, count=None, time=None, reconnect=True
         The function was not a coroutine, an invalid value for the ``time`` parameter was passed,
         or ``time`` parameter was passed in conjunction with relative time parameters.
     """
+
     def decorator(func):
         kwargs = {
-            'seconds': seconds,
-            'minutes': minutes,
-            'hours': hours,
-            'count': count,
-            'time': time,
-            'reconnect': reconnect,
-            'loop': loop
+            "seconds": seconds,
+            "minutes": minutes,
+            "hours": hours,
+            "count": count,
+            "time": time,
+            "reconnect": reconnect,
+            "loop": loop,
         }
         return Loop(func, **kwargs)
+
     return decorator

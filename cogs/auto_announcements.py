@@ -1,16 +1,17 @@
 import datetime
-import os
 import importlib
+import os
 
-import pytz
-import discord
 import aiohttp
+import discord
+import pytz
 from discord.ext import commands
 
 import common.backport_task as backport_task
 import common.utils as utils
 
 et = pytz.timezone("US/Eastern")
+
 
 class AutoAnnouncements(commands.Cog):
     def __init__(self, bot):
@@ -23,14 +24,13 @@ class AutoAnnouncements(commands.Cog):
         )
 
         self.auto_run.start()
-        
+
     def cog_unload(self):
         self.auto_run.cancel()
 
-    @backport_task.loop(time=(
-        datetime.time(hour=9, tzinfo=et),
-        datetime.time(hour=23, tzinfo=et)
-    ))
+    @backport_task.loop(
+        time=(datetime.time(hour=9, tzinfo=et), datetime.time(hour=23, tzinfo=et))
+    )
     async def auto_run(self):
         embed = discord.Embed(title="Announcement from Drake Aelius", color=11779669)
         et_now = datetime.datetime.now(et)
@@ -39,7 +39,7 @@ class AutoAnnouncements(commands.Cog):
             embed.description = """It's 11 PM. Go to sleep.
             The mess hall will close in a few minutes. Move out of it quickly: it would be rather \
             pathetic if you died just by being in it.
-                
+
             Remember: all you have to do to escape is kill... and I heard night time's the \
             *perfect* time to kill."""
         else:
