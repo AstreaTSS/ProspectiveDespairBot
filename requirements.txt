@@ -4,3 +4,4 @@ jishaku
 humanize
 websockets
 python-dotenv
+rapidfuzz
