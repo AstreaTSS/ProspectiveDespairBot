@@ -50,8 +50,8 @@ class CardHandling(commands.Cog):
         await ctx.reply("Done!")
 
     @commands.command()
-    async def search(self, ctx: commands.Context, querty: Union[fuzzys.FuzzyMemberConverter, fuzzys.FuzzyOCNameConverter]):
-        card: cards.Card = discord.utils.get(cards.participants, user_id=querty.id)
+    async def search(self, ctx: commands.Context, *, query: Union[fuzzys.FuzzyMemberConverter, fuzzys.FuzzyOCNameConverter]):
+        card: cards.Card = discord.utils.get(cards.participants, user_id=query.id)
 
         if not card:
             await ctx.reply("That user does not have a card!")
