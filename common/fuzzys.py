@@ -17,7 +17,7 @@ class FuzzyConverter(commands.IDConverter):
 
     def embed_gen(self, ctx, description):
         selection_embed = discord.Embed(
-            colour=discord.Colour(0x4378FC), description="\n".join(description)
+            colour=ctx.bot.color, description="\n".join(description)
         )
         selection_embed.set_author(
             name=f"{ctx.guild.me.name}",
@@ -217,6 +217,19 @@ class FuzzyOCNameConverter(FuzzyConverter):
     Returns a Discord object representing the user.
     Does not handle the hosts."""
 
+    def norm_embed_gen(self, ctx, entries):
+        list_str = [f"`{c.oc_name}`" for c in entries]
+
+        description = collections.deque()
+        description.append(
+            "Multiple entries found. Please choose one of the following, or type cancel."
+        )
+
+        for n in range(len(list_str)):
+            description.append(f"{n+1} - {list_str[n]}")
+
+        return self.embed_gen(ctx, description)
+
     def get_name(self, card):
         """See FuzzyMemberConverter's get_display_name."""
         if isinstance(card, cards.Card):
@@ -227,7 +240,7 @@ class FuzzyOCNameConverter(FuzzyConverter):
     async def convert(self, ctx, argument) -> discord.Object:
         result = None
         result = await self.extract_from_list(
-            ctx, argument, cards.participants, [self.get_name]
+            ctx, argument, tuple(cards.participants + cards.hosts), [self.get_name]
         )
 
         if result is None:

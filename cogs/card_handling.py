@@ -7,6 +7,7 @@ import asyncio
 from discord.ext import commands
 
 import common.cards as cards
+import common.utils as utils
 import common.fuzzys as fuzzys
 
 class CardHandling(commands.Cog):
@@ -50,12 +51,30 @@ class CardHandling(commands.Cog):
         await ctx.reply("Done!")
 
     @commands.command()
-    async def search(self, ctx: commands.Context, *, query: Union[fuzzys.FuzzyMemberConverter, fuzzys.FuzzyOCNameConverter]):
-        card: cards.Card = discord.utils.get(cards.participants, user_id=query.id)
+    async def search(self, ctx: commands.Context, *, query: Union[fuzzys.FuzzyOCNameConverter, fuzzys.FuzzyMemberConverter]):
+        """Allows to you to search and get a person's card based on the query provided.
+        The query can either be the OC's name or their RPer's name.
+        """
 
-        if not card:
-            await ctx.reply("That user does not have a card!")
+        # find all cards that have the same user id the person we got, and put those cards in a list in a list because
+        # the exploit with FuzzyOCNameConverter that we might have to do requires that
+        selected_cards = tuple([c] for c in tuple(cards.participants + cards.hosts) if c.user_id == query.id)
+
+        if not selected_cards: # could be a member that doesn't have a card
+            await ctx.reply("Invalid query!")
         else:
+            if len(selected_cards) > 1:
+                if not isinstance(query, (discord.User, discord.Member)):
+                    # only would happen with oc name converter, which shouldnt be possible
+                    # as there can be only one oc named something
+                    raise utils.CustomCheckFailure("This shouldn't happen. Contact Sonic immediately - he has some debugging to do.")
+
+                # time to abuse the converter to do things
+                oc_converter = fuzzys.FuzzyOCNameConverter()
+                card = await oc_converter.selection_handler(ctx, selected_cards)
+            else:
+                card = selected_cards[0][0]
+
             embed = await card.as_embed(self.bot)
             await ctx.reply(embed=embed)
 
