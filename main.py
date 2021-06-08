@@ -130,6 +130,10 @@ class ProspectiveDespairBot(commands.Bot):
 
         return ctx
 
+    async def close(self):
+        await Tortoise.close_connections()
+        return await super().close()  # this will complain a bit, just ignore it
+
 
 intents = discord.Intents.all()
 mentions = discord.AllowedMentions.all()
