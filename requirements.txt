@@ -7,3 +7,4 @@ humanize
 websockets
 python-dotenv
 rapidfuzz
+python-dateutil
