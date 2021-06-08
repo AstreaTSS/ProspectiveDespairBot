@@ -57,7 +57,7 @@ class Interactions(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=["reset_inters"])
+    @commands.command(aliases=["reset_inters", "reset-inter"])
     @commands.is_owner()
     async def reset_interactions(self, ctx: commands.Context):
 
@@ -71,13 +71,14 @@ class Interactions(commands.Cog):
 
         await ctx.reply("Done!")
 
-    @commands.command(aliases=["list_inters"])
+    @commands.command(aliases=["list_inters", "list-inter"])
     @commands.is_owner()
     async def list_interactions(self, ctx: commands.Context):
 
         async with ctx.typing():
             inters = await models.UserInteraction.all()
-            list_inters = tuple(f"<@{i.user_id}> - {i.interactions}" for i in inters)
+            inters.sort(key=lambda i: i.interactions, reverse=True)
+            list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
 
         await ctx.reply(
             "\n".join(list_inters), allowed_mentions=utils.deny_mentions(ctx.author)
