@@ -12,7 +12,11 @@ async def init():
     )
     await Tortoise.generate_schemas()
 
-    user_ids = tuple(c.user_id for c in common.cards.participants)
+    user_ids = tuple(
+        c.user_id
+        for c in common.cards.participants
+        if c.status == common.cards.Status.ALIVE
+    )
 
     for id in user_ids:
         await common.models.UserInteraction.create(user_id=id, interactions=0)
