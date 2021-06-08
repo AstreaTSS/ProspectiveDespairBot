@@ -35,6 +35,8 @@ class AutoAnnouncements(commands.Cog):
         embed = discord.Embed(title="Announcement from Drake Aelius", color=11779669)
         et_now = datetime.datetime.now(et)
 
+        await utils.msg_to_owner(self.bot, et_now)
+
         if et_now.hour == 23:
             embed.description = """It's 11 PM. Go to sleep.
             The mess hall will close in a few minutes. Move out of it quickly: it would be rather \
