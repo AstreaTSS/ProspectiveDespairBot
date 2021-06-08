@@ -6,6 +6,7 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
@@ -46,6 +47,10 @@ def global_checks(ctx: commands.Context):
 
 async def on_init_load():
     await bot.wait_until_ready()
+
+    await Tortoise.init(
+        db_url="sqlite://db.sqlite3", modules={"models": ["common.models"]}
+    )
 
     application = await bot.application_info()
     bot.owner = application.owner
