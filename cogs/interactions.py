@@ -1,3 +1,4 @@
+import datetime
 import importlib
 from decimal import Decimal
 
@@ -16,20 +17,28 @@ class Interactions(commands.Cog):
     @commands.command(aliases=["add_inter"])
     @commands.is_owner()
     async def add_interaction(
-        self, ctx: commands.Context, members: commands.Greedy[discord.Member]
+        self,
+        ctx: commands.Context,
+        members: commands.Greedy[discord.Member],
+        count: int = 1,
     ):
-
         async with ctx.typing():
             async for inter in models.UserInteraction.filter(
                 user_id__in=frozenset(m.id for m in members)
             ).select_for_update():
-                inter.interactions += 1
+                inter.interactions += count
                 await inter.save()
 
-            embed = discord.Embed(
-                color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got an interaction!",
-            )
+            if count == 1:
+                embed = discord.Embed(
+                    color=self.bot.color,
+                    description=f"{', '.join(tuple(m.mention for m in members))} got an interaction!",
+                )
+            else:
+                embed = discord.Embed(
+                    color=self.bot.color,
+                    description=f"{', '.join(tuple(m.mention for m in members))} got {count} interactions!",
+                )
 
             await ctx.message.delete()
 
@@ -40,7 +49,6 @@ class Interactions(commands.Cog):
     async def add_event(
         self, ctx: commands.Context, members: commands.Greedy[discord.Member]
     ):
-
         async with ctx.typing():
             async for inter in models.UserInteraction.filter(
                 user_id__in=frozenset(m.id for m in members)
@@ -61,7 +69,6 @@ class Interactions(commands.Cog):
     @commands.command(aliases=["reset_inters", "reset-inter"])
     @commands.is_owner()
     async def reset_interactions(self, ctx: commands.Context):
-
         async with ctx.typing():
             await models.UserInteraction.all().delete()
 
@@ -77,27 +84,34 @@ class Interactions(commands.Cog):
     @commands.command(aliases=["list_inters", "list-inter"])
     @commands.is_owner()
     async def list_interactions(self, ctx: commands.Context):
-
         async with ctx.typing():
             inters = await models.UserInteraction.all()
             inters.sort(key=lambda i: i.interactions, reverse=True)
             list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
 
-        await ctx.reply(
-            "\n".join(list_inters), allowed_mentions=utils.deny_mentions(ctx.author)
+        embed = discord.Embed(
+            color=self.bot.color,
+            description="\n".join(list_inters),
+            timestamp=datetime.datetime.utcnow(),
         )
+        embed.set_footer(text="As of")
+        await ctx.reply(embed=embed)
 
     @commands.command(aliases=["inter", "inters", "interaction"])
     async def interactions(self, ctx: commands.Context):
         """Allows you to view the number of interactions you had in the current cycle.
         Will not work if you are not in the KG."""
-
         async with ctx.typing():
             inter = await models.UserInteraction.get_or_none(user_id=ctx.author.id)
             if inter:
-                await ctx.reply(
-                    f"You have {inter.interactions} interactions for this cycle!"
+
+                embed = discord.Embed(
+                    color=self.bot.color,
+                    description=f"You have {inter.interactions} interactions for this cycle!",
+                    timestamp=datetime.datetime.utcnow(),
                 )
+                embed.set_footer(text="As of")
+                await ctx.reply(embed=embed)
             else:
                 raise utils.CustomCheckFailure("You aren't in the KG!")
 
