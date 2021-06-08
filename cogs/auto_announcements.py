@@ -34,12 +34,16 @@ class AutoAnnouncements(commands.Cog):
             # very hacky way of finding out when to sleep based on the current time
             if et_now.hour == 23:
                 sleep_till = et_now + relativedelta(
-                    days=+1, hour=9, minute=0, microsecond=0
+                    days=+1, hour=9, minute=0, second=0, microsecond=0
                 )
             elif 0 <= et_now.hour < 9:
-                sleep_till = et_now + relativedelta(hour=9, minute=0, microsecond=0)
+                sleep_till = et_now + relativedelta(
+                    hour=9, minute=0, second=0, microsecond=0
+                )
             else:
-                sleep_till = et_now + relativedelta(hour=23, minute=0, microsecond=0)
+                sleep_till = et_now + relativedelta(
+                    hour=23, minute=0, second=0, microsecond=0
+                )
 
             await discord.utils.sleep_until(sleep_till)
 
