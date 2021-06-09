@@ -53,20 +53,23 @@ class AutoAnnouncements(commands.Cog):
             et_now = datetime.datetime.now(et)
 
             if et_now.hour == 23:
-                embed.description = """It's 11 PM. Go to sleep.
-                The mess hall will close in a few minutes. Move out of it quickly: it would be rather \
-                pathetic if you died just by being in it.
-
-                Remember: all you have to do to escape is kill... and I heard night time's the \
-                *perfect* time to kill."""
+                str_builder = [
+                    "It's 11 PM. Go to sleep.\n",
+                    "The mess hall will close in a few minutes. Move out of it ",
+                    "quickly: it would be rather pathetic if you died just by being in it.",
+                    "\n\nRemember: all you have to do to escape is kill... ",
+                    "and I heard night time's the *perfect* time to kill.",
+                ]
             else:
-                embed.description = """Wake up, idiots.
-                It's now 9 AM. Unless you're a lazy ass, you should probably get ready for the day. \
-                And yeah, the mess hall has been unlocked too.
+                str_builder = [
+                    "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
+                    "you should probably get ready for the day.\n",
+                    "And yeah, the mess hall has been unlocked too.",
+                    "\n\nRemember: if you want to escape, all you have to do is ",
+                    "kill. If you can't convince yourself to do that... how weak.",
+                ]
 
-                Remember: if you want to escape, all you have to do is kill. If you can't convince \
-                yourself to do that... how weak."""
-
+            embed.description = "".join(str_builder)
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 
