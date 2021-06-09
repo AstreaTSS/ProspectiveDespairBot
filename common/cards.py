@@ -192,6 +192,12 @@ kai_card = Card(
     oc_talent="Polymath",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/848966598358073354/KaiYazzieCard.png",
 )
+ema_card = Card(
+    user_id=543853525038530561,
+    oc_name="Ema Isaru",
+    oc_talent="Confectioner",
+    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239711159189534/EmaIsaruCard.png",
+)
 
 
 participants = [
@@ -215,5 +221,6 @@ participants = [
     maigo_card,
     otto_card,
     kai_card,
+    ema_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
