@@ -1,6 +1,8 @@
 import datetime
 import importlib
+import typing
 from decimal import Decimal
+from decimal import InvalidOperation
 
 import discord
 from discord.ext import commands
@@ -8,6 +10,14 @@ from discord.ext import commands
 import common.cards as cards
 import common.models as models
 import common.utils as utils
+
+
+class DecimalConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, argument: str) -> Decimal:
+        try:
+            return Decimal(argument)
+        except InvalidOperation:
+            raise commands.BadArgument("This is not a decimal!")
 
 
 class Interactions(commands.Cog):
@@ -20,7 +30,7 @@ class Interactions(commands.Cog):
         self,
         ctx: commands.Context,
         members: commands.Greedy[discord.Member],
-        count: int = 1,
+        count: DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
             async for inter in models.UserInteraction.filter(
