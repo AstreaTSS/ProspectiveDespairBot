@@ -163,7 +163,7 @@ class Interactions(commands.Cog):
             )
 
     @commands.command(
-        aliases=["add_player_too_inter", "add_play_from_inter",]
+        aliases=["add_player_to_inter", "add_play_to_inter",]
     )
     @commands.is_owner()
     async def add_player_to_interaction(
