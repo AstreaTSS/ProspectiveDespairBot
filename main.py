@@ -42,7 +42,7 @@ def global_checks(ctx: commands.Context):
     if not ctx.guild:
         return False
 
-    return ctx.guild.id == 786609181855318047
+    return ctx.guild.id == 786609181855318047 or ctx.author.id == ctx.bot.owner.id
 
 
 async def on_init_load():
