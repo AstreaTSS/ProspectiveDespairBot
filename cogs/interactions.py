@@ -54,6 +54,36 @@ class Interactions(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(aliases=["remove_inter", "del_inter"])
+    @commands.is_owner()
+    async def remove_interaction(
+        self,
+        ctx: commands.Context,
+        members: commands.Greedy[discord.Member],
+        count: DecimalConverter = Decimal(1),
+    ):
+        async with ctx.typing():
+            async for inter in models.UserInteraction.filter(
+                user_id__in=frozenset(m.id for m in members)
+            ).select_for_update():
+                inter.interactions -= count
+                if inter.interactions < 0:
+                    inter.interactions == 0
+                await inter.save()
+
+            if count == 1:
+                embed = discord.Embed(
+                    color=self.bot.color,
+                    description=f"Removed an interaction from: {', '.join(tuple(m.mention for m in members))}.",
+                )
+            else:
+                embed = discord.Embed(
+                    color=self.bot.color,
+                    description=f"Removed {count} interactions from: {', '.join(tuple(m.mention for m in members))}.",
+                )
+
+        await ctx.send(embed=embed)
+
     @commands.command()
     @commands.is_owner()
     async def add_event(
