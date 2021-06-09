@@ -20,7 +20,7 @@ class DecimalConverter(commands.Converter):
             raise commands.BadArgument("This is not a decimal!")
 
 
-class Interactions(commands.Cog):
+class Interactions(commands.Cog, name="Interaction"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 

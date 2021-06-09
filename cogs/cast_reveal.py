@@ -13,7 +13,7 @@ from discord.ext import commands
 import common.cards as cards
 
 
-class CastReveal(commands.Cog):
+class CastReveal(commands.Cog, name="Cast Reveal"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 

@@ -11,7 +11,7 @@ import common.fuzzys as fuzzys
 import common.utils as utils
 
 
-class CardHandling(commands.Cog):
+class CardHandling(commands.Cog, name="Card Handling"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
