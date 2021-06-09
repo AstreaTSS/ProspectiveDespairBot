@@ -90,12 +90,12 @@ fausto_card = Card(
     oc_talent="Boxer",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239712804274246/FaustoRochadaCard.png",
 )
-hikaru_card = Card(
-    user_id=621631815311949834,
-    oc_name="Hikaru",
-    oc_talent="Butler",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239715588374568/Hikaru.png",
-)
+# hikaru_card = Card(
+#     user_id=621631815311949834,
+#     oc_name="Hikaru",
+#     oc_talent="Butler",
+#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239715588374568/Hikaru.png",
+# )
 jack_card = Card(
     user_id=269156561320935426,
     oc_name="Jack Enjo",
@@ -198,7 +198,7 @@ participants = [
     bat_card,
     david_card,
     fausto_card,
-    hikaru_card,
+    # hikaru_card,
     jack_card,
     jacob_card,
     kento_card,

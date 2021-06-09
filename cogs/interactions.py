@@ -153,7 +153,7 @@ class Interactions(commands.Cog):
 
         if num_deleted > 0:
             await ctx.reply(
-                f"`{user.mention}` deleted!",
+                f"{user.mention} deleted!",
                 allowed_mentions=utils.deny_mentions(ctx.author),
             )
         else:
@@ -178,7 +178,9 @@ class Interactions(commands.Cog):
 
             await models.UserInteraction.create(user_id=user.id, interactions=0)
 
-        await ctx.reply("Done!")
+        await ctx.reply(
+            f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
+        )
 
     @commands.command(aliases=["inter", "inters", "interaction"])
     async def interactions(self, ctx: commands.Context):
