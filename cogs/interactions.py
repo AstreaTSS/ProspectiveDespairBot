@@ -137,6 +137,49 @@ class Interactions(commands.Cog):
         embed.set_footer(text="As of")
         await ctx.reply(embed=embed)
 
+    @commands.command(
+        aliases=[
+            "remove_player_from_inter",
+            "remove_play_from_inter",
+            "rm_play_from_inter",
+        ]
+    )
+    @commands.is_owner()
+    async def remove_player_from_interaction(
+        self, ctx: commands.Context, user: discord.User
+    ):
+        async with ctx.typing():
+            num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
+
+        if num_deleted > 0:
+            await ctx.reply(
+                f"`{user.mention}` deleted!",
+                allowed_mentions=utils.deny_mentions(ctx.author),
+            )
+        else:
+            raise commands.BadArgument(
+                f"Member {user.mention} does not exist in interactions!",
+                allowed_mentions=utils.deny_mentions(ctx.author),
+            )
+
+    @commands.command(
+        aliases=["add_player_too_inter", "add_play_from_inter",]
+    )
+    @commands.is_owner()
+    async def add_player_to_interaction(
+        self, ctx: commands.Context, user: discord.User
+    ):
+        async with ctx.typing():
+            exists = await models.UserInteraction.exists(user_id=user.id)
+            if exists:
+                raise commands.BadArgument(
+                    f"Member {user.mention} already in interactions!"
+                )
+
+            await models.UserInteraction.create(user_id=user.id, interactions=0)
+
+        await ctx.reply("Done!")
+
     @commands.command(aliases=["inter", "inters", "interaction"])
     async def interactions(self, ctx: commands.Context):
         """Allows you to view the number of interactions you had in the current cycle.
