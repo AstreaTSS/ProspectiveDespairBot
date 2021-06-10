@@ -52,7 +52,7 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
-        count: Optional[floats] = None,  # slight exploit because str doesnt work
+        count: Optional[float] = None,  # slight exploit because str doesnt work
     ):
         await ctx.defer()
 
