@@ -8,3 +8,4 @@ websockets
 python-dotenv
 rapidfuzz
 python-dateutil
+discord-py-slash-command
