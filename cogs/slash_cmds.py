@@ -25,6 +25,13 @@ sonic_perms = {
     ]
 }
 
+alive_player_perms = {
+    786609181855318047: [
+        create_permission(229350299909881876, SlashCommandPermissionType.USER, True),
+        create_permission(786610731826544670, SlashCommandPermissionType.ROLE, True),
+    ]
+}
+
 interaction_options = [
     create_option("user_1", "The first user.", SlashCommandOptionType.USER, True),
     create_option("user_2", "The second user.", SlashCommandOptionType.USER, False),
@@ -36,13 +43,12 @@ interaction_options = [
     create_option("user_8", "The eight user.", SlashCommandOptionType.USER, False),
     create_option("user_9", "The ninth user.", SlashCommandOptionType.USER, False),
     create_option("user_10", "The tenth user.", SlashCommandOptionType.USER, False),
-    create_option(
-        "count",
-        "How many interactions should be added.",
-        SlashCommandOptionType.STRING,
-        False,
-    ),
 ]
+
+interactions_plus = interaction_options.copy()
+interactions_plus.append(
+    create_option("count", "How many interactions should be added.", 3, False,)
+)
 
 
 def error_embed_generate(error_msg):
@@ -59,7 +65,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[786609181855318047],
         default_permission=False,
         permissions=sonic_perms,
-        options=interaction_options,
+        options=interactions_plus,
     )
     async def add_interaction(
         self,
@@ -130,7 +136,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[786609181855318047],
         default_permission=False,
         permissions=sonic_perms,
-        options=interaction_options,
+        options=interactions_plus,
     )
     async def remove_interaction(
         self,
@@ -203,6 +209,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[786609181855318047],
         default_permission=False,
         permissions=sonic_perms,
+        options=interaction_options,
     )
     async def add_event(
         self,
@@ -254,6 +261,9 @@ class SlashCMDS(commands.Cog):
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[786609181855318047],
+        default_permission=False,
+        permissions=alive_player_perms,
+        options=[],
     )
     async def interactions(self, ctx: SlashContext):
         await ctx.defer(hidden=True)
