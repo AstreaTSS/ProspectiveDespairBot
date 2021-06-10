@@ -157,8 +157,7 @@ class Interactions(commands.Cog, name="Interaction"):
             )
         else:
             raise commands.BadArgument(
-                f"Member {user.mention} does not exist in interactions!",
-                allowed_mentions=utils.deny_mentions(ctx.author),
+                f"Member {user.mention} does not exist in interactions!"
             )
 
     @commands.command(
