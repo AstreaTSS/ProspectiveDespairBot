@@ -95,7 +95,7 @@ class SlashCMDS(commands.Cog):
             )
             return
 
-        all_users = tuple(
+        all_users = (
             user_1,
             user_2,
             user_3,
@@ -166,7 +166,7 @@ class SlashCMDS(commands.Cog):
             )
             return
 
-        all_users = tuple(
+        all_users = (
             user_1,
             user_2,
             user_3,
@@ -227,7 +227,7 @@ class SlashCMDS(commands.Cog):
     ):
         await ctx.defer()
 
-        all_users = tuple(
+        all_users = (
             user_1,
             user_2,
             user_3,
