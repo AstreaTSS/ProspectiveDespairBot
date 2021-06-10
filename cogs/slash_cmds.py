@@ -9,7 +9,9 @@ import discord
 from discord.ext import commands
 from discord_slash import cog_ext
 from discord_slash import SlashContext
+from discord_slash.model import SlashCommandOptionType
 from discord_slash.model import SlashCommandPermissionType
+from discord_slash.utils.manage_commands import create_option
 from discord_slash.utils.manage_commands import create_permission
 
 import common.cards as cards
@@ -22,6 +24,25 @@ sonic_perms = {
         create_permission(229350299909881876, SlashCommandPermissionType.USER, True)
     ]
 }
+
+interaction_options = [
+    create_option("user_1", "The first user.", SlashCommandOptionType.USER, True),
+    create_option("user_2", "The second user.", SlashCommandOptionType.USER, False),
+    create_option("user_3", "The third user.", SlashCommandOptionType.USER, False),
+    create_option("user_4", "The fourth user.", SlashCommandOptionType.USER, False),
+    create_option("user_5", "The fifth user.", SlashCommandOptionType.USER, False),
+    create_option("user_6", "The sixth user.", SlashCommandOptionType.USER, False),
+    create_option("user_7", "The seventh user.", SlashCommandOptionType.USER, False),
+    create_option("user_8", "The eight user.", SlashCommandOptionType.USER, False),
+    create_option("user_9", "The ninth user.", SlashCommandOptionType.USER, False),
+    create_option("user_10", "The tenth user.", SlashCommandOptionType.USER, False),
+    create_option(
+        "count",
+        "How many interactions should be added.",
+        SlashCommandOptionType.STRING,
+        False,
+    ),
+]
 
 
 def error_embed_generate(error_msg):
@@ -38,6 +59,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[786609181855318047],
         default_permission=False,
         permissions=sonic_perms,
+        options=interaction_options,
     )
     async def add_interaction(
         self,
@@ -52,7 +74,7 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
-        count: Optional[float] = None,  # slight exploit because str doesnt work
+        count: Optional[str] = None,
     ):
         await ctx.defer()
 
@@ -108,6 +130,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[786609181855318047],
         default_permission=False,
         permissions=sonic_perms,
+        options=interaction_options,
     )
     async def remove_interaction(
         self,
@@ -122,7 +145,7 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
-        count: Optional[float] = None,  # slight exploit because str doesnt work
+        count: Optional[str] = None,
     ):
         await ctx.defer()
 
