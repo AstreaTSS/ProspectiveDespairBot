@@ -102,6 +102,77 @@ class SlashCMDS(commands.Cog):
         await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
+        name="remove_interaction",
+        description="Removes an interaction from the members specified.",
+        guild_ids=[786609181855318047],
+        permissions=sonic_perms,
+    )
+    async def remove_interaction(
+        self,
+        ctx: SlashContext,
+        user_1: discord.User,
+        user_2: Optional[discord.User],
+        user_3: Optional[discord.User],
+        user_4: Optional[discord.User],
+        user_5: Optional[discord.User],
+        user_6: Optional[discord.User],
+        user_7: Optional[discord.User],
+        user_8: Optional[discord.User],
+        user_9: Optional[discord.User],
+        user_10: Optional[discord.User],
+        count: Optional[str],
+    ):
+        await ctx.defer()
+
+        if count is None:
+            count = "1"
+
+        try:
+            actual_count = Decimal(count)
+        except InvalidOperation:
+            await ctx.send(
+                embed=error_embed_generate("Number provided is not a decimal!")
+            )
+            return
+
+        all_users = tuple(
+            user_1,
+            user_2,
+            user_3,
+            user_4,
+            user_5,
+            user_6,
+            user_7,
+            user_8,
+            user_9,
+            user_10,
+        )
+        members: Tuple[discord.User] = tuple(
+            user for user in all_users if user is not None
+        )
+
+        async for inter in models.UserInteraction.filter(
+            user_id__in=frozenset(m.id for m in members)
+        ).select_for_update():
+            inter.interactions -= count
+            if inter.interactions < 0:
+                inter.interactions == 0
+            await inter.save()
+
+        if count == 1:
+            embed = discord.Embed(
+                color=self.bot.color,
+                description=f"Removed an interaction from: {', '.join(tuple(m.mention for m in members))}.",
+            )
+        else:
+            embed = discord.Embed(
+                color=self.bot.color,
+                description=f"Removed {count} interactions from: {', '.join(tuple(m.mention for m in members))}.",
+            )
+
+        await ctx.send(embed=embed)
+
+    @cog_ext.cog_slash(
         name="add_event",
         description="Gives an event point to the users specified.",
         guild_ids=[786609181855318047],
