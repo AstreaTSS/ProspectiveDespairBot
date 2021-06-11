@@ -209,7 +209,9 @@ class Interactions(commands.Cog, name="Interaction"):
             if inter:
                 embed = discord.Embed(
                     color=self.bot.color,
-                    description=f"You have {inter.interactions} interactions for this cycle!",
+                    description="**NOTE**: this command will be removed soon. "
+                    + "Please use the slash command `/interactions` instead.\n"
+                    + f"You have {inter.interactions} interactions for this cycle!",
                     timestamp=datetime.datetime.utcnow(),
                 )
                 embed.set_footer(text="As of")
