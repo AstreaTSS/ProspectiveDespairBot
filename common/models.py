@@ -1,8 +1,10 @@
-from tortoise import fields
-from tortoise.models import Model
+from piccolo.columns import BigInt
+from piccolo.columns import Decimal
+from piccolo.columns import Integer
+from piccolo.table import Table
 
 
-class UserInteraction(Model):
-    id = fields.IntField(pk=True)
-    user_id = fields.BigIntField()
-    interactions = fields.DecimalField(4, 1)
+class UserInteraction(Table):
+    id = Integer(primary=True, key=True)
+    user_id = BigInt()
+    interactions = Decimal(digits=(4, 1))

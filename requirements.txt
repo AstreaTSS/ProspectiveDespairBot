@@ -1,5 +1,4 @@
-aiosqlite==0.16.1
-tortoise-orm
+piccolo[orjson]
 discord.py
 pytz
 jishaku

@@ -7,7 +7,6 @@ import discord
 import discord_slash
 from discord.ext import commands
 from dotenv import load_dotenv
-from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
@@ -49,10 +48,6 @@ def global_checks(ctx: commands.Context):
 async def on_init_load():
     await bot.wait_until_ready()
 
-    await Tortoise.init(
-        db_url="sqlite://db.sqlite3", modules={"models": ["common.models"]}
-    )
-
     application = await bot.application_info()
     bot.owner = application.owner
 
@@ -63,10 +58,11 @@ async def on_init_load():
     for cog in cogs_list:
         try:
             bot.load_extension(cog)
-        except commands.NoEntryPointError:
+        except commands.NoEntryPointError as e:
             pass
 
     await bot.slash.sync_all_commands()  # need to do this as otherwise slash cmds wont work
+    bot.init_load = False
 
 
 class ProspectiveDespairBot(commands.Bot):
@@ -100,8 +96,6 @@ class ProspectiveDespairBot(commands.Bot):
 
         await self.owner.send(connect_msg)
 
-        self.init_load = False
-
         activity = discord.Activity(
             name="over Prospective Despair", type=discord.ActivityType.watching
         )
@@ -134,7 +128,6 @@ class ProspectiveDespairBot(commands.Bot):
         return ctx
 
     async def close(self):
-        await Tortoise.close_connections()
         return await super().close()  # this will complain a bit, just ignore it
 
 

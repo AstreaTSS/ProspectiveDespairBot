@@ -55,6 +55,13 @@ def error_embed_generate(error_msg):
     return discord.Embed(colour=discord.Colour.red(), description=error_msg)
 
 
+def add_decimal_value(ori_value, add):
+    if not isinstance(add, Decimal):
+        return str(Decimal(ori_value) + Decimal(add))
+    else:
+        return str(Decimal(ori_value) + add)
+
+
 class SlashCMDS(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -111,11 +118,14 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
-            user_id__in=frozenset(m.id for m in members)
-        ).select_for_update():
-            inter.interactions += actual_count
-            await inter.save()
+        inters = (
+            await models.UserInteraction.objects()
+            .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+            .run()
+        )
+        for inter in inters:
+            inter.interactions = add_decimal_value(inter.interactions, actual_count)
+            await inter.save().run()
 
         if actual_count == 1:
             embed = discord.Embed(
@@ -182,15 +192,20 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
-            user_id__in=frozenset(m.id for m in members)
-        ).select_for_update():
-            inter.interactions -= count
-            if inter.interactions < 0:
-                inter.interactions == 0
-            await inter.save()
+        inters = (
+            await models.UserInteraction.objects()
+            .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+            .run()
+        )
+        for inter in inters:
+            inter.interactions = add_decimal_value(
+                inter.interactions, actual_count * -1
+            )
+            if float(inter.interactions) < 0:
+                inter.interactions == "0"
+                await inter.save().run()
 
-        if count == 1:
+        if actual_count == 1:
             embed = discord.Embed(
                 color=self.bot.color,
                 description=f"Removed an interaction from: {', '.join(tuple(m.mention for m in members))}.",
@@ -243,11 +258,14 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
-            user_id__in=frozenset(m.id for m in members)
-        ).select_for_update():
-            inter.interactions += Decimal("0.5")
-            await inter.save()
+        inters = (
+            await models.UserInteraction.objects()
+            .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+            .run()
+        )
+        for inter in inters:
+            inter.interactions = add_decimal_value(inter.interactions, "0.5")
+            await inter.save().run()
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -268,7 +286,11 @@ class SlashCMDS(commands.Cog):
     async def interactions(self, ctx: SlashContext):
         await ctx.defer(hidden=True)
 
-        inter = await models.UserInteraction.get_or_none(user_id=ctx.author.id)
+        inter = (
+            await models.UserInteraction.objects()
+            .where(models.UserInteraction.user_id == ctx.author.id)
+            .run()
+        )
         if inter:
             embed = discord.Embed(
                 color=self.bot.color,

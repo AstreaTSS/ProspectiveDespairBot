@@ -19,6 +19,13 @@ class DecimalConverter(commands.Converter):
             raise commands.BadArgument("This is not a decimal!")
 
 
+def add_decimal_value(ori_value, add):
+    if not isinstance(add, Decimal):
+        return str(Decimal(ori_value) + Decimal(add))
+    else:
+        return str(Decimal(ori_value) + add)
+
+
 class Interactions(commands.Cog, name="Interaction"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -32,11 +39,14 @@ class Interactions(commands.Cog, name="Interaction"):
         count: DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
-            async for inter in models.UserInteraction.filter(
-                user_id__in=frozenset(m.id for m in members)
-            ).select_for_update():
-                inter.interactions += count
-                await inter.save()
+            inters = (
+                await models.UserInteraction.objects()
+                .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+                .run()
+            )
+            for inter in inters:
+                inter.interactions = add_decimal_value(inter.interactions, count)
+                await inter.save().run()
 
             if count == 1:
                 embed = discord.Embed(
@@ -62,13 +72,16 @@ class Interactions(commands.Cog, name="Interaction"):
         count: DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
-            async for inter in models.UserInteraction.filter(
-                user_id__in=frozenset(m.id for m in members)
-            ).select_for_update():
-                inter.interactions -= count
-                if inter.interactions < 0:
-                    inter.interactions == 0
-                await inter.save()
+            inters = (
+                await models.UserInteraction.objects()
+                .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+                .run()
+            )
+            for inter in inters:
+                inter.interactions = add_decimal_value(inter.interactions, count * -1)
+                if float(inter.interactions) < 0:
+                    inter.interactions == "0"
+                await inter.save().run()
 
             if count == 1:
                 embed = discord.Embed(
@@ -89,11 +102,14 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, members: commands.Greedy[discord.Member]
     ):
         async with ctx.typing():
-            async for inter in models.UserInteraction.filter(
-                user_id__in=frozenset(m.id for m in members)
-            ).select_for_update():
-                inter.interactions += Decimal("0.5")
-                await inter.save()
+            inters = (
+                await models.UserInteraction.objects()
+                .where(models.UserInteraction.user_id.is_in([m.id for m in members]))
+                .run()
+            )
+            for inter in inters:
+                inter.interactions = add_decimal_value(inter.interactions, "0.5")
+                await inter.save().run()
 
             embed = discord.Embed(
                 color=self.bot.color,
@@ -109,14 +125,16 @@ class Interactions(commands.Cog, name="Interaction"):
     @commands.is_owner()
     async def reset_interactions(self, ctx: commands.Context):
         async with ctx.typing():
-            await models.UserInteraction.all().delete()
+            await models.UserInteraction.delete(force=True).run()
 
             user_ids = tuple(
                 c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
             )
 
             for user_id in user_ids:
-                await models.UserInteraction.create(user_id=user_id, interactions=0)
+                await models.UserInteraction.insert(
+                    models.UserInteraction(user_id=user_id, interactions="0")
+                ).run()
 
         await ctx.reply("Done!")
 
@@ -124,9 +142,11 @@ class Interactions(commands.Cog, name="Interaction"):
     @commands.is_owner()
     async def list_interactions(self, ctx: commands.Context):
         async with ctx.typing():
-            inters = await models.UserInteraction.all()
-            inters.sort(key=lambda i: i.interactions, reverse=True)
-            list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
+            inters = await models.UserInteraction.objects().run()
+            inters.sort(key=lambda i: Decimal(i.interactions), reverse=True)
+            list_inters = tuple(
+                f"<@{i.user_id}>: {Decimal(i.interactions)}" for i in inters
+            )
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -148,9 +168,18 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, user: discord.User
     ):
         async with ctx.typing():
-            num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
+            # i hate piccolo sometimes
+            exists = (
+                await models.UserInteraction.exists()
+                .where(models.UserInteraction.user_id == user.id)
+                .run()
+            )
+            if exists:
+                await models.UserInteraction.delete().where(
+                    models.UserInteraction.user_id == user.id
+                ).run()
 
-        if num_deleted > 0:
+        if exists:
             await ctx.reply(
                 f"{user.mention} deleted!",
                 allowed_mentions=utils.deny_mentions(ctx.author),
@@ -168,13 +197,19 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, user: discord.User
     ):
         async with ctx.typing():
-            exists = await models.UserInteraction.exists(user_id=user.id)
+            exists = (
+                await models.UserInteraction.exists()
+                .where(models.UserInteraction.user_id == user.id)
+                .run()
+            )
             if exists:
                 raise commands.BadArgument(
                     f"Member {user.mention} already in interactions!"
                 )
 
-            await models.UserInteraction.create(user_id=user.id, interactions=0)
+            await models.UserInteraction.insert(
+                models.UserInteraction(user_id=user.id, interactions="0")
+            ).run()
 
         await ctx.reply(
             f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
@@ -185,9 +220,12 @@ class Interactions(commands.Cog, name="Interaction"):
         """Allows you to view the number of interactions you had in the current cycle.
         Will not work if you are not in the KG."""
         async with ctx.typing():
-            inter = await models.UserInteraction.get_or_none(user_id=ctx.author.id)
+            inter = (
+                await models.UserInteraction.objects()
+                .where(models.UserInteraction.user_id == ctx.author.id)
+                .run()
+            )
             if inter:
-
                 embed = discord.Embed(
                     color=self.bot.color,
                     description=f"You have {inter.interactions} interactions for this cycle!",
