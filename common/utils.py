@@ -2,21 +2,38 @@
 import collections
 import logging
 import traceback
+from decimal import Decimal
+from decimal import InvalidOperation
 from pathlib import Path
-from typing import Union
 
 import aiohttp
 import discord
 from discord.ext import commands
 
 
-def proper_permissions():
-    async def predicate(ctx: commands.Context):
-        # checks if author has admin or manage guild perms or is the owner
-        permissions = ctx.channel.permissions_for(ctx.author)
-        return permissions.administrator or permissions.manage_guild
+class UsableIDConverter(commands.IDConverter):
+    """The internal ID converter, but usable.
+    Will be replaced by the ObjectConverter in d.py 2.0."""
 
-    return commands.check(predicate)
+    async def convert(self, ctx: commands.Context, argument: str):
+        match = self._get_id_match(argument)
+        try:
+            return int(match.group(1))
+        except:
+            raise commands.MessageNotFound(argument)
+
+
+class DecimalConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, argument: str) -> Decimal:
+        try:
+            return Decimal(argument)
+        except InvalidOperation:
+            raise commands.BadArgument("This is not a decimal!")
+
+
+class CustomCheckFailure(commands.CheckFailure):
+    # custom classs for custom prerequisite failures outside of normal command checks
+    pass
 
 
 async def error_handle(bot, error, ctx=None):
@@ -160,6 +177,21 @@ def yesno_friendly_str(bool_to_convert):
         return "no"
 
 
-class CustomCheckFailure(commands.CheckFailure):
-    # custom classs for custom prerequisite failures outside of normal command checks
-    pass
+def error_embed_generate(error_msg):
+    return discord.Embed(colour=discord.Colour.red(), description=error_msg)
+
+
+def add_decimal_value(ori_value, add):
+    if not isinstance(add, Decimal):
+        return str(Decimal(ori_value) + Decimal(add))
+    else:
+        return str(Decimal(ori_value) + add)
+
+
+def proper_permissions():
+    async def predicate(ctx: commands.Context):
+        # checks if author has admin or manage guild perms or is the owner
+        permissions = ctx.channel.permissions_for(ctx.author)
+        return permissions.administrator or permissions.manage_guild
+
+    return commands.check(predicate)

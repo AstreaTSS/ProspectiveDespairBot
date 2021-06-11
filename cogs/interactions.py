@@ -11,21 +11,6 @@ import common.models as models
 import common.utils as utils
 
 
-class DecimalConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, argument: str) -> Decimal:
-        try:
-            return Decimal(argument)
-        except InvalidOperation:
-            raise commands.BadArgument("This is not a decimal!")
-
-
-def add_decimal_value(ori_value, add):
-    if not isinstance(add, Decimal):
-        return str(Decimal(ori_value) + Decimal(add))
-    else:
-        return str(Decimal(ori_value) + add)
-
-
 class Interactions(commands.Cog, name="Interaction"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -36,14 +21,14 @@ class Interactions(commands.Cog, name="Interaction"):
         self,
         ctx: commands.Context,
         members: commands.Greedy[discord.Member],
-        count: DecimalConverter = Decimal(1),
+        count: utils.DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
             inters = await models.UserInteraction.objects.all(
                 user_id__in=[m.id for m in members]
             )
             for inter in inters:
-                inter.interactions = add_decimal_value(inter.interactions, count)
+                inter.interactions = utils.add_decimal_value(inter.interactions, count)
                 await inter.update()
 
             if count == 1:
@@ -67,14 +52,16 @@ class Interactions(commands.Cog, name="Interaction"):
         self,
         ctx: commands.Context,
         members: commands.Greedy[discord.Member],
-        count: DecimalConverter = Decimal(1),
+        count: utils.DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
             inters = await models.UserInteraction.objects.all(
                 user_id__in=[m.id for m in members]
             )
             for inter in inters:
-                inter.interactions = add_decimal_value(inter.interactions, count * -1)
+                inter.interactions = utils.add_decimal_value(
+                    inter.interactions, count * -1
+                )
                 if Decimal(inter.interactions) < 0:
                     inter.interactions == "0"
                 await inter.update()
@@ -102,7 +89,7 @@ class Interactions(commands.Cog, name="Interaction"):
                 user_id__in=[m.id for m in members]
             )
             for inter in inters:
-                inter.interactions = add_decimal_value(inter.interactions, "0.5")
+                inter.interactions = utils.add_decimal_value(inter.interactions, "0.5")
                 await inter.update()
 
             embed = discord.Embed(

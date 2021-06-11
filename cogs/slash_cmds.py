@@ -51,17 +51,6 @@ interactions_plus.append(
 )
 
 
-def error_embed_generate(error_msg):
-    return discord.Embed(colour=discord.Colour.red(), description=error_msg)
-
-
-def add_decimal_value(ori_value, add):
-    if not isinstance(add, Decimal):
-        return str(Decimal(ori_value) + Decimal(add))
-    else:
-        return str(Decimal(ori_value) + add)
-
-
 class SlashCMDS(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -98,7 +87,7 @@ class SlashCMDS(commands.Cog):
             actual_count = Decimal(count)
         except InvalidOperation:
             await ctx.send(
-                embed=error_embed_generate("Number provided is not a decimal!")
+                embed=utils.error_embed_generate("Number provided is not a decimal!")
             )
             return
 
@@ -122,7 +111,9 @@ class SlashCMDS(commands.Cog):
             user_id__in=[m.id for m in members]
         )
         for inter in inters:
-            inter.interactions = add_decimal_value(inter.interactions, actual_count)
+            inter.interactions = utils.add_decimal_value(
+                inter.interactions, actual_count
+            )
             await inter.update()
 
         if actual_count == 1:
@@ -170,7 +161,7 @@ class SlashCMDS(commands.Cog):
             actual_count = Decimal(count)
         except InvalidOperation:
             await ctx.send(
-                embed=error_embed_generate("Number provided is not a decimal!")
+                embed=utils.error_embed_generate("Number provided is not a decimal!")
             )
             return
 
@@ -194,7 +185,7 @@ class SlashCMDS(commands.Cog):
             user_id__in=[m.id for m in members]
         )
         for inter in inters:
-            inter.interactions = add_decimal_value(
+            inter.interactions = utils.add_decimal_value(
                 inter.interactions, actual_count * -1
             )
             if Decimal(inter.interactions) < 0:
@@ -258,7 +249,7 @@ class SlashCMDS(commands.Cog):
             user_id__in=[m.id for m in members]
         )
         for inter in inters:
-            inter.interactions = add_decimal_value(inter.interactions, "0.5")
+            inter.interactions = utils.add_decimal_value(inter.interactions, "0.5")
             await inter.update()
 
         embed = discord.Embed(
@@ -291,7 +282,7 @@ class SlashCMDS(commands.Cog):
             await ctx.send(embed=embed, hidden=True)
         else:
             await ctx.send(
-                embed=error_embed_generate("You aren't in the KG!"), hidden=True
+                embed=utils.error_embed_generate("You aren't in the KG!"), hidden=True
             )
 
     @commands.Cog.listener()
