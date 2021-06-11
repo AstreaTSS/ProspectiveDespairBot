@@ -1,10 +1,21 @@
-from piccolo.columns import BigInt
-from piccolo.columns import Decimal
-from piccolo.columns import Integer
-from piccolo.table import Table
+import databases
+import ormar
+import sqlalchemy
+
+DATABASE_URL = "sqlite:///db.sqlite3"
+database = databases.Database(DATABASE_URL)
+metadata = sqlalchemy.MetaData()
 
 
-class UserInteraction(Table):
-    id = Integer(primary=True, key=True)
-    user_id = BigInt()
-    interactions = Decimal(digits=(4, 1))
+class BaseMeta(ormar.ModelMeta):
+    metadata = metadata
+    database = database
+
+
+class UserInteraction(ormar.Model):
+    class Meta(BaseMeta):
+        tablename = "user_interaction"
+
+    id: int = ormar.Integer(primary_key=True, unique=True, autoincrement=True)
+    user_id: int = ormar.BigInteger()
+    interactions: str = ormar.String(max_length=40)

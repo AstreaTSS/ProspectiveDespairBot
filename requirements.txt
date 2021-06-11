@@ -1,4 +1,5 @@
-piccolo[orjson]
+ormar[sqlite]~=0.10
+databases
 discord.py
 pytz
 jishaku
