@@ -117,7 +117,7 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
                     option_type = discord_slash.SlashCommandOptionType(
                         option["type"]
                     ).name
-                    required_txt = ", required" if option["required"] else ""
+                    required_txt = ", required" if option.get("required") else ""
                     entry_str_list.append(
                         f"{option['name']} (type {option_type}{required_txt}) - {option['description']}"
                     )
