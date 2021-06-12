@@ -112,7 +112,7 @@ kento_card = Card(
     user_id=333292261024595969,
     oc_name="Kento Masumi",
     oc_talent="Bass Player",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239748320854046/KentoMasumiCard.png",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/853345454271234098/image.jpeg",
 )
 kojima_card = Card(
     user_id=217419998677696512,
