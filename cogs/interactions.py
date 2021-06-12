@@ -26,9 +26,13 @@ class Interactions(commands.Cog, name="Interaction"):
             inters = await models.UserInteraction.objects.all(
                 user_id__in=[m.id for m in members]
             )
-            for inter in inters:
+
+            def edit_interaction(inter: models.UserInteraction):
                 inter.interactions = utils.add_decimal_value(inter.interactions, count)
-                await inter.update()
+                return inter
+
+            new_inters = [edit_interaction(inter) for inter in inters]
+            await models.UserInteraction.objects.bulk_update(new_inters)
 
             if count == 1:
                 embed = discord.Embed(
@@ -57,13 +61,17 @@ class Interactions(commands.Cog, name="Interaction"):
             inters = await models.UserInteraction.objects.all(
                 user_id__in=[m.id for m in members]
             )
-            for inter in inters:
+
+            def edit_interaction(inter: models.UserInteraction):
                 inter.interactions = utils.add_decimal_value(
                     inter.interactions, count * -1
                 )
                 if Decimal(inter.interactions) < 0:
                     inter.interactions == "0"
-                await inter.update()
+                return inter
+
+            new_inters = [edit_interaction(inter) for inter in inters]
+            await models.UserInteraction.objects.bulk_update(new_inters)
 
             if count == 1:
                 embed = discord.Embed(
@@ -87,9 +95,13 @@ class Interactions(commands.Cog, name="Interaction"):
             inters = await models.UserInteraction.objects.all(
                 user_id__in=[m.id for m in members]
             )
-            for inter in inters:
+
+            def edit_interaction(inter: models.UserInteraction):
                 inter.interactions = utils.add_decimal_value(inter.interactions, "0.5")
-                await inter.update()
+                return inter
+
+            new_inters = [edit_interaction(inter) for inter in inters]
+            await models.UserInteraction.objects.bulk_update(new_inters)
 
             embed = discord.Embed(
                 color=self.bot.color,
@@ -111,10 +123,11 @@ class Interactions(commands.Cog, name="Interaction"):
                 c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
             )
 
-            for user_id in user_ids:
-                await models.UserInteraction.objects.create(
-                    user_id=user_id, interactions="0"
-                )
+            new_inters = [
+                models.UserInteraction(user_id=user_id, interactions="0")
+                for user_id in user_ids
+            ]
+            await models.UserInteraction.objects.bulk_create(new_inters)
 
         await ctx.reply("Done!")
 
