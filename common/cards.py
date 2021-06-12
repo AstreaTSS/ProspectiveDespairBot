@@ -161,6 +161,7 @@ benjamin_card = Card(
     oc_name="Benjamin Wood",
     oc_talent="Detective",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963505213145138/BenjaminWoodCard.png",
+    status=Status.DEAD,
 )
 dvorah_card = Card(
     user_id=293549819828633600,

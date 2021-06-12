@@ -56,7 +56,7 @@ class SlashCMDS(commands.Cog):
         self.bot = bot
 
     @cog_ext.cog_slash(
-        name="add_interaction",
+        name="add-interaction",
         description="Adds an interaction to the members specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
@@ -132,7 +132,7 @@ class SlashCMDS(commands.Cog):
         await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
-        name="remove_interaction",
+        name="remove-interaction",
         description="Removes an interaction from the members specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
@@ -212,7 +212,7 @@ class SlashCMDS(commands.Cog):
         await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
-        name="add_event",
+        name="add-event",
         description="Gives an event point to the users specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
