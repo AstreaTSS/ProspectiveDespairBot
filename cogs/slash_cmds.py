@@ -188,7 +188,9 @@ class SlashCMDS(commands.Cog):
         )
 
         def edit_interaction(inter: models.UserInteraction):
-            inter.interactions = utils.add_decimal_value(inter.interactions, count * -1)
+            inter.interactions = utils.add_decimal_value(
+                inter.interactions, Decimal(count) * -1
+            )
             if Decimal(inter.interactions) < 0:
                 inter.interactions == "0"
             return inter
