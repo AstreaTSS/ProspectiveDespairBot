@@ -197,27 +197,6 @@ class Interactions(commands.Cog, name="Interaction"):
             f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
         )
 
-    @commands.command(aliases=["inter", "inters", "interaction"])
-    async def interactions(self, ctx: commands.Context):
-        """Allows you to view the number of interactions you had in the current cycle.
-        Will not work if you are not in the KG."""
-        async with ctx.typing():
-            inter = await models.UserInteraction.objects.get_or_none(
-                user_id=ctx.author.id
-            )
-            if inter:
-                embed = discord.Embed(
-                    color=self.bot.color,
-                    description="**NOTE**: this command will be removed soon. "
-                    + "Please use the slash command `/interactions` instead.\n"
-                    + f"You have {inter.interactions} interactions for this cycle!",
-                    timestamp=datetime.datetime.utcnow(),
-                )
-                embed.set_footer(text="As of")
-                await ctx.reply(embed=embed)
-            else:
-                raise utils.CustomCheckFailure("You aren't in the KG!")
-
 
 def setup(bot):
     importlib.reload(cards)
