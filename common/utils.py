@@ -9,6 +9,7 @@ from pathlib import Path
 import aiohttp
 import discord
 from discord.ext import commands
+from discord_slash import SlashContext
 
 
 class UsableIDConverter(commands.IDConverter):
@@ -60,13 +61,19 @@ async def error_handle(bot, error, ctx=None):
     await msg_to_owner(bot, to_send, split)
 
     if ctx:
-        if hasattr(ctx, "reply"):
+        if isinstance(ctx, discord.Message):
             await ctx.reply(
                 "An internal error has occured. The bot owner has been notified."
             )
+        elif isinstance(ctx, SlashContext):
+            await ctx.send(
+                content="An internal error has occured. The bot owner has been notified.",
+                hidden=True,
+            )
         else:
+            # just pray this will work
             await ctx.channel.send(
-                content="An internal error has occured. The bot owner has been notified."
+                "An internal error has occured. The bot owner has been notified."
             )
 
 
