@@ -1,7 +1,6 @@
 import datetime
 import importlib
 from decimal import Decimal
-from decimal import InvalidOperation
 
 import discord
 from discord.ext import commands
@@ -113,9 +112,9 @@ class Interactions(commands.Cog, name="Interaction"):
             )
 
             for user_id in user_ids:
-                await models.UserInteraction.insert(
-                    models.UserInteraction(user_id=user_id, interactions="0")
-                ).run()
+                await models.UserInteraction.objects.create(
+                    user_id=user_id, interactions="0"
+                )
 
         await ctx.reply("Done!")
 
