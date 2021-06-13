@@ -113,6 +113,7 @@ kento_card = Card(
     oc_name="Kento Masumi",
     oc_talent="Bass Player",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/853345454271234098/image.jpeg",
+    status=Status.DEAD,
 )
 kojima_card = Card(
     user_id=217419998677696512,
