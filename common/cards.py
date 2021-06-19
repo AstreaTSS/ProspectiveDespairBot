@@ -169,6 +169,7 @@ dvorah_card = Card(
     oc_name="D'vorah Kokatsu",
     oc_talent="Scientist",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963532396953620/DvorahKokatsuCard.png",
+    status=Status.DEAD,
 )
 luna_card = Card(
     user_id=673944515417079847,
