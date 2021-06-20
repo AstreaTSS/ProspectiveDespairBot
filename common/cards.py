@@ -156,6 +156,7 @@ aradia_card = Card(
     oc_name="Aradia Boswell",
     oc_talent="Wood Carver",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963495571357714/AradiaBoswellCard.png",
+    status=Status.DEAD,
 )
 benjamin_card = Card(
     user_id=422447246060158996,
