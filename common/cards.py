@@ -84,12 +84,12 @@ david_card = Card(
     oc_talent="Social Engineer",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239706654244922/DavidJosephRussellCard.png",
 )
-fausto_card = Card(
-    user_id=140543419104755712,
-    oc_name="Fausto Rochada",
-    oc_talent="Boxer",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239712804274246/FaustoRochadaCard.png",
-)
+# fausto_card = Card(
+#     user_id=140543419104755712,
+#     oc_name="Fausto Rochada",
+#     oc_talent="Boxer",
+#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239712804274246/FaustoRochadaCard.png",
+# )
 # hikaru_card = Card(
 #     user_id=621631815311949834,
 #     oc_name="Hikaru",
@@ -202,12 +202,18 @@ ema_card = Card(
     oc_talent="Confectioner",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239711159189534/EmaIsaruCard.png",
 )
+north_card = Card(
+    user_id=303254061644382219,
+    oc_name="North Olsen",
+    oc_talent="Lumberjack",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/856576781708034068/NorthOlsenCard.png",
+)
 
 
 participants = [
     bat_card,
     david_card,
-    fausto_card,
+    # fausto_card,
     # hikaru_card,
     jack_card,
     jacob_card,
@@ -226,5 +232,6 @@ participants = [
     otto_card,
     kai_card,
     ema_card,
+    north_card,
 ]
 participants.sort(key=lambda card: card.oc_name)

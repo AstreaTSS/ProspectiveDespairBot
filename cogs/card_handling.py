@@ -49,6 +49,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
                 "All participant cards should be in alphabetical order and easily searchable.\n"
                 + "All host cards should be displayed in the order in which they were revealed.\n"
                 "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.",
+                "If you want to get the individual, transparent image, you can also ping or DM Sonic for that too.",
                 embed=embed,
             )
 
