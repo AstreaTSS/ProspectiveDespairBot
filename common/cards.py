@@ -72,12 +72,12 @@ hosts = [drake_card, talia_card, goro_card]
 # order of these cards do not represent anything whatsoever
 # they're just like that
 # everything gets sorted by oc name anyways
-bat_card = Card(
-    user_id=770866874468270092,
-    oc_name="Bat Allan-Poe",
-    oc_talent="Gothic Horror Writer",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239705463980113/BatAllanPoeCard.png",
-)
+# bat_card = Card(
+#     user_id=770866874468270092,
+#     oc_name="Bat Allan-Poe",
+#     oc_talent="Gothic Horror Writer",
+#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239705463980113/BatAllanPoeCard.png",
+# )
 david_card = Card(
     user_id=723768708433969243,
     oc_name="David Joseph Russell",
@@ -208,10 +208,16 @@ north_card = Card(
     oc_talent="Lumberjack",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/856576781708034068/NorthOlsenCard.png",
 )
+hunter_card = Card(
+    user_id=588749122643951616,
+    oc_name="Hunter Ryuu",
+    oc_talent="Tutor",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/856660449356546098/HunterRyuuCard.png",
+)
 
 
 participants = [
-    bat_card,
+    # bat_card,
     david_card,
     # fausto_card,
     # hikaru_card,
@@ -233,5 +239,6 @@ participants = [
     kai_card,
     ema_card,
     north_card,
+    hunter_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
