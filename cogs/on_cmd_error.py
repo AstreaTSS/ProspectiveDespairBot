@@ -48,7 +48,7 @@ class OnCMDError(commands.Cog):
         elif isinstance(error, commands.CheckFailure):
             if ctx.guild:
                 await ctx.reply(
-                    embed=self.error_embed_generate(
+                    embed=utils.error_embed_generate(
                         "You do not have the proper permissions to use that command."
                     )
                 )
