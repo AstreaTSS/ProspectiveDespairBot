@@ -136,8 +136,8 @@ rita_card = Card(
 takuya_card = Card(
     user_id=288772793460457473,
     oc_name="Takuya Erion",
-    oc_talent="Operator",
-    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239784576024586/TakuyaErionCard.png",
+    oc_talent="Pirate",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/857645879484874782/TakuyaErionCard.png",
 )
 tokumei_card = Card(
     user_id=578326021443420160,
