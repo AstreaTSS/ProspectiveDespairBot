@@ -174,9 +174,9 @@ dvorah_card = Card(
 )
 luna_card = Card(
     user_id=673944515417079847,
-    oc_name="Luna",
+    oc_name="Luna (Isle) No.343539(23)",
     oc_talent="Pathological Liar",
-    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963577276006500/LunaCard.png",
+    card_url="https://cdn.discordapp.com/attachments/465547475839746058/858207646121066516/LunaCard.png",
 )
 maigo_card = Card(
     user_id=328149026266677248,
