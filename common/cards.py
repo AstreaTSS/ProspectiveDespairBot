@@ -72,30 +72,33 @@ hosts = [drake_card, talia_card, goro_card]
 # order of these cards do not represent anything whatsoever
 # they're just like that
 # everything gets sorted by oc name anyways
-# bat_card = Card(
-#     user_id=770866874468270092,
-#     oc_name="Bat Allan-Poe",
-#     oc_talent="Gothic Horror Writer",
-#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239705463980113/BatAllanPoeCard.png",
-# )
+bat_card = Card(
+    user_id=770866874468270092,
+    oc_name="Bat Allan-Poe",
+    oc_talent="Gothic Horror Writer",
+    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239705463980113/BatAllanPoeCard.png",
+    status=Status.DEAD,
+)
 david_card = Card(
     user_id=723768708433969243,
     oc_name="David Joseph Russell",
     oc_talent="Social Engineer",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239706654244922/DavidJosephRussellCard.png",
 )
-# fausto_card = Card(
-#     user_id=140543419104755712,
-#     oc_name="Fausto Rochada",
-#     oc_talent="Boxer",
-#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239712804274246/FaustoRochadaCard.png",
-# )
-# hikaru_card = Card(
-#     user_id=621631815311949834,
-#     oc_name="Hikaru",
-#     oc_talent="Butler",
-#     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239715588374568/Hikaru.png",
-# )
+fausto_card = Card(
+    user_id=140543419104755712,
+    oc_name="Fausto Rochada",
+    oc_talent="Boxer",
+    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239712804274246/FaustoRochadaCard.png",
+    status=Status.DEAD,
+)
+hikaru_card = Card(
+    user_id=621631815311949834,
+    oc_name="Hikaru",
+    oc_talent="Butler",
+    card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239715588374568/Hikaru.png",
+    status=Status.DEAD,
+)
 jack_card = Card(
     user_id=269156561320935426,
     oc_name="Jack Enjo",
@@ -120,6 +123,7 @@ kojima_card = Card(
     oc_name="Kojima Akihiro",
     oc_talent="Vlogger",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239753610526770/KojimaAkihiroCard.png",
+    status=Status.DEAD,
 )
 noriko_card = Card(
     user_id=248410976808992768,
@@ -218,10 +222,10 @@ hunter_card = Card(
 
 
 participants = [
-    # bat_card,
+    bat_card,
     david_card,
-    # fausto_card,
-    # hikaru_card,
+    fausto_card,
+    hikaru_card,
     jack_card,
     jacob_card,
     kento_card,
