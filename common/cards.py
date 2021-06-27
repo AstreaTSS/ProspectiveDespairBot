@@ -138,6 +138,7 @@ takuya_card = Card(
     oc_name="Takuya Erion",
     oc_talent="Pirate",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/857645879484874782/TakuyaErionCard.png",
+    status=Status.DEAD,
 )
 tokumei_card = Card(
     user_id=578326021443420160,
