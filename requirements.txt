@@ -2,10 +2,10 @@ ormar[sqlite]~=0.10
 databases
 discord.py
 pytz==2021.1
-jishaku
-humanize
-websockets
-python-dotenv
-rapidfuzz
-python-dateutil
-discord-py-slash-command
+jishaku==2.0.0
+humanize==3.9.0
+websockets==9.1
+python-dotenv==0.18.0
+rapidfuzz==1.4.1
+python-dateutil==2.8.1
+discord-py-slash-command==2.0.4
