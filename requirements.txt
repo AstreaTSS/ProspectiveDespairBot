@@ -1,6 +1,6 @@
 ormar[sqlite]~=0.10
 databases
-discord.py
+discord.py==1.7.3
 pytz==2021.1
 jishaku==2.0.0
 humanize==3.9.0
