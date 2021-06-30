@@ -2,7 +2,7 @@ ormar[sqlite]~=0.10
 databases
 discord.py
 pytz
-jishaku
+jishaku==2.0.0
 humanize
 websockets
 python-dotenv
