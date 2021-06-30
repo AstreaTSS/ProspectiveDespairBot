@@ -5,7 +5,7 @@ pytz
 jishaku
 humanize
 websockets==9.1
-python-dotenv
-rapidfuzz
-python-dateutil
-discord-py-slash-command
+python-dotenv==0.18.0
+rapidfuzz==1.4.1
+python-dateutil==2.8.1
+discord-py-slash-command==2.0.4
