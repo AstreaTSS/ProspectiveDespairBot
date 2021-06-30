@@ -1,7 +1,7 @@
 ormar[sqlite]~=0.10
 databases
 discord.py
-pytz
+pytz==2021.1
 jishaku
 humanize
 websockets
