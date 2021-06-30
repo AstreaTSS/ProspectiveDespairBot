@@ -4,7 +4,7 @@ discord.py
 pytz
 jishaku
 humanize
-websockets
+websockets==9.1
 python-dotenv==0.18.0
 rapidfuzz==1.4.1
 python-dateutil==2.8.1
