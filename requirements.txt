@@ -1,5 +1,5 @@
 ormar[sqlite]~=0.10
-databases
+databases==0.4.3
 discord.py
 pytz
 jishaku
