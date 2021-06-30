@@ -3,7 +3,7 @@ databases
 discord.py
 pytz
 jishaku
-humanize
+humanize==3.9.0
 websockets
 python-dotenv
 rapidfuzz
