@@ -6,6 +6,6 @@ jishaku
 humanize
 websockets
 python-dotenv
-rapidfuzz
+rapidfuzz==1.3.3
 python-dateutil
 discord-py-slash-command
