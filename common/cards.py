@@ -182,6 +182,7 @@ luna_card = Card(
     oc_name="Luna (Isle) No.343539(23)",
     oc_talent="Pathological Liar",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/858207646121066516/LunaCard.png",
+    status=Status.DEAD,
 )
 maigo_card = Card(
     user_id=328149026266677248,
@@ -206,6 +207,7 @@ ema_card = Card(
     oc_name="Ema Isaru",
     oc_talent="Confectioner",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239711159189534/EmaIsaruCard.png",
+    status=Status.DEAD,
 )
 north_card = Card(
     user_id=303254061644382219,
