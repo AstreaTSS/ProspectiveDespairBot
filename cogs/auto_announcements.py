@@ -32,7 +32,7 @@ class AutoAnnouncements(commands.Cog):
             et_now = datetime.datetime.now(et)
 
             # very hacky way of finding out when to sleep based on the current time
-            if et_now.hour == 22:
+            if et_now.hour >= 22:
                 sleep_till = et_now + relativedelta(
                     days=+1, hour=8, minute=0, second=0, microsecond=0
                 )

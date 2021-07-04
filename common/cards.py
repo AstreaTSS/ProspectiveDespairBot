@@ -5,7 +5,7 @@ import discord
 
 
 class Status(Enum):
-    ALIVE = discord.Color.green()
+    ALIVE = discord.Color.teal()
     DEAD = discord.Color.red()
     ESCAPED = discord.Color.lighter_gray()
     HOST = discord.Color.darker_gray()
