@@ -16,7 +16,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
         self.bot: commands.Bot = bot
 
     @commands.command()
-    @commands.is_owner()
+    @utils.proper_permissions()
     async def update_cast(self, ctx: commands.Context):
 
         async with ctx.typing():
