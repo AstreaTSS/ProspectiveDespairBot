@@ -149,6 +149,7 @@ tokumei_card = Card(
     oc_name="Tokumei Sakkaku",
     oc_talent="War Strategist",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239786925359184/TokumeiSakkakuCard.png",
+    status=Status.DEAD,
 )
 akira_card = Card(
     user_id=397994270226907136,
