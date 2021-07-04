@@ -26,9 +26,9 @@ handler.setFormatter(
 logger.addHandler(handler)
 
 
-async def pd_prefixes(bot: commands.Bot, msg: discord.Message):
+async def dh_prefixes(bot: commands.Bot, msg: discord.Message):
     mention_prefixes = {f"{bot.user.mention} ", f"<@!{bot.user.id}> "}
-    custom_prefixes = {"p!"}
+    custom_prefixes = {"d!"}
     return mention_prefixes.union(custom_prefixes)
 
 
@@ -42,7 +42,7 @@ def global_checks(ctx: commands.Context):
     if not ctx.guild:
         return False
 
-    return ctx.guild.id == 786609181855318047 or ctx.author.id == ctx.bot.owner.id
+    return ctx.guild.id == 673355251583025192 or ctx.author.id == ctx.bot.owner.id
 
 
 async def on_init_load():
@@ -65,7 +65,7 @@ async def on_init_load():
     bot.init_load = False
 
 
-class ProspectiveDespairBot(commands.Bot):
+class DespairsHorizonBot(commands.Bot):
     def __init__(
         self,
         command_prefix,
@@ -97,7 +97,7 @@ class ProspectiveDespairBot(commands.Bot):
         await self.owner.send(connect_msg)
 
         activity = discord.Activity(
-            name="over Prospective Despair", type=discord.ActivityType.watching
+            name="over Despair's Horizon", type=discord.ActivityType.watching
         )
 
         try:
@@ -107,7 +107,7 @@ class ProspectiveDespairBot(commands.Bot):
 
     async def on_resumed(self):
         activity = discord.Activity(
-            name="over Prospective Despair", type=discord.ActivityType.watching
+            name="over Despair's Horizon", type=discord.ActivityType.watching
         )
         await self.change_presence(activity=activity)
 
@@ -134,13 +134,13 @@ class ProspectiveDespairBot(commands.Bot):
 intents = discord.Intents.all()
 mentions = discord.AllowedMentions.all()
 
-bot = ProspectiveDespairBot(
-    command_prefix=pd_prefixes, allowed_mentions=mentions, intents=intents,
+bot = DespairsHorizonBot(
+    command_prefix=dh_prefixes, allowed_mentions=mentions, intents=intents,
 )
 slash = discord_slash.SlashCommand(bot, override_type=True)
 
 bot.init_load = True
-bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
+bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
 
 bot.loop.create_task(on_init_load())
 bot.run(os.environ.get("MAIN_TOKEN"))

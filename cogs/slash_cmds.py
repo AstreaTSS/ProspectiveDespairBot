@@ -19,16 +19,18 @@ import common.models as models
 import common.utils as utils
 
 
-sonic_perms = {
-    786609181855318047: [
-        create_permission(229350299909881876, SlashCommandPermissionType.USER, True)
+admin_perms = {
+    673355251583025192: [
+        create_permission(673635882271637516, SlashCommandPermissionType.ROLE, True),
+        create_permission(673630805343600641, SlashCommandPermissionType.ROLE, True),
     ]
 }
 
 alive_player_perms = {
-    786609181855318047: [
-        create_permission(229350299909881876, SlashCommandPermissionType.USER, True),
-        create_permission(786610731826544670, SlashCommandPermissionType.ROLE, True),
+    673355251583025192: [
+        create_permission(673635882271637516, SlashCommandPermissionType.ROLE, True),
+        create_permission(673630805343600641, SlashCommandPermissionType.ROLE, True),
+        create_permission(673640411494875182, SlashCommandPermissionType.ROLE, True),
     ]
 }
 
@@ -58,9 +60,9 @@ class SlashCMDS(commands.Cog):
     @cog_ext.cog_slash(
         name="add-interaction",
         description="Adds an interaction to the members specified.",
-        guild_ids=[786609181855318047],
+        guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=sonic_perms,
+        permissions=admin_perms,
         options=interactions_plus,
     )
     async def add_interaction(
@@ -134,9 +136,9 @@ class SlashCMDS(commands.Cog):
     @cog_ext.cog_slash(
         name="remove-interaction",
         description="Removes an interaction from the members specified.",
-        guild_ids=[786609181855318047],
+        guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=sonic_perms,
+        permissions=admin_perms,
         options=interactions_plus,
     )
     async def remove_interaction(
@@ -214,9 +216,9 @@ class SlashCMDS(commands.Cog):
     @cog_ext.cog_slash(
         name="add-event",
         description="Gives an event point to the users specified.",
-        guild_ids=[786609181855318047],
+        guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=sonic_perms,
+        permissions=admin_perms,
         options=interaction_options,
     )
     async def add_event(
@@ -273,7 +275,7 @@ class SlashCMDS(commands.Cog):
     @cog_ext.cog_slash(
         name="interactions",
         description="List your interactions for this activity cycle.",
-        guild_ids=[786609181855318047],
+        guild_ids=[673355251583025192],
         default_permission=False,
         permissions=alive_player_perms,
         options=[],

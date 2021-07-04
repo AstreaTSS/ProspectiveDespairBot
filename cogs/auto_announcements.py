@@ -32,41 +32,40 @@ class AutoAnnouncements(commands.Cog):
             et_now = datetime.datetime.now(et)
 
             # very hacky way of finding out when to sleep based on the current time
-            if et_now.hour == 23:
+            if et_now.hour == 22:
                 sleep_till = et_now + relativedelta(
-                    days=+1, hour=9, minute=0, second=0, microsecond=0
+                    days=+1, hour=8, minute=0, second=0, microsecond=0
                 )
-            elif 0 <= et_now.hour < 9:
+            elif 0 <= et_now.hour < 8:
                 sleep_till = et_now + relativedelta(
-                    hour=9, minute=0, second=0, microsecond=0
+                    hour=8, minute=0, second=0, microsecond=0
                 )
             else:
                 sleep_till = et_now + relativedelta(
-                    hour=23, minute=0, second=0, microsecond=0
+                    hour=22, minute=0, second=0, microsecond=0
                 )
 
             await discord.utils.sleep_until(sleep_till)
 
             embed = discord.Embed(
-                title="Announcement from Drake Aelius", color=11779669
+                title="Announcement from Monokuma", color=13632027
             )
+            embed.set_image(url="https://cdn.discordapp.com/attachments/690643602312790118/691828682112630789/image0.jpg")
             et_now = datetime.datetime.now(et)
 
-            if et_now.hour == 23:
+            if et_now.hour == 22:
                 str_builder = [
-                    "It's 11 PM. Go to sleep.\n",
-                    "The mess hall will close in a few minutes. Move out of it ",
-                    "quickly: it would be rather pathetic if you died just by being in it.",
-                    "\n\nRemember: all you have to do to escape is kill... ",
-                    "and I heard night time's the *perfect* time to kill.",
+                    "Ahem. This is an important announcement. It is now 10 PM. ",
+                    "As such, it is officially nighttime. Soon the doors to the ",
+                    "buffet will be locked, and entry at that point is strictly ",
+                    "prohibited. Okay then... sweet dreams, everyone! Good night, ",
+                    "sleep tight, *don’t let the bedbugs bite...*",
+
                 ]
             else:
                 str_builder = [
-                    "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
-                    "you should probably get ready for the day.\n",
-                    "And yeah, the mess hall has been unlocked too.",
-                    "\n\nRemember: if you want to escape, all you have to do is ",
-                    "kill. If you can't convince yourself to do that... how weak.",
+                    "Yodelay he puhuhuhu! It is now 8 AM and night time is officially ",
+                    "over! Time to rise and freeze and get ready for a yodelay great day!",
                 ]
 
             embed.description = "".join(str_builder)

@@ -20,20 +20,21 @@ class CardHandling(commands.Cog, name="Card Handling"):
     async def update_cast(self, ctx: commands.Context):
 
         async with ctx.typing():
-            profile_chan = self.bot.get_channel(786638377801744394)
+            profile_chan = self.bot.get_channel(675066875180351494)
 
             def is_valid(m: discord.Message):
                 return m.author.id == self.bot.user.id
 
-            reference_date = datetime(2021, 5, 29)
+            reference_date = datetime(2021, 6, 17)
             await profile_chan.purge(limit=100, check=is_valid, after=reference_date)
 
-            await profile_chan.send("```\nKG Hosts\n```")
+            if cards.hosts:
+                await profile_chan.send("```\nKG Hosts\n```")
 
-            for host_card in cards.hosts:
-                embed = await host_card.as_embed(ctx.bot)
-                await profile_chan.send(embed=embed)
-                await asyncio.sleep(1)  # ratelimits
+                for host_card in cards.hosts:
+                    embed = await host_card.as_embed(ctx.bot)
+                    await profile_chan.send(embed=embed)
+                    await asyncio.sleep(1)  # ratelimits
 
             await profile_chan.send("```\nParticipants\n```")
 
@@ -47,7 +48,6 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
             await profile_chan.send(
                 "All participant cards should be in alphabetical order and easily searchable.\n"
-                + "All host cards should be displayed in the order in which they were revealed.\n"
                 + "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.\n"
                 "If you want to get the individual, transparent image, you can also ping or DM Sonic for that too.",
                 embed=embed,
