@@ -50,7 +50,7 @@ class AutoAnnouncements(commands.Cog):
             embed = discord.Embed(
                 title="Announcement from Monokuma", color=13632027
             )
-            embed.set_image(url="https://cdn.discordapp.com/attachments/690643602312790118/691828682112630789/image0.jpg")
+            embed.set_image(url="https://cdn.discordapp.com/attachments/457939628209602560/861282169276072006/vlcsnap-2021-07-04-12h26m28s639.png")
             et_now = datetime.datetime.now(et)
 
             if et_now.hour == 22:
