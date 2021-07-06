@@ -177,6 +177,7 @@ veyel_card = Card(
     oc_name="Veyel Thoumeaux",
     oc_talent="Cleaner",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074791347388436/VeyelThoumeauxCard.png",
+    status=Status.DEAD,
 )
 yuko_card = Card(
     user_id=486181655837671425,
