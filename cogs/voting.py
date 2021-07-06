@@ -56,7 +56,8 @@ class Voting(commands.Cog, name="Voting"):
             "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
         ]
 
-        alive_people_role = ctx.guild.get_role(673640411494875182)  # alive player role
+        alive_people_role = ctx.guild.get_role(786610731826544670)  # alive player role
+        self.logging_channel = ctx.bot.get_channel(675339100806447125)  # #logs
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
 
@@ -65,13 +66,14 @@ class Voting(commands.Cog, name="Voting"):
         )
         self.is_voting = True
 
-        try:
-            # we abuse timeouts in order to stop this function
-            # process_votes runs forever, but wait_for will stop it
-            # for running too long
-            await asyncio.wait_for(self.process_votes(), 300)
-        except asyncio.TimeoutError:
-            self.is_voting = False
+        async with ctx.typing():
+            try:
+                # we abuse timeouts in order to stop this function
+                # process_votes runs forever, but wait_for will stop it
+                # for running too long
+                await asyncio.wait_for(self.process_votes(), 300)
+            except asyncio.TimeoutError:
+                self.is_voting = False
 
         # transfer the format of [discord_user_id] = 'oc name'
         # to ['oc name'] = number_of_votes
@@ -109,6 +111,13 @@ class Voting(commands.Cog, name="Voting"):
             await ctx.send(
                 f"Voted for **{card_needed.oc_name}**!", hidden=True
             )  # confirmation message
+
+            # logging message
+            embed = utils.error_embed_generate(
+                f"<@{ctx.author_id}> voted for **{card_needed.oc_name}**."
+            )
+            embed.color = ctx.bot.color
+            await self.logging_channel.send(embed=embed)
 
 
 def setup(bot):
