@@ -264,11 +264,9 @@ class SlashCMDS(commands.Cog):
     async def list_interactions(self, ctx: SlashContext):
         await ctx.defer()
 
-        inters = await models.UserInteraction.objects.all()
-        inters.sort(key=lambda i: Decimal(i.interactions), reverse=True)
-        list_inters = tuple(
-            f"<@{i.user_id}>: {Decimal(i.interactions)}" for i in inters
-        )
+        inters = await models.UserInteraction.all()
+        inters.sort(key=lambda i: i.interactions, reverse=True)
+        list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
 
         embed = discord.Embed(
             color=self.bot.color,
