@@ -1,5 +1,5 @@
 aiosqlite==0.16.1
-tortoise-orm==0.17.4
+tortoise-orm==0.17.5
 discord.py==1.7.3
 pytz==2021.1
 jishaku==2.0.0
