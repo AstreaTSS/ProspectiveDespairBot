@@ -188,13 +188,6 @@ def error_embed_generate(error_msg):
     return discord.Embed(colour=discord.Colour.red(), description=error_msg)
 
 
-def add_decimal_value(ori_value, add):
-    if not isinstance(add, Decimal):
-        return str(Decimal(ori_value) + Decimal(add))
-    else:
-        return str(Decimal(ori_value) + add)
-
-
 def proper_permissions():
     async def predicate(ctx: commands.Context):
         # checks if author has admin or manage guild perms or is the owner

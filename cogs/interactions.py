@@ -23,16 +23,11 @@ class Interactions(commands.Cog, name="Interaction"):
         count: utils.DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
-            inters = await models.UserInteraction.objects.all(
-                user_id__in=[m.id for m in members]
-            )
-
-            def edit_interaction(inter: models.UserInteraction):
-                inter.interactions = utils.add_decimal_value(inter.interactions, count)
-                return inter
-
-            new_inters = [edit_interaction(inter) for inter in inters]
-            await models.UserInteraction.objects.bulk_update(new_inters)
+            async for inter in models.UserInteraction.filter(
+                user_id__in=frozenset(m.id for m in members)
+            ).select_for_update():
+                inter.interactions += count
+                await inter.save()
 
             if count == 1:
                 embed = discord.Embed(
@@ -58,22 +53,15 @@ class Interactions(commands.Cog, name="Interaction"):
         count: utils.DecimalConverter = Decimal(1),
     ):
         async with ctx.typing():
-            inters = await models.UserInteraction.objects.all(
-                user_id__in=[m.id for m in members]
-            )
+            async for inter in models.UserInteraction.filter(
+                user_id__in=frozenset(m.id for m in members)
+            ).select_for_update():
+                inter.interactions -= count
+                if inter.interactions < Decimal(0):
+                    inter.interactions == Decimal(0)
+                await inter.save()
 
-            def edit_interaction(inter: models.UserInteraction):
-                inter.interactions = utils.add_decimal_value(
-                    inter.interactions, Decimal(count) * -1
-                )
-                if Decimal(inter.interactions) < 0:
-                    inter.interactions == "0"
-                return inter
-
-            new_inters = [edit_interaction(inter) for inter in inters]
-            await models.UserInteraction.objects.bulk_update(new_inters)
-
-            if count == 1:
+            if count == Decimal(1):
                 embed = discord.Embed(
                     color=self.bot.color,
                     description=f"Removed an interaction from: {', '.join(tuple(m.mention for m in members))}.",
@@ -92,16 +80,11 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, members: commands.Greedy[discord.Member]
     ):
         async with ctx.typing():
-            inters = await models.UserInteraction.objects.all(
-                user_id__in=[m.id for m in members]
-            )
-
-            def edit_interaction(inter: models.UserInteraction):
-                inter.interactions = utils.add_decimal_value(inter.interactions, "0.5")
-                return inter
-
-            new_inters = [edit_interaction(inter) for inter in inters]
-            await models.UserInteraction.objects.bulk_update(new_inters)
+            async for inter in models.UserInteraction.filter(
+                user_id__in=frozenset(m.id for m in members)
+            ).select_for_update():
+                inter.interactions += Decimal("0.5")
+                await inter.save()
 
             embed = discord.Embed(
                 color=self.bot.color,
@@ -117,17 +100,14 @@ class Interactions(commands.Cog, name="Interaction"):
     @commands.is_owner()
     async def reset_interactions(self, ctx: commands.Context):
         async with ctx.typing():
-            await models.UserInteraction.objects.delete(each=True)
+            await models.UserInteraction.all().delete()
 
             user_ids = tuple(
                 c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
             )
 
-            new_inters = [
-                models.UserInteraction(user_id=user_id, interactions="0")
-                for user_id in user_ids
-            ]
-            await models.UserInteraction.objects.bulk_create(new_inters)
+            for user_id in user_ids:
+                await models.UserInteraction.create(user_id=user_id, interactions=0)
 
         await ctx.reply("Done!")
 
@@ -135,11 +115,9 @@ class Interactions(commands.Cog, name="Interaction"):
     @commands.is_owner()
     async def list_interactions(self, ctx: commands.Context):
         async with ctx.typing():
-            inters = await models.UserInteraction.objects.all()
-            inters.sort(key=lambda i: Decimal(i.interactions), reverse=True)
-            list_inters = tuple(
-                f"<@{i.user_id}>: {Decimal(i.interactions)}" for i in inters
-            )
+            inters = await models.UserInteraction.all()
+            inters.sort(key=lambda i: i.interactions, reverse=True)
+            list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -161,7 +139,7 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, user: discord.User
     ):
         async with ctx.typing():
-            num_deleted = await models.UserInteraction.objects.delete(user_id=user.id)
+            num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
 
         if num_deleted > 0:
             await ctx.reply(
@@ -181,17 +159,13 @@ class Interactions(commands.Cog, name="Interaction"):
         self, ctx: commands.Context, user: discord.User
     ):
         async with ctx.typing():
-            exists = await models.UserInteraction.objects.filter(
-                user_id=user.id
-            ).exists()
+            exists = await models.UserInteraction.exists(user_id=user.id)
             if exists:
                 raise commands.BadArgument(
                     f"Member {user.mention} already in interactions!"
                 )
 
-            await models.UserInteraction.objects.create(
-                user_id=user.id, interactions="0"
-            )
+            await models.UserInteraction.create(user_id=user.id, interactions=0)
 
         await ctx.reply(
             f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
