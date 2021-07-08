@@ -256,6 +256,31 @@ class SlashCMDS(commands.Cog):
         await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
+        name="list-interactions",
+        description="Lists out interactions for everyone still alive.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+        permissions=sonic_perms,
+        options=[],
+    )
+    async def list_interactions(self, ctx: SlashContext):
+        await ctx.defer()
+
+        inters = await models.UserInteraction.objects.all()
+        inters.sort(key=lambda i: Decimal(i.interactions), reverse=True)
+        list_inters = tuple(
+            f"<@{i.user_id}>: {Decimal(i.interactions)}" for i in inters
+        )
+
+        embed = discord.Embed(
+            color=self.bot.color,
+            description="\n".join(list_inters),
+            timestamp=datetime.datetime.utcnow(),
+        )
+        embed.set_footer(text="As of")
+        await ctx.send(embed=embed)
+
+    @cog_ext.cog_slash(
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[673355251583025192],
