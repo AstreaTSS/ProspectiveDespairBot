@@ -276,7 +276,7 @@ class SlashCMDS(commands.Cog):
             timestamp=datetime.datetime.utcnow(),
         )
         embed.set_footer(text="As of")
-        await ctx.reply(embed=embed)
+        await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
         name="interactions",
