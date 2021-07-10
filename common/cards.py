@@ -215,6 +215,7 @@ north_card = Card(
     oc_name="North Olsen",
     oc_talent="Lumberjack",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/856576781708034068/NorthOlsenCard.png",
+    status=Status.DEAD,
 )
 hunter_card = Card(
     user_id=588749122643951616,
