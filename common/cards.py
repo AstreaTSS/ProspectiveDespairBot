@@ -156,6 +156,7 @@ akira_card = Card(
     oc_name="Akira Yakou",
     oc_talent="Yarn Bomber",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963484569960508/AkiraYakouCard.png",
+    status=Status.DEAD,
 )
 aradia_card = Card(
     user_id=447899165373235200,
