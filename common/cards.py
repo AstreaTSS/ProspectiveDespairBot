@@ -186,11 +186,11 @@ luna_card = Card(
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/858207646121066516/LunaCard.png",
     status=Status.DEAD,
 )
-maigo_card = Card(
+asahi_card = Card(
     user_id=328149026266677248,
-    oc_name="Maigo",
+    oc_name="Asahi Hasegawa",
     oc_talent="Hunter",
-    card_url="https://cdn.discordapp.com/attachments/465547475839746058/848963587929145344/MaigoCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/863898188426772520/AsahiHasegawaCard.png",
 )
 otto_card = Card(
     user_id=486181655837671425,
@@ -244,7 +244,7 @@ participants = [
     benjamin_card,
     dvorah_card,
     luna_card,
-    maigo_card,
+    asahi_card,
     otto_card,
     kai_card,
     ema_card,
