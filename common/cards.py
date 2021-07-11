@@ -122,7 +122,7 @@ mikhail_card = Card(
     user_id=314934503913160704,
     oc_name="Mikhail Dmitrievich Kirillov",
     oc_talent="Violist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074710481862687/MikhailDmitrievichKirillovCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/863866034000101386/MikhailDmitrievichKirillovCard.png",
 )
 nine_card = Card(
     user_id=448815258060980226,
