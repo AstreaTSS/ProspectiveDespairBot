@@ -223,6 +223,7 @@ hunter_card = Card(
     oc_name="Hunter Ryuu",
     oc_talent="Tutor",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/856660449356546098/HunterRyuuCard.png",
+    status=Status.DEAD,
 )
 
 
