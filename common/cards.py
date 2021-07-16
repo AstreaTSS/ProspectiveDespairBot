@@ -123,6 +123,7 @@ mikhail_card = Card(
     oc_name="Mikhail Dmitrievich Kirillov",
     oc_talent="Violist",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/863866034000101386/MikhailDmitrievichKirillovCard.png",
+    status=Status.DEAD,
 )
 nine_card = Card(
     user_id=448815258060980226,
@@ -135,6 +136,7 @@ paolo_card = Card(
     oc_name="Paolo Donini",
     oc_talent="Racer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074740923203594/PaoloDoniniCard.png",
+    status=Status.DEAD,
 )
 pluviam_card = Card(
     user_id=475792369023713291,
