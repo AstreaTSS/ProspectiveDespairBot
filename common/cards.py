@@ -50,21 +50,21 @@ drake_card = Card(
     oc_name="Drake Aelius",
     oc_talent="Youtuber",
     card_url="https://cdn.discordapp.com/attachments/786719895051304980/818595354416775249/DrakeAeliusCard.png",
-    status=Status.HOST,
+    status=Status.ESCAPED,
 )
 talia_card = Card(
     user_id=229350299909881876,
     oc_name="Talia Aelius",
     oc_talent="Online Advertiser",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/849342731213471764/TaliaAeliusCard.png",
-    status=Status.HOST,
+    status=Status.ESCAPED,
 )
 goro_card = Card(
     user_id=588749122643951616,
     oc_name="Goro Ryuu",
     oc_talent="Cult Leader",
     card_url="https://cdn.discordapp.com/attachments/465547475839746058/851225940771471390/GoroRyuuCard.png",
-    status=Status.HOST,
+    status=Status.DEAD,
 )
 hosts = [drake_card, talia_card, goro_card]
 
@@ -110,6 +110,7 @@ jacob_card = Card(
     oc_name="Jacob Canon",
     oc_talent="Nightcrawler",
     card_url="https://cdn.discordapp.com/attachments/429720487678050308/848239718415728682/JacobCanonCard.png",
+    status=Status.ESCAPED,
 )
 kento_card = Card(
     user_id=333292261024595969,
