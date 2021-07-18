@@ -65,7 +65,7 @@ class AutoAnnouncements(commands.Cog):
             else:
                 str_builder = [
                     "Yodelay he puhuhuhu! It is now 8 AM and night time is officially ",
-                    "over! Time to rise and freeze and get ready for another PogChamp day!",
+                    "over! Time to rise and freeze and get ready for a yodelay great day!",
                 ]
 
             embed.description = "".join(str_builder)
