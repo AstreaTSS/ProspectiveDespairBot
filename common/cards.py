@@ -62,6 +62,7 @@ adrian_card = Card(
     oc_name="Adrian Shpion",
     oc_talent="???",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074580843135006/AdrianShpionCard.png",
+    status=Status.DEAD,
 )
 auko_card = Card(
     user_id=447899165373235200,
@@ -149,6 +150,7 @@ ryuunosuke_card = Card(
     oc_name="Ryuunosuke Edahiko",
     oc_talent="Actor",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074748602581033/RyuunosukeEdahikoCard.png",
+    status=Status.DEAD,
 )
 sayaka_card = Card(
     user_id=328149026266677248,
