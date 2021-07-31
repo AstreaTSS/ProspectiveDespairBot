@@ -1,6 +1,6 @@
 # Prospective Despair Bot
 
-## NOTE: this bot will get merged with [Ultimate Investigator](https://github.com/Sonic4999/UltimateInvestigator) in the future.
+## NOTE: this bot will get merged with [Ultimate Investigator](https://github.com/Astrea48/UltimateInvestigator) in the future.
 
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/465547475839746058/849170688093847572/PDLogo.png" alt="Prospective Despair's Logo" width="700"/>
