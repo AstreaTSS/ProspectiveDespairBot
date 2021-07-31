@@ -1,6 +1,6 @@
 # Despair's Horizon Bot
 
-## NOTE: this bot will get merged with [Ultimate Investigator](https://github.com/Sonic4999/UltimateInvestigator) in the future.
+## NOTE: this bot will get merged with [Ultimate Investigator](https://github.com/Astrea49/UltimateInvestigator) in the future.
 
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/841732429735788574/842513201761746974/banner.png" alt="Despair's Horizon's Banner" width="600"/>
