@@ -81,6 +81,7 @@ hoshi_card = Card(
     oc_name="Hoshi Corbyn",
     oc_talent="Ufologist",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074582227910696/HoshiCorbynCard.png",
+    status=Status.DEAD,
 )
 inultes_card = Card(
     user_id=339972906693951489,
@@ -163,6 +164,7 @@ sierra_card = Card(
     oc_name="Sierra Mistaria",
     oc_talent="Fashion Designer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074756160454656/SierraMistariaCard.png",
+    status=Status.DEAD,
 )
 spike_card = Card(
     user_id=303254061644382219,
