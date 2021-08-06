@@ -48,8 +48,8 @@ class CardHandling(commands.Cog, name="Card Handling"):
             await profile_chan.send(
                 "All participant cards should be in alphabetical order and easily searchable.\n"
                 + "All host cards should be displayed in the order in which they were revealed.\n"
-                + "If any information is wrong, ping or DM Sonic about it and he'll change it ASAP.\n"
-                "If you want to get the individual, transparent image, you can also ping or DM Sonic for that too.",
+                + "If any information is wrong, ping or DM Astrea about it and he'll change it ASAP.\n"
+                "If you want to get the individual, transparent image, you can also ping or DM Astrea for that too.",
                 embed=embed,
             )
 
@@ -82,7 +82,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
                     # only would happen with oc name converter, which shouldnt be possible
                     # as there can be only one oc named something
                     raise utils.CustomCheckFailure(
-                        "This shouldn't happen. Contact Sonic immediately - he has some debugging to do."
+                        "This shouldn't happen. Contact Astrea immediately - he has some debugging to do."
                     )
 
                 # time to abuse the converter to do things
