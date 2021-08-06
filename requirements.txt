@@ -1,4 +1,4 @@
-aiosqlite==0.16.1
+aiosqlite==0.17.0
 tortoise-orm==0.17.6
 discord.py==1.7.3
 pytz==2021.1
