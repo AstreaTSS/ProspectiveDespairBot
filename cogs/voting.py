@@ -79,7 +79,7 @@ class Voting(commands.Cog, name="Voting"):
             "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
         ]
 
-        alive_people_role = ctx.guild.get_role(786610731826544670)  # alive player role
+        alive_people_role = ctx.guild.get_role(673640411494875182)  # alive player role
         self.logging_channel = ctx.bot.get_channel(675339100806447125)  # #logs
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
