@@ -58,7 +58,12 @@ interaction_options = [
 
 interactions_plus = interaction_options.copy()
 interactions_plus.append(
-    create_option("count", "How many interactions should be added.", 3, False,)
+    create_option(
+        "count",
+        "How many interactions should be added.",
+        SlashCommandOptionType.FLOAT,
+        False,
+    )
 )
 
 
@@ -87,12 +92,12 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
-        count: Optional[str] = None,
+        count: Optional[float] = None,
     ):
         await ctx.defer()
 
         if count is None:
-            count = "1"
+            count = 1
 
         try:
             actual_count = Decimal(count)
@@ -158,12 +163,12 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
-        count: Optional[str] = None,
+        count: Optional[float] = None,
     ):
         await ctx.defer()
 
         if count is None:
-            count = "1"
+            count = 1
 
         try:
             actual_count = Decimal(count)
