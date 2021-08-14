@@ -195,3 +195,17 @@ def proper_permissions():
         return permissions.administrator or permissions.manage_guild
 
     return commands.check(predicate)
+
+
+def deprecated_cmd():
+    async def predicate(ctx: commands.Context):
+        await ctx.send(
+            embed=error_embed_generate(
+                "This command is deprecated, "
+                + "and will be removed in a later release. Please use "
+                + f"/{ctx.command.qualified_name.replace('_', '-')} instead."
+            )
+        )
+        return True
+
+    return commands.check(predicate)

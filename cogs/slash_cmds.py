@@ -292,6 +292,85 @@ class SlashCMDS(commands.Cog):
         await ctx.send(embed=embed)
 
     @cog_ext.cog_slash(
+        name="reset-interactions",
+        description="Resets everyone's interaction counts.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+        permissions=admin_perms,
+        options=[],
+    )
+    async def reset_interactions(self, ctx: SlashContext):
+        await ctx.defer()
+
+        await models.UserInteraction.all().delete()
+        user_ids = tuple(
+            c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
+        )
+        for user_id in user_ids:
+            await models.UserInteraction.create(user_id=user_id, interactions=0)
+
+        await ctx.send("Done!")
+
+    @cog_ext.cog_slash(
+        name="remove-player-from-interaction",
+        description="Removes a player from the interaction tracker.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+        permissions=admin_perms,
+        options=[
+            create_option(
+                "user", "The user to remove.", SlashCommandOptionType.USER, True
+            ),
+        ],
+    )
+    async def remove_player_from_interaction(
+        self, ctx: SlashContext, user: discord.User
+    ):
+        await ctx.defer()
+
+        num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
+        if num_deleted > 0:
+            await ctx.send(
+                f"{user.mention} deleted!",
+                allowed_mentions=utils.deny_mentions(ctx.author),
+            )
+        else:
+            await ctx.send(
+                embed=utils.error_embed_generate(
+                    f"Member {user.mention} does not exist in interactions!"
+                )
+            )
+
+    @cog_ext.cog_slash(
+        name="add-player-to-interaction",
+        description="Adds a player to the interaction tracker.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+        permissions=admin_perms,
+        options=[
+            create_option(
+                "user", "The user to add.", SlashCommandOptionType.USER, True
+            ),
+        ],
+    )
+    async def add_player_to_interaction(self, ctx: SlashContext, user: discord.User):
+        await ctx.defer()
+
+        exists = await models.UserInteraction.exists(user_id=user.id)
+        if exists:
+            await ctx.send(
+                embed=utils.error_embed_generate(
+                    f"Member {user.mention} already in interactions!"
+                )
+            )
+            return
+
+        await models.UserInteraction.create(user_id=user.id, interactions=0)
+        await ctx.send(
+            f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
+        )
+
+    @cog_ext.cog_slash(
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[786609181855318047],

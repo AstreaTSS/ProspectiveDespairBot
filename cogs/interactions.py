@@ -16,6 +16,7 @@ class Interactions(commands.Cog, name="Interaction"):
 
     @commands.command(aliases=["add_inter"])
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def add_interaction(
         self,
         ctx: commands.Context,
@@ -46,6 +47,7 @@ class Interactions(commands.Cog, name="Interaction"):
 
     @commands.command(aliases=["remove_inter", "del_inter"])
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def remove_interaction(
         self,
         ctx: commands.Context,
@@ -76,6 +78,7 @@ class Interactions(commands.Cog, name="Interaction"):
 
     @commands.command()
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def add_event(
         self, ctx: commands.Context, members: commands.Greedy[discord.Member]
     ):
@@ -98,6 +101,7 @@ class Interactions(commands.Cog, name="Interaction"):
 
     @commands.command(aliases=["reset_inters", "reset-inter"])
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def reset_interactions(self, ctx: commands.Context):
         async with ctx.typing():
             await models.UserInteraction.all().delete()
@@ -113,6 +117,7 @@ class Interactions(commands.Cog, name="Interaction"):
 
     @commands.command(aliases=["list_inters", "list-inter"])
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def list_interactions(self, ctx: commands.Context):
         async with ctx.typing():
             inters = await models.UserInteraction.all()
@@ -135,6 +140,7 @@ class Interactions(commands.Cog, name="Interaction"):
         ]
     )
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def remove_player_from_interaction(
         self, ctx: commands.Context, user: discord.User
     ):
@@ -155,6 +161,7 @@ class Interactions(commands.Cog, name="Interaction"):
         aliases=["add_player_to_inter", "add_play_to_inter",]
     )
     @commands.is_owner()
+    @utils.deprecated_cmd()
     async def add_player_to_interaction(
         self, ctx: commands.Context, user: discord.User
     ):
