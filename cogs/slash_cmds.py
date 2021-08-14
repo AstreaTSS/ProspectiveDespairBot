@@ -91,6 +91,11 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
+        user_11: Optional[discord.User] = None,
+        user_12: Optional[discord.User] = None,
+        user_13: Optional[discord.User] = None,
+        user_14: Optional[discord.User] = None,
+        user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
         await ctx.defer()
@@ -117,6 +122,11 @@ class SlashCMDS(commands.Cog):
             user_8,
             user_9,
             user_10,
+            user_11,
+            user_12,
+            user_13,
+            user_14,
+            user_15,
         )
         members: Tuple[discord.User] = tuple(
             user for user in all_users if user is not None
@@ -162,6 +172,11 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
+        user_11: Optional[discord.User] = None,
+        user_12: Optional[discord.User] = None,
+        user_13: Optional[discord.User] = None,
+        user_14: Optional[discord.User] = None,
+        user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
         await ctx.defer()
@@ -188,6 +203,11 @@ class SlashCMDS(commands.Cog):
             user_8,
             user_9,
             user_10,
+            user_11,
+            user_12,
+            user_13,
+            user_14,
+            user_15,
         )
         members: Tuple[discord.User] = tuple(
             user for user in all_users if user is not None
@@ -235,6 +255,11 @@ class SlashCMDS(commands.Cog):
         user_8: Optional[discord.User] = None,
         user_9: Optional[discord.User] = None,
         user_10: Optional[discord.User] = None,
+        user_11: Optional[discord.User] = None,
+        user_12: Optional[discord.User] = None,
+        user_13: Optional[discord.User] = None,
+        user_14: Optional[discord.User] = None,
+        user_15: Optional[discord.User] = None,
     ):
         await ctx.defer()
 
@@ -249,6 +274,11 @@ class SlashCMDS(commands.Cog):
             user_8,
             user_9,
             user_10,
+            user_11,
+            user_12,
+            user_13,
+            user_14,
+            user_15,
         )
         members: Tuple[discord.User] = tuple(
             user for user in all_users if user is not None
