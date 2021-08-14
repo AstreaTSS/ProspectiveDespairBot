@@ -199,11 +199,11 @@ def proper_permissions():
 
 def deprecated_cmd():
     async def predicate(ctx: commands.Context):
-        await ctx.send(
+        await ctx.reply(
             embed=error_embed_generate(
                 "This command is deprecated, "
                 + "and will be removed in a later release. Please use "
-                + f"/{ctx.command.qualified_name.replace('_', '-')} instead."
+                + f"`/{ctx.command.qualified_name.replace('_', '-')}`` instead."
             )
         )
         return True
