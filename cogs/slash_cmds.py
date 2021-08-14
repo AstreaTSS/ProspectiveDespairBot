@@ -19,9 +19,10 @@ import common.models as models
 import common.utils as utils
 
 
-astrea_perms = {
+admin_perms = {
     786609181855318047: [
-        create_permission(229350299909881876, SlashCommandPermissionType.USER, True)
+        create_permission(229350299909881876, SlashCommandPermissionType.USER, True),
+        create_permission(786610218133094420, SlashCommandPermissionType.ROLE, True),
     ]
 }
 
@@ -60,7 +61,7 @@ class SlashCMDS(commands.Cog):
         description="Adds an interaction to the members specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
-        permissions=astrea_perms,
+        permissions=admin_perms,
         options=interactions_plus,
     )
     async def add_interaction(
@@ -131,7 +132,7 @@ class SlashCMDS(commands.Cog):
         description="Removes an interaction from the members specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
-        permissions=astrea_perms,
+        permissions=admin_perms,
         options=interactions_plus,
     )
     async def remove_interaction(
@@ -204,7 +205,7 @@ class SlashCMDS(commands.Cog):
         description="Gives an event point to the users specified.",
         guild_ids=[786609181855318047],
         default_permission=False,
-        permissions=astrea_perms,
+        permissions=admin_perms,
         options=interaction_options,
     )
     async def add_event(
@@ -258,7 +259,7 @@ class SlashCMDS(commands.Cog):
         description="Lists out interactions for everyone still alive.",
         guild_ids=[786609181855318047],
         default_permission=False,
-        permissions=astrea_perms,
+        permissions=admin_perms,
         options=[],
     )
     async def list_interactions(self, ctx: SlashContext):
