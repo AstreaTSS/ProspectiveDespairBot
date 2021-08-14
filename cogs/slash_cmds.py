@@ -45,6 +45,15 @@ interaction_options = [
     create_option("user_8", "The eight user.", SlashCommandOptionType.USER, False),
     create_option("user_9", "The ninth user.", SlashCommandOptionType.USER, False),
     create_option("user_10", "The tenth user.", SlashCommandOptionType.USER, False),
+    create_option("user_11", "The eleventh user.", SlashCommandOptionType.USER, False),
+    create_option("user_12", "The twelfth user.", SlashCommandOptionType.USER, False),
+    create_option(
+        "user_13", "The thirteenth user.", SlashCommandOptionType.USER, False
+    ),
+    create_option(
+        "user_14", "The fourteenth user.", SlashCommandOptionType.USER, False
+    ),
+    create_option("user_15", "The fifteenth user.", SlashCommandOptionType.USER, False),
 ]
 
 interactions_plus = interaction_options.copy()
