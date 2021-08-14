@@ -61,7 +61,7 @@ interactions_plus.append(
     create_option(
         "count",
         "How many interactions should be added.",
-        SlashCommandOptionType.FLOAT,
+        10,
         False,
     )
 )
