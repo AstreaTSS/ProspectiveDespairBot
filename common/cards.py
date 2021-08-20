@@ -56,6 +56,7 @@ aaron_card = Card(
     oc_name="Aaron Ovengue",
     oc_talent="Gang Leader",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074575131672616/AaronOvengueCard.png",
+    status=Status.DEAD,
 )
 adrian_card = Card(
     user_id=496893333277376514,
@@ -119,6 +120,7 @@ midas_card = Card(
     oc_name="Midas Edric",
     oc_talent="Prankster",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074692370202635/MidasEdricCard.png",
+    status=Status.DEAD,
 )
 mikhail_card = Card(
     user_id=314934503913160704,
@@ -145,6 +147,7 @@ pluviam_card = Card(
     oc_name="Pluviam Lone",
     oc_talent="Mortician",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074744757190667/PluviamLoneCard.png",
+    status=Status.DEAD,
 )
 ryuunosuke_card = Card(
     user_id=226178585227034624,
