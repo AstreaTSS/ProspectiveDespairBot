@@ -70,6 +70,7 @@ auko_card = Card(
     oc_name="Auko Corbyn",
     oc_talent="Astronomer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074581624324096/AukoCorbynCard.png",
+    status=Status.DEAD,
 )
 ayaka_card = Card(
     user_id=284589540553916416,
@@ -180,6 +181,7 @@ toru_card = Card(
     oc_name="Toru Kurou",
     oc_talent="Internet Troll",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/861074786607431680/ToruKurouCard.png",
+    status=Status.DEAD,
 )
 veyel_card = Card(
     user_id=387610935122067456,
