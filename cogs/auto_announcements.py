@@ -22,10 +22,11 @@ class AutoAnnouncements(commands.Cog):
             adapter=discord.AsyncWebhookAdapter(aiohttp.ClientSession()),
         )
 
-        self.task = self.bot.loop.create_task(self.auto_run())
+        #self.task = self.bot.loop.create_task(self.auto_run())
 
     def cog_unload(self):
-        self.task.cancel()
+        pass
+        # self.task.cancel()
 
     async def auto_run(self):
         while True:
