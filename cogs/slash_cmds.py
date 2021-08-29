@@ -403,7 +403,7 @@ class SlashCMDS(commands.Cog):
         options=[],
     )
     async def interactions(self, inter: dislash.Interaction):
-        await inter.reply(type=5)
+        await inter.reply(type=5, ephemeral=True)
 
         interact = await models.UserInteraction.get_or_none(user_id=inter.author.id)
         if interact:
