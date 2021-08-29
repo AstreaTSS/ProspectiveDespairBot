@@ -33,8 +33,8 @@ class HelpPaginator(paginator.Pages):
         self.embed.title = self.title
 
         if self.is_bot:
-            value = "Check out the wiki for Seraphim here: https://astrea.gitbook.io/seraphim/"
-            self.embed.add_field(name="Wiki", value=value, inline=False)
+            value = "For more help, join the official support server: https://discord.gg/NSdetwGjpK"
+            self.embed.add_field(name="Support", value=value, inline=False)
 
         self.embed.set_footer(
             text=f'Use "{self.prefix}help command" for more info on a command.'
@@ -207,7 +207,7 @@ class PaginatedHelpCommand(commands.HelpCommand):
 
     async def send_command_help(self, command):
         # No pagination necessary for a single command.
-        embed = discord.Embed(colour=discord.Colour(0x4378FC))
+        embed = discord.Embed(colour=self.context.color)
         self.common_command_formatting(embed, command)
         await self.context.reply(embed=embed)
 
