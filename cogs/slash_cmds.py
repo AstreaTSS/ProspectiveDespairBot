@@ -414,11 +414,9 @@ class SlashCMDS(commands.Cog):
                 timestamp=discord.utils.utcnow(),
             )
             embed.set_footer(text="As of")
-            await inter.edit(embed=embed, hidden=True)
+            await inter.edit(embed=embed)
         else:
-            await inter.edit(
-                embed=utils.error_embed_generate("You aren't in the KG!"), hidden=True
-            )
+            await inter.edit(embed=utils.error_embed_generate("You aren't in the KG!"))
 
     @commands.Cog.listener()
     async def on_slash_command_error(
