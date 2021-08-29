@@ -11,10 +11,6 @@ from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
-<<<<<<< HEAD
-=======
-import keep_alive
->>>>>>> 5db511e (Upgrade to d.py 2.0)
 from common.help_cmd import PaginatedHelpCommand
 
 
