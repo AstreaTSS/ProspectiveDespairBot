@@ -36,7 +36,7 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
             await asyncio.sleep(10)  # because otherwise it would be done a bit too fast
 
             for card in shuffled_participants:
-                after_cooldown = datetime.utcnow() + timedelta(seconds=60)
+                after_cooldown = discord.utils.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(ctx.bot)
                 await ctx.send(

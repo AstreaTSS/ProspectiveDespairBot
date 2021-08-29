@@ -3,7 +3,6 @@ import datetime
 import importlib
 
 import discord
-import humanize
 from discord.ext import commands
 
 import common.utils as utils
@@ -31,11 +30,13 @@ class OnCMDError(commands.Cog):
                 )
             )
         elif isinstance(error, commands.CommandOnCooldown):
-            delta_wait = datetime.timedelta(seconds=error.retry_after)
+            till = discord.utils.utcnow() + datetime.timedelta(
+                seconds=error.retry_after
+            )
             await ctx.reply(
                 embed=utils.error_embed_generate(
                     "You're doing that command too fast! "
-                    + f"Try again in `{humanize.precisedelta(delta_wait, format='%0.0f')}`."
+                    + f"Try again {discord.utils.format_dt(till, style='R')}."
                 )
             )
         elif isinstance(

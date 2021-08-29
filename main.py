@@ -11,8 +11,8 @@ from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
-from common.help_cmd import PaginatedHelpCommand
 import keep_alive
+from common.help_cmd import PaginatedHelpCommand
 
 
 # load_dotenv()
@@ -88,7 +88,7 @@ class ProspectiveDespairBot(commands.Bot):
         self._checks.append(global_checks)
 
     async def on_ready(self):
-        utcnow = datetime.datetime.utcnow()
+        utcnow = discord.utils.utcnow()
         time_format = utcnow.strftime("%x %X UTC")
 
         connect_msg = (

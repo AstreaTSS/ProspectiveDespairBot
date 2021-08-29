@@ -42,7 +42,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
                 await profile_chan.send(embed=embed)
                 await asyncio.sleep(1)
 
-            embed = discord.Embed(timestamp=datetime.utcnow())
+            embed = discord.Embed(timestamp=discord.utils.utcnow())
             embed.set_footer(text="Last Updated")
 
             await profile_chan.send(
