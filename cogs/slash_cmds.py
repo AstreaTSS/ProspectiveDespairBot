@@ -86,7 +86,7 @@ class SlashCMDS(commands.Cog):
     )
     async def add_interaction(
         self,
-        ctx: dislash.Interaction,
+        inter: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -104,7 +104,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await ctx.reply(type=5)
+        await inter.reply(type=5)
 
         if count is None:
             count = 1
@@ -135,11 +135,11 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
+        async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-            inter.interactions += actual_count
-            await inter.save()
+            interact.interactions += actual_count
+            await interact.save()
 
         if actual_count == Decimal(1):
             embed = discord.Embed(
@@ -152,7 +152,7 @@ class SlashCMDS(commands.Cog):
                 description=f"{', '.join(tuple(m.mention for m in members))} got {actual_count} interactions!",
             )
 
-        await ctx.edit(embed=embed)
+        await inter.edit(embed=embed)
 
     @dislash.slash_command(
         name="remove-interaction",
@@ -163,7 +163,7 @@ class SlashCMDS(commands.Cog):
     )
     async def remove_interaction(
         self,
-        ctx: dislash.Interaction,
+        inter: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -181,7 +181,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await ctx.reply(type=5)
+        await inter.reply(type=5)
 
         if count is None:
             count = 1
@@ -212,13 +212,13 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
+        async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-            inter.interactions -= actual_count
-            if inter.interactions < Decimal(0):
-                inter.interactions == Decimal(0)
-            await inter.save()
+            interact.interactions -= count
+            if interact.interactions < Decimal(0):
+                interact.interactions == Decimal(0)
+            await interact.save()
 
         if actual_count == Decimal(1):
             embed = discord.Embed(
@@ -231,7 +231,7 @@ class SlashCMDS(commands.Cog):
                 description=f"Removed {actual_count} interactions from: {', '.join(tuple(m.mention for m in members))}.",
             )
 
-        await ctx.edit(embed=embed)
+        await inter.edit(embed=embed)
 
     @dislash.slash_command(
         name="add-event",
@@ -242,7 +242,7 @@ class SlashCMDS(commands.Cog):
     )
     async def add_event(
         self,
-        ctx: dislash.Interaction,
+        inter: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -259,7 +259,7 @@ class SlashCMDS(commands.Cog):
         user_14: Optional[discord.User] = None,
         user_15: Optional[discord.User] = None,
     ):
-        await ctx.reply(type=5)
+        await inter.reply(type=5)
 
         all_users = (
             user_1,
@@ -282,11 +282,11 @@ class SlashCMDS(commands.Cog):
             user for user in all_users if user is not None
         )
 
-        async for inter in models.UserInteraction.filter(
+        async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-            inter.interactions += Decimal("0.5")
-            await inter.save()
+            interact.interactions += Decimal("0.5")
+            await interact.save()
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -294,7 +294,7 @@ class SlashCMDS(commands.Cog):
             + "at the event! They get 0.5 interaction points.",
         )
 
-        await ctx.edit(embed=embed)
+        await inter.edit(embed=embed)
 
     @dislash.slash_command(
         name="list-interactions",
@@ -303,8 +303,8 @@ class SlashCMDS(commands.Cog):
         default_permission=False,
         options=[],
     )
-    async def list_interactions(self, ctx: dislash.Interaction):
-        await ctx.reply(type=5)
+    async def list_interactions(self, inter: dislash.Interaction):
+        await inter.reply(type=5)
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
@@ -316,7 +316,7 @@ class SlashCMDS(commands.Cog):
             timestamp=discord.utils.utcnow(),
         )
         embed.set_footer(text="As of")
-        await ctx.edit(embed=embed)
+        await inter.edit(embed=embed)
 
     @dislash.slash_command(
         name="reset-interactions",
@@ -325,8 +325,8 @@ class SlashCMDS(commands.Cog):
         default_permission=False,
         options=[],
     )
-    async def reset_interactions(self, ctx: dislash.Interaction):
-        await ctx.reply(type=5)
+    async def reset_interactions(self, inter: dislash.Interaction):
+        await inter.reply(type=5)
 
         await models.UserInteraction.all().delete()
         user_ids = tuple(
@@ -335,7 +335,7 @@ class SlashCMDS(commands.Cog):
         for user_id in user_ids:
             await models.UserInteraction.create(user_id=user_id, interactions=0)
 
-        await ctx.edit("Done!")
+        await inter.edit("Done!")
 
     @dislash.slash_command(
         name="remove-player-from-interaction",
@@ -349,18 +349,18 @@ class SlashCMDS(commands.Cog):
         ],
     )
     async def remove_player_from_interaction(
-        self, ctx: dislash.Interaction, user: discord.User
+        self, inter: dislash.Interaction, user: discord.User
     ):
-        await ctx.reply(type=5)
+        await inter.reply(type=5)
 
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
-            await ctx.edit(
-                f"{user.mention} deleted!",
-                allowed_mentions=utils.deny_mentions(ctx.author),
+            await inter.edit(
+                f"{inter.mention} deleted!",
+                allowed_mentions=utils.deny_mentions(inter.author),
             )
         else:
-            await ctx.edit(
+            await inter.edit(
                 embed=utils.error_embed_generate(
                     f"Member {user.mention} does not exist in interactions!"
                 )
@@ -376,13 +376,13 @@ class SlashCMDS(commands.Cog):
         ],
     )
     async def add_player_to_interaction(
-        self, ctx: dislash.Interaction, user: discord.User
+        self, inter: dislash.Interaction, user: discord.User
     ):
-        await ctx.reply(type=5)
+        await inter.reply(type=5)
 
         exists = await models.UserInteraction.exists(user_id=user.id)
         if exists:
-            await ctx.edit(
+            await inter.edit(
                 embed=utils.error_embed_generate(
                     f"Member {user.mention} already in interactions!"
                 )
@@ -390,8 +390,8 @@ class SlashCMDS(commands.Cog):
             return
 
         await models.UserInteraction.create(user_id=user.id, interactions=0)
-        await ctx.edit(
-            f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
+        await inter.edit(
+            f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(inter.author)
         )
 
     @dislash.slash_command(
@@ -402,20 +402,20 @@ class SlashCMDS(commands.Cog):
         permissions=alive_player_perms,
         options=[],
     )
-    async def interactions(self, ctx: dislash.Interaction):
-        await ctx.reply(type=5)
+    async def interactions(self, inter: dislash.Interaction):
+        await inter.reply(type=5)
 
-        inter = await models.UserInteraction.get_or_none(user_id=ctx.author.id)
-        if inter:
+        interact = await models.UserInteraction.get_or_none(user_id=inter.author.id)
+        if interact:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"You have {inter.interactions} interactions for this cycle!",
+                description=f"You have {interact.interactions} interactions for this cycle!",
                 timestamp=discord.utils.utcnow(),
             )
             embed.set_footer(text="As of")
-            await ctx.edit(embed=embed, hidden=True)
+            await inter.edit(embed=embed, hidden=True)
         else:
-            await ctx.edit(
+            await inter.edit(
                 embed=utils.error_embed_generate("You aren't in the KG!"), hidden=True
             )
 
