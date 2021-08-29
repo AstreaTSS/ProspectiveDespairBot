@@ -55,7 +55,7 @@ interactions_plus.append(
 class SlashCMDS(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.loop = self.bot.loop.create_task(self.add_perms)
+        self.loop = self.bot.loop.create_task(self.add_perms())
 
     def cog_unload(self) -> None:
         self.loop.cancel()
