@@ -4,7 +4,7 @@ import logging
 import os
 
 import discord
-import discord_slash
+import dislash
 from discord.ext import commands
 from dotenv import load_dotenv
 from tortoise import Tortoise
@@ -70,7 +70,6 @@ async def on_init_load():
         except commands.NoEntryPointError as e:
             pass
 
-    await bot.slash.sync_all_commands()  # need to do this as otherwise slash cmds wont work
     bot.init_load = False
 
 
@@ -147,7 +146,7 @@ mentions = discord.AllowedMentions.all()
 bot = DespairsHorizonBot(
     command_prefix=dh_prefixes, allowed_mentions=mentions, intents=intents,
 )
-slash = discord_slash.SlashCommand(bot, override_type=True)
+slash = dislash.InteractionClient(bot, modify_send=False)
 
 bot.init_load = True
 bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
