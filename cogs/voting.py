@@ -2,11 +2,8 @@ import asyncio
 import collections
 import importlib
 
+import discord
 from discord.ext import commands
-from discord_slash import ComponentContext
-from discord_slash.utils.manage_components import create_actionrow
-from discord_slash.utils.manage_components import create_select
-from discord_slash.utils.manage_components import create_select_option
 
 import common.cards as cards
 import common.utils as utils
@@ -24,25 +21,56 @@ class Voting(commands.Cog, name="Voting"):
 
     def create_select(self):
         """Creates the select component."""
-        options = [
-            create_select_option(
-                card.oc_name, f"vote:{convert_name(card.oc_name)}"
-            )
-            for card in cards.participants
-        ]
-        select = [create_select(options)]
-        return [create_actionrow(*select)]
+        ori_self = self
 
-    def vote_check(self, ctx: ComponentContext):
-        """Simple check to make sure voting is only done to that one message
-        by Alive Players."""
-        if ctx.author_id not in self.people_voting:
-            return False
+        class Dropdown(discord.ui.Select):
+            def __init__(self):
+                options = [
+                    discord.SelectOption(
+                        label=card.oc_name,
+                        value=f"vote:{convert_name(card.oc_name)})",
+                    )
+                    for card in cards.participants
+                ]
+                super().__init__(min_values=1, max_values=1, options=options)
 
-        if ctx.origin_message_id != self.voting_msg.id:
-            return False
+            async def callback(self, inter: discord.Interaction):
+                await inter.response.defer(
+                    ephemeral=True
+                )  # make sure interact doesnt errror
 
-        return True
+                card_needed = None
+
+                to_check = self.values[0]
+                name = to_check.replace("vote:", "")  # get name of option picked
+
+                # should always return a card
+                for card in cards.participants:
+                    if convert_name(card.oc_name) == name:
+                        card_needed = card
+
+                ori_self.votes[inter.user.id] = card_needed.oc_name
+
+                await inter.followup.send(
+                    f"Voted for **{card_needed.oc_name}**!", ephemeral=True
+                )  # confirmation message
+
+                # logging message
+                embed = utils.error_embed_generate(
+                    f"<@{inter.user.id}> voted for **{card_needed.oc_name}**."
+                )
+                embed.color = ori_self.bot.color
+                await ori_self.logging_channel.send(embed=embed)
+
+        class DropdownView(discord.ui.View):
+            def __init__(self):
+                super().__init__()
+                self.add_item(Dropdown())
+
+            async def interaction_check(self, interaction: discord.Interaction) -> bool:
+                return interaction.user.id in ori_self.people_voting
+
+        return DropdownView()
 
     @commands.command(aliases=["voting"])
     @utils.proper_permissions()
@@ -52,7 +80,7 @@ class Voting(commands.Cog, name="Voting"):
         ):  # voting would break if there was more than one vote going on
             raise utils.CustomCheckFailure("There is already a vote going on!")
 
-        actionrow = self.create_select()
+        voting_view = self.create_select()
         prompt_builder = [
             "It's time to vote! Please use this drop-down menu in order to do so.",
             "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
@@ -63,9 +91,7 @@ class Voting(commands.Cog, name="Voting"):
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
 
-        self.voting_msg = await ctx.send(
-            "\n".join(prompt_builder), components=actionrow
-        )
+        self.voting_msg = await ctx.send("\n".join(prompt_builder), view=voting_view)
         self.is_voting = True
 
         async with ctx.typing():
@@ -73,9 +99,10 @@ class Voting(commands.Cog, name="Voting"):
                 # we abuse timeouts in order to stop this function
                 # process_votes runs forever, but wait_for will stop it
                 # for running too long
-                await asyncio.wait_for(self.process_votes(), 300)
+                await asyncio.wait_for(voting_view.stop(), 300)
             except asyncio.TimeoutError:
                 self.is_voting = False
+                await voting_view.stop()
 
         # transfer the format of [discord_user_id] = 'oc name'
         # to ['oc name'] = number_of_votes
@@ -90,36 +117,6 @@ class Voting(commands.Cog, name="Voting"):
         final_msg_builder.insert(0, "__**VOTES:**__")
 
         await ctx.send("\n".join(final_msg_builder))
-
-    async def process_votes(self):
-        while True:
-            ctx: ComponentContext = await self.bot.wait_for(
-                "component", check=self.vote_check
-            )
-            await ctx.defer(hidden=True)  # make sure interact doesnt errror
-
-            card_needed = None
-
-            to_check = ctx.selected_options[0]
-            name = to_check.replace("vote:", "")  # get name of option picked
-
-            # should always return a card
-            for card in cards.participants:
-                if convert_name(card.oc_name) == name:
-                    card_needed = card
-
-            self.votes[ctx.author_id] = card_needed.oc_name
-
-            await ctx.send(
-                f"Voted for **{card_needed.oc_name}**!", hidden=True
-            )  # confirmation message
-
-            # logging message
-            embed = utils.error_embed_generate(
-                f"<@{ctx.author_id}> voted for **{card_needed.oc_name}**."
-            )
-            embed.color = ctx.bot.color
-            await self.logging_channel.send(embed=embed)
 
 
 def setup(bot):

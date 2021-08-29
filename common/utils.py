@@ -2,6 +2,7 @@
 import collections
 import logging
 import traceback
+import typing
 from decimal import Decimal
 from decimal import InvalidOperation
 from pathlib import Path
@@ -9,19 +10,7 @@ from pathlib import Path
 import aiohttp
 import discord
 from discord.ext import commands
-from discord_slash import SlashContext
-
-
-class UsableIDConverter(commands.IDConverter):
-    """The internal ID converter, but usable.
-    Will be replaced by the ObjectConverter in d.py 2.0."""
-
-    async def convert(self, ctx: commands.Context, argument: str):
-        match = self._get_id_match(argument)
-        try:
-            return int(match.group(1))
-        except:
-            raise commands.MessageNotFound(argument)
+from dislash import SlashInteraction
 
 
 class DecimalConverter(commands.Converter):
@@ -37,7 +26,9 @@ class CustomCheckFailure(commands.CheckFailure):
     pass
 
 
-async def error_handle(bot, error, ctx=None):
+async def error_handle(
+    bot, error, ctx: typing.Union[commands.Context, SlashInteraction, None] = None
+):
     # handles errors and sends them to owner
     if isinstance(error, aiohttp.ServerDisconnectedError):
         to_send = "Disconnected from server!"
@@ -46,12 +37,16 @@ async def error_handle(bot, error, ctx=None):
         error_str = error_format(error)
         logging.getLogger("discord").error(error_str)
 
-        chunks = line_split(error_str)
+        error_split = error_str.splitlines()
+        chunks = [error_split[x : x + 20] for x in range(0, len(error_split), 20)]
         for i in range(len(chunks)):
             chunks[i][0] = f"```py\n{chunks[i][0]}"
             chunks[i][len(chunks[i]) - 1] += "\n```"
 
-        final_chunks = ["\n".join(chunk) for chunk in chunks]
+        final_chunks = []
+        for chunk in chunks:
+            final_chunks.append("\n".join(chunk))
+
         if ctx and hasattr(ctx, "message") and hasattr(ctx.message, "jump_url"):
             final_chunks.insert(0, f"Error on: {ctx.message.jump_url}")
 
@@ -61,19 +56,14 @@ async def error_handle(bot, error, ctx=None):
     await msg_to_owner(bot, to_send, split)
 
     if ctx:
-        if isinstance(ctx, discord.Message):
+        if isinstance(ctx, commands.Context):
             await ctx.reply(
                 "An internal error has occured. The bot owner has been notified."
             )
-        elif isinstance(ctx, SlashContext):
-            await ctx.send(
-                content="An internal error has occured. The bot owner has been notified.",
-                hidden=True,
-            )
         else:
-            # just pray this will work
-            await ctx.channel.send(
-                "An internal error has occured. The bot owner has been notified."
+            await ctx.reply(
+                content="An internal error has occured. The bot owner has been notified.",
+                ephemeral=True,
             )
 
 

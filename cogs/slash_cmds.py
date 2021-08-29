@@ -1,67 +1,51 @@
-import datetime
+import asyncio
 import importlib
+import typing
 from decimal import Decimal
 from decimal import InvalidOperation
 from typing import Optional
 from typing import Tuple
 
 import discord
+import dislash
 from discord.ext import commands
-from discord_slash import cog_ext
-from discord_slash import SlashContext
-from discord_slash.model import SlashCommandOptionType
-from discord_slash.model import SlashCommandPermissionType
-from discord_slash.utils.manage_commands import create_option
-from discord_slash.utils.manage_commands import create_permission
 
 import common.cards as cards
 import common.models as models
 import common.utils as utils
 
+admin_perms = dislash.SlashCommandPermissions.from_ids(
+    {673635882271637516: True, 673630805343600641: True}
+)
 
-admin_perms = {
-    673355251583025192: [
-        create_permission(673635882271637516, SlashCommandPermissionType.ROLE, True),
-        create_permission(673630805343600641, SlashCommandPermissionType.ROLE, True),
-    ]
-}
-
-alive_player_perms = {
-    673355251583025192: [
-        create_permission(673635882271637516, SlashCommandPermissionType.ROLE, True),
-        create_permission(673630805343600641, SlashCommandPermissionType.ROLE, True),
-        create_permission(673640411494875182, SlashCommandPermissionType.ROLE, True),
-    ]
-}
+alive_player_perms = dislash.SlashCommandPermissions.from_ids(
+    {673635882271637516: True, 673630805343600641: True, 673640411494875182: True}
+)
 
 interaction_options = [
-    create_option("user_1", "The first user.", SlashCommandOptionType.USER, True),
-    create_option("user_2", "The second user.", SlashCommandOptionType.USER, False),
-    create_option("user_3", "The third user.", SlashCommandOptionType.USER, False),
-    create_option("user_4", "The fourth user.", SlashCommandOptionType.USER, False),
-    create_option("user_5", "The fifth user.", SlashCommandOptionType.USER, False),
-    create_option("user_6", "The sixth user.", SlashCommandOptionType.USER, False),
-    create_option("user_7", "The seventh user.", SlashCommandOptionType.USER, False),
-    create_option("user_8", "The eight user.", SlashCommandOptionType.USER, False),
-    create_option("user_9", "The ninth user.", SlashCommandOptionType.USER, False),
-    create_option("user_10", "The tenth user.", SlashCommandOptionType.USER, False),
-    create_option("user_11", "The eleventh user.", SlashCommandOptionType.USER, False),
-    create_option("user_12", "The twelfth user.", SlashCommandOptionType.USER, False),
-    create_option(
-        "user_13", "The thirteenth user.", SlashCommandOptionType.USER, False
-    ),
-    create_option(
-        "user_14", "The fourteenth user.", SlashCommandOptionType.USER, False
-    ),
-    create_option("user_15", "The fifteenth user.", SlashCommandOptionType.USER, False),
+    dislash.Option("user_1", "The first user.", dislash.OptionType.USER, True),
+    dislash.Option("user_2", "The second user.", dislash.OptionType.USER, False),
+    dislash.Option("user_3", "The third user.", dislash.OptionType.USER, False),
+    dislash.Option("user_4", "The fourth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_5", "The fifth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_6", "The sixth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_7", "The seventh user.", dislash.OptionType.USER, False),
+    dislash.Option("user_8", "The eight user.", dislash.OptionType.USER, False),
+    dislash.Option("user_9", "The ninth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_10", "The tenth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_11", "The eleventh user.", dislash.OptionType.USER, False),
+    dislash.Option("user_12", "The twelfth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_13", "The thirteenth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_14", "The fourteenth user.", dislash.OptionType.USER, False),
+    dislash.Option("user_15", "The fifteenth user.", dislash.OptionType.USER, False),
 ]
 
 interactions_plus = interaction_options.copy()
 interactions_plus.append(
-    create_option(
+    dislash.Option(
         "count",
         "How many interactions should be added.",
-        10,
+        dislash.OptionType.NUMBER,
         False,
     )
 )
@@ -69,19 +53,40 @@ interactions_plus.append(
 
 class SlashCMDS(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: commands.Bot = bot
+        self.loop = self.bot.loop.create_task(self.add_perms)
 
-    @cog_ext.cog_slash(
+    def cog_unload(self) -> None:
+        self.loop.cancel()
+
+    async def add_perms(self):
+        await asyncio.sleep(10)
+        slash_cmds: typing.List[
+            dislash.SlashCommand
+        ] = await self.bot.slash.fetch_guild_commands(786609181855318047)
+
+        perm_dict = {}
+
+        for cmd in slash_cmds:
+            if cmd.name == "interactions":
+                perm_dict[cmd.id] = alive_player_perms
+            else:
+                perm_dict[cmd.id] = admin_perms
+
+        await self.bot.slash.batch_edit_guild_command_permissions(
+            786609181855318047, perm_dict
+        )
+
+    @dislash.slash_command(
         name="add-interaction",
         description="Adds an interaction to the members specified.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=interactions_plus,
     )
     async def add_interaction(
         self,
-        ctx: SlashContext,
+        ctx: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -99,7 +104,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await ctx.defer()
+        await ctx.reply(type=5)
 
         if count is None:
             count = 1
@@ -107,10 +112,7 @@ class SlashCMDS(commands.Cog):
         try:
             actual_count = Decimal(count)
         except InvalidOperation:
-            await ctx.send(
-                embed=utils.error_embed_generate("Number provided is not a decimal!")
-            )
-            return
+            raise dislash.BadArgument("Number provided is not a decimal!")
 
         all_users = (
             user_1,
@@ -150,19 +152,18 @@ class SlashCMDS(commands.Cog):
                 description=f"{', '.join(tuple(m.mention for m in members))} got {actual_count} interactions!",
             )
 
-        await ctx.send(embed=embed)
+        await ctx.edit(embed=embed)
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="remove-interaction",
         description="Removes an interaction from the members specified.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=interactions_plus,
     )
     async def remove_interaction(
         self,
-        ctx: SlashContext,
+        ctx: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -180,7 +181,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await ctx.defer()
+        await ctx.reply(type=5)
 
         if count is None:
             count = 1
@@ -188,10 +189,7 @@ class SlashCMDS(commands.Cog):
         try:
             actual_count = Decimal(count)
         except InvalidOperation:
-            await ctx.send(
-                embed=utils.error_embed_generate("Number provided is not a decimal!")
-            )
-            return
+            raise dislash.BadArgument("Number provided is not a decimal!")
 
         all_users = (
             user_1,
@@ -233,19 +231,18 @@ class SlashCMDS(commands.Cog):
                 description=f"Removed {actual_count} interactions from: {', '.join(tuple(m.mention for m in members))}.",
             )
 
-        await ctx.send(embed=embed)
+        await ctx.edit(embed=embed)
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="add-event",
         description="Gives an event point to the users specified.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=interaction_options,
     )
     async def add_event(
         self,
-        ctx: SlashContext,
+        ctx: dislash.Interaction,
         user_1: discord.User,
         user_2: Optional[discord.User] = None,
         user_3: Optional[discord.User] = None,
@@ -262,7 +259,7 @@ class SlashCMDS(commands.Cog):
         user_14: Optional[discord.User] = None,
         user_15: Optional[discord.User] = None,
     ):
-        await ctx.defer()
+        await ctx.reply(type=5)
 
         all_users = (
             user_1,
@@ -297,18 +294,17 @@ class SlashCMDS(commands.Cog):
             + "at the event! They get 0.5 interaction points.",
         )
 
-        await ctx.send(embed=embed)
+        await ctx.edit(embed=embed)
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="list-interactions",
         description="Lists out interactions for everyone still alive.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=[],
     )
-    async def list_interactions(self, ctx: SlashContext):
-        await ctx.defer()
+    async def list_interactions(self, ctx: dislash.Interaction):
+        await ctx.reply(type=5)
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
@@ -317,21 +313,20 @@ class SlashCMDS(commands.Cog):
         embed = discord.Embed(
             color=self.bot.color,
             description="\n".join(list_inters),
-            timestamp=datetime.datetime.utcnow(),
+            timestamp=discord.utils.utcnow(),
         )
         embed.set_footer(text="As of")
-        await ctx.send(embed=embed)
+        await ctx.edit(embed=embed)
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="reset-interactions",
         description="Resets everyone's interaction counts.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=[],
     )
-    async def reset_interactions(self, ctx: SlashContext):
-        await ctx.defer()
+    async def reset_interactions(self, ctx: dislash.Interaction):
+        await ctx.reply(type=5)
 
         await models.UserInteraction.all().delete()
         user_ids = tuple(
@@ -340,56 +335,54 @@ class SlashCMDS(commands.Cog):
         for user_id in user_ids:
             await models.UserInteraction.create(user_id=user_id, interactions=0)
 
-        await ctx.send("Done!")
+        await ctx.edit("Done!")
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="remove-player-from-interaction",
         description="Removes a player from the interaction tracker.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=[
-            create_option(
-                "user", "The user to remove.", SlashCommandOptionType.USER, True
+            dislash.Option(
+                "user", "The user to remove.", dislash.OptionType.USER, True
             ),
         ],
     )
     async def remove_player_from_interaction(
-        self, ctx: SlashContext, user: discord.User
+        self, ctx: dislash.Interaction, user: discord.User
     ):
-        await ctx.defer()
+        await ctx.reply(type=5)
 
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
-            await ctx.send(
+            await ctx.edit(
                 f"{user.mention} deleted!",
                 allowed_mentions=utils.deny_mentions(ctx.author),
             )
         else:
-            await ctx.send(
+            await ctx.edit(
                 embed=utils.error_embed_generate(
                     f"Member {user.mention} does not exist in interactions!"
                 )
             )
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="add-player-to-interaction",
         description="Adds a player to the interaction tracker.",
         guild_ids=[673355251583025192],
         default_permission=False,
-        permissions=admin_perms,
         options=[
-            create_option(
-                "user", "The user to add.", SlashCommandOptionType.USER, True
-            ),
+            dislash.Option("user", "The user to add.", dislash.OptionType.USER, True),
         ],
     )
-    async def add_player_to_interaction(self, ctx: SlashContext, user: discord.User):
-        await ctx.defer()
+    async def add_player_to_interaction(
+        self, ctx: dislash.Interaction, user: discord.User
+    ):
+        await ctx.reply(type=5)
 
         exists = await models.UserInteraction.exists(user_id=user.id)
         if exists:
-            await ctx.send(
+            await ctx.edit(
                 embed=utils.error_embed_generate(
                     f"Member {user.mention} already in interactions!"
                 )
@@ -397,11 +390,11 @@ class SlashCMDS(commands.Cog):
             return
 
         await models.UserInteraction.create(user_id=user.id, interactions=0)
-        await ctx.send(
+        await ctx.edit(
             f"Added {user.mention}!", allowed_mentions=utils.deny_mentions(ctx.author)
         )
 
-    @cog_ext.cog_slash(
+    @dislash.slash_command(
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[673355251583025192],
@@ -409,36 +402,46 @@ class SlashCMDS(commands.Cog):
         permissions=alive_player_perms,
         options=[],
     )
-    async def interactions(self, ctx: SlashContext):
-        await ctx.defer(hidden=True)
+    async def interactions(self, ctx: dislash.Interaction):
+        await ctx.reply(type=5)
 
         inter = await models.UserInteraction.get_or_none(user_id=ctx.author.id)
         if inter:
             embed = discord.Embed(
                 color=self.bot.color,
                 description=f"You have {inter.interactions} interactions for this cycle!",
-                timestamp=datetime.datetime.utcnow(),
+                timestamp=discord.utils.utcnow(),
             )
             embed.set_footer(text="As of")
-            await ctx.send(embed=embed, hidden=True)
+            await ctx.edit(embed=embed, hidden=True)
         else:
-            await ctx.send(
+            await ctx.edit(
                 embed=utils.error_embed_generate("You aren't in the KG!"), hidden=True
             )
 
     @commands.Cog.listener()
-    async def on_slash_command_error(self, ctx, ex):
-        if isinstance(ex, discord.NotFound) and ex.text == "Unknown interaction":
-            if isinstance(ctx.author, (discord.Member, discord.User)):
-                author_str = ctx.author.mention
-            else:
-                author_str = f"<@{ctx.author}>"
-            await ctx.channel.send(
-                f"{author_str}, the bot is a bit slow and so cannot do slash commands right now. Please wait a bit and try again.",
+    async def on_slash_command_error(
+        self, inter: dislash.SlashInteraction, error: dislash.ApplicationCommandError
+    ):
+        if isinstance(
+            error,
+            (
+                dislash.BadArgument,
+                dislash.InteractionCheckFailure,
+                dislash.NotGuildOwner,
+            ),
+        ):
+            await inter.reply(
+                embed=self.error_embed_generate(str(error)), ephemeral=True
+            )
+        elif "Unknown interaction" in str(error):
+            await inter.channel.send(
+                f"{inter.author.mention}, the bot is a bit slow and so cannot do slash commands "
+                + "right now. Please wait a bit and try again.",
                 delete_after=3,
             )
         else:
-            await utils.error_handle(self.bot, ex, ctx)
+            await utils.error_handle(self.bot, error, inter)
 
 
 def setup(bot):

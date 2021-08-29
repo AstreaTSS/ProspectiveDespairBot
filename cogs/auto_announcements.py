@@ -17,16 +17,19 @@ et = pytz.timezone("US/Eastern")
 class AutoAnnouncements(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.webhook = discord.Webhook.from_url(
-            os.environ.get("WEBHOOK_URL"),
-            adapter=discord.AsyncWebhookAdapter(aiohttp.ClientSession()),
-        )
 
-        #self.task = self.bot.loop.create_task(self.auto_run())
+    #     self.webhook_session = aiohttp.ClientSession()
 
-    def cog_unload(self):
-        pass
-        # self.task.cancel()
+    #     self.webhook = discord.Webhook.from_url(
+    #         os.environ.get("WEBHOOK_URL"),
+    #         session=self.webhook_session,
+    #     )
+
+    #     self.task = self.bot.loop.create_task(self.auto_run())
+
+    # def cog_unload(self):
+    #     self.task.cancel()
+    #     self.webhook_session.close()
 
     async def auto_run(self):
         while True:

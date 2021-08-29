@@ -11,6 +11,10 @@ from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
+<<<<<<< HEAD
+=======
+import keep_alive
+>>>>>>> 5db511e (Upgrade to d.py 2.0)
 from common.help_cmd import PaginatedHelpCommand
 
 
@@ -87,7 +91,7 @@ class DespairsHorizonBot(commands.Bot):
         self._checks.append(global_checks)
 
     async def on_ready(self):
-        utcnow = datetime.datetime.utcnow()
+        utcnow = discord.utils.utcnow()
         time_format = utcnow.strftime("%x %X UTC")
 
         connect_msg = (
