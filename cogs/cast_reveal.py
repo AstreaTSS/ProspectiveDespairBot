@@ -2,10 +2,8 @@
 import asyncio
 import importlib
 from copy import deepcopy
-from datetime import datetime
 from datetime import timedelta
 from random import shuffle
-from typing import List
 
 import discord
 from discord.ext import commands
@@ -35,12 +33,13 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
         async with ctx.typing():
             await asyncio.sleep(10)  # because otherwise it would be done a bit too fast
 
-            for card in shuffled_participants:
+            for index, card in enumerate(shuffled_participants):
                 after_cooldown = discord.utils.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(ctx.bot)
                 await ctx.send(
-                    f"**Welcome {card.title_name}!**\nBy: {card.mention}", embed=embed
+                    f"**Welcome {card.title_name}!**\nRPed by: {card.mention}",
+                    embed=embed,
                 )
                 await ctx.send("```\n \n```")  # looks neater
 
@@ -48,11 +47,12 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                 await member.remove_roles(applied)
                 await member.add_roles(alive_player)
 
-                await discord.utils.sleep_until(after_cooldown)
+                if index != len(shuffled_participants) - 1:
+                    await discord.utils.sleep_until(after_cooldown)
 
         await ctx.send(
             "**All participants have been revealed.**\nWe apologize if you didn't get in, "
-            + "but there were quite a number of applications this season (39, in fact). "
+            + "but there were *a lot* of applications this season. We sadly can't accept everyone. "
             + "Astrea will be sending a concluding message shortly about backups and other details."
         )
 
