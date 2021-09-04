@@ -105,7 +105,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         if count is None:
             count = 1
@@ -182,7 +182,7 @@ class SlashCMDS(commands.Cog):
         user_15: Optional[discord.User] = None,
         count: Optional[float] = None,
     ):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         if count is None:
             count = 1
@@ -260,7 +260,7 @@ class SlashCMDS(commands.Cog):
         user_14: Optional[discord.User] = None,
         user_15: Optional[discord.User] = None,
     ):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         all_users = (
             user_1,
@@ -305,7 +305,7 @@ class SlashCMDS(commands.Cog):
         options=[],
     )
     async def list_interactions(self, inter: dislash.Interaction):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
@@ -327,7 +327,7 @@ class SlashCMDS(commands.Cog):
         options=[],
     )
     async def reset_interactions(self, inter: dislash.Interaction):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         await models.UserInteraction.all().delete()
         user_ids = tuple(
@@ -352,7 +352,7 @@ class SlashCMDS(commands.Cog):
     async def remove_player_from_interaction(
         self, inter: dislash.Interaction, user: discord.User
     ):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
@@ -379,7 +379,7 @@ class SlashCMDS(commands.Cog):
     async def add_player_to_interaction(
         self, inter: dislash.Interaction, user: discord.User
     ):
-        await inter.create_response(type=5, ephemeral=True)
+        await inter.create_response(type=5)
 
         exists = await models.UserInteraction.exists(user_id=user.id)
         if exists:
