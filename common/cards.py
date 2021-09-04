@@ -78,7 +78,7 @@ chunyu_card = Card(
     user_id=486291559617134592,
     oc_name="Chunyu Tsuguri",
     oc_talent="Surgeon",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164208856973394/ChunyuTsuguriCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883830062925885491/ChunyuTsuguriCard.png",
 )
 codex_card = Card(
     user_id=397994270226907136,
@@ -90,7 +90,7 @@ error_card = Card(
     user_id=463875652718821377,
     oc_name="ERROR",
     oc_talent="???",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164240209412106/ERRORCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883830081405976656/ERRORCard.png",
 )
 fusanosuke_card = Card(
     user_id=248410976808992768,
