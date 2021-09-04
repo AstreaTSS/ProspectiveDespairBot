@@ -44,8 +44,9 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                 await ctx.send("```\n \n```")  # looks neater
 
                 member = ctx.guild.get_member(card.user_id)
-                await member.remove_roles(applied)
-                await member.add_roles(alive_player)
+                if member:  # amazing 10/10 error prevention code
+                    await member.remove_roles(applied)
+                    await member.add_roles(alive_player)
 
                 if index != len(shuffled_participants) - 1:
                     await discord.utils.sleep_until(after_cooldown)
