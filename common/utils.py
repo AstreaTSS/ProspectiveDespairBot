@@ -61,7 +61,7 @@ async def error_handle(
                 "An internal error has occured. The bot owner has been notified."
             )
         else:
-            await ctx.reply(
+            await ctx.create_response(
                 content="An internal error has occured. The bot owner has been notified.",
                 ephemeral=True,
             )

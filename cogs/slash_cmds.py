@@ -430,7 +430,7 @@ class SlashCMDS(commands.Cog):
                 dislash.NotGuildOwner,
             ),
         ):
-            await inter.reply(
+            await inter.create_response(
                 embed=self.error_embed_generate(str(error)), ephemeral=True
             )
         elif "Unknown interaction" in str(error):
