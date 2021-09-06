@@ -59,7 +59,21 @@ drake_card = Card(
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883163375272624138/DrakeAeliusCard.png",
     status=Status.HOST,
 )
-hosts = [talia_card, drake_card]
+chichi_card = Card(
+    user_id=588749122643951616,
+    oc_name="Chichi Hanamura",
+    oc_talent="Idol",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/884562807520116766/ChichiHanamuraCard.png",
+    status=Status.HOST,
+)
+antomy_card = Card(
+    user_id=328149026266677248,
+    oc_name="Antomy Ideris-Sanjuroku",
+    oc_talent="Domestic Helper",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/884562762435543050/AntomyIderisSanjurokuCard.png",
+    status=Status.HOST,
+)
+hosts = [talia_card, drake_card, chichi_card, antomy_card]
 
 
 alice_card = Card(
