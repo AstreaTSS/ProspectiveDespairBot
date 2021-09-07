@@ -15,7 +15,7 @@ import keep_alive
 from common.help_cmd import PaginatedHelpCommand
 
 
-# load_dotenv()
+load_dotenv()
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.INFO)
@@ -149,5 +149,5 @@ bot.init_load = True
 bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
 
 bot.loop.create_task(on_init_load())
-keep_alive.keep_alive()
+# keep_alive.keep_alive()
 bot.run(os.environ.get("MAIN_TOKEN"))
