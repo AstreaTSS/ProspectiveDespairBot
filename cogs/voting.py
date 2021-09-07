@@ -70,6 +70,8 @@ class Voting(commands.Cog, name="Voting"):
                     if convert_name(card.oc_name) == name:
                         card_needed = card
 
+                assert card_needed != None
+
                 ori_self.votes[inter.user.id] = card_needed.oc_name
 
                 await inter.followup.send(
@@ -120,10 +122,10 @@ class Voting(commands.Cog, name="Voting"):
                 # we abuse timeouts in order to stop this function
                 # process_votes runs forever, but wait_for will stop it
                 # for running too long
-                await asyncio.wait_for(voting_view.stop(), 300)
+                await asyncio.wait_for(voting_view.wait(), 300)
             except asyncio.TimeoutError:
                 self.is_voting = False
-                await voting_view.stop()
+                voting_view.stop()
 
         # transfer the format of [discord_user_id] = 'oc name'
         # to ['oc name'] = number_of_votes
