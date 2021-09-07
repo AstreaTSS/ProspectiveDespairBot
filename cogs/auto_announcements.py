@@ -30,6 +30,40 @@ class AutoAnnouncements(commands.Cog):
         self.task.cancel()
         self.bot.loop.create_task(self.webhook_session.close())
 
+    def gen_embed(self, day: bool = True):
+        embed = discord.Embed(title="Announcement from Talia Aelius", color=0x155F60)
+        if day:
+            str_builder = [
+                "Wake up, sweeties~ it's 9 AM!\n",
+                "The cafeteria and kitchen are now open for your eating "
+                "pleasure~ we wouldn't want to die on an empty stomach, would we?",
+                "\n\nRemember: escape is only a murder away~",
+            ]
+        else:
+            str_builder = [
+                "It's 11 PM, sweeties~ time to go to sleep!\n",
+                "The cafeteria and kitchen will close in a few minutes. ",
+                "I would move out of there if you don't want to be shot to ",
+                "death~ it's not exciting as murder or being murder, after all!",
+                "\n\nRemember: escape is only a murder away, especially at night~",
+            ]
+        embed.description = "".join(str_builder)
+        return embed
+
+    @commands.command(
+        aliases=["run_night_announce", "night_announcement", "night_announce"]
+    )
+    @utils.proper_permissions()
+    async def run_night_announcement(self, ctx: commands.Context):
+        await self.webhook.send(embed=self.gen_embed(day=False))
+        await ctx.reply("Done!")
+
+    @commands.command(aliases=["run_day_announce", "day_announcement", "day_announce"])
+    @utils.proper_permissions()
+    async def run_day_announcement(self, ctx: commands.Context):
+        await self.webhook.send(embed=self.gen_embed(day=True))
+        await ctx.reply("Done!")
+
     async def auto_run(self):
         while True:
             et_now = datetime.datetime.now(et)
@@ -49,29 +83,9 @@ class AutoAnnouncements(commands.Cog):
                 )
 
             await discord.utils.sleep_until(sleep_till)
-
-            embed = discord.Embed(
-                title="Announcement from Talia Aelius", color=0x155F60
-            )
             et_now = datetime.datetime.now(et)
 
-            if et_now.hour == 23:
-                str_builder = [
-                    "It's 11 PM, sweeties~ time to go to sleep!\n",
-                    "The cafeteria and kitchen will close in a few minutes. ",
-                    "I would move out of there if you don't want to be shot to ",
-                    "death~ it's not exciting as murder or being murder, after all!",
-                    "\n\nRemember: escape is only a murder away, especially at night~",
-                ]
-            else:
-                str_builder = [
-                    "Wake up, sweeties~ it's 9 AM!\n",
-                    "The cafeteria and kitchen are now open for your eating "
-                    "pleasure~ we wouldn't want to die on an empty stomach, would we?",
-                    "\n\nRemember: escape is only a murder away~",
-                ]
-
-            embed.description = "".join(str_builder)
+            embed = self.gen_embed(day=bool(et_now.hour == 23))
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 
