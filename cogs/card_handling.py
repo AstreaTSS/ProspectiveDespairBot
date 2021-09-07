@@ -20,7 +20,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
     async def update_cast(self, ctx: commands.Context):
 
         async with ctx.typing():
-            profile_chan = self.bot.get_channel(675066875180351494)
+            profile_chan: discord.TextChannel = self.bot.get_channel(675066875180351494)
 
             def is_valid(m: discord.Message):
                 return m.author.id == self.bot.user.id

@@ -75,7 +75,7 @@ class HelpPaginator(paginator.Pages):
 
         async def go_back_to_current_page():
             await asyncio.sleep(30.0)
-            await self.show_current_page()
+            await self.show_current_page(inter)
 
         self.bot.loop.create_task(go_back_to_current_page())
 
@@ -113,7 +113,7 @@ class HelpPaginator(paginator.Pages):
 
         async def go_back_to_current_page():
             await asyncio.sleep(30.0)
-            await self.show_current_page()
+            await self.show_current_page(inter)
 
         self.bot.loop.create_task(go_back_to_current_page())
 

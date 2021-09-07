@@ -131,7 +131,7 @@ class SlashCMDS(commands.Cog):
             user_14,
             user_15,
         )
-        members: Tuple[discord.User] = tuple(
+        members: Tuple[discord.User, ...] = tuple(
             user for user in all_users if user is not None
         )
 
@@ -208,7 +208,7 @@ class SlashCMDS(commands.Cog):
             user_14,
             user_15,
         )
-        members: Tuple[discord.User] = tuple(
+        members: Tuple[discord.User, ...] = tuple(
             user for user in all_users if user is not None
         )
 
@@ -278,7 +278,7 @@ class SlashCMDS(commands.Cog):
             user_14,
             user_15,
         )
-        members: Tuple[discord.User] = tuple(
+        members: Tuple[discord.User, ...] = tuple(
             user for user in all_users if user is not None
         )
 
@@ -356,7 +356,7 @@ class SlashCMDS(commands.Cog):
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
             await inter.edit(
-                f"{inter.mention} deleted!",
+                f"{user.mention} deleted!",
                 allowed_mentions=utils.deny_mentions(inter.author),
             )
         else:
@@ -430,7 +430,7 @@ class SlashCMDS(commands.Cog):
             ),
         ):
             await inter.create_response(
-                embed=self.error_embed_generate(str(error)), ephemeral=True
+                embed=utils.error_embed_generate(str(error)), ephemeral=True
             )
         elif "Unknown interaction" in str(error):
             await inter.channel.send(
