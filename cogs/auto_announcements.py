@@ -85,7 +85,7 @@ class AutoAnnouncements(commands.Cog):
             await discord.utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
 
-            embed = self.gen_embed(day=bool(et_now.hour == 23))
+            embed = self.gen_embed(day=bool(et_now.hour != 23))
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 
