@@ -160,12 +160,12 @@ masami_card = Card(
     oc_talent="Seamstress",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164275756109864/MasamiOkumuraCard.png",
 )
-perseus_card = Card(
-    user_id=745908719786655744,
-    oc_name="Perseus Lucien Hyperion",
-    oc_talent="Ballerina",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164279702970368/PerseusLucienHyperionCard.png",
-)
+# perseus_card = Card(
+#     user_id=745908719786655744,
+#     oc_name="Perseus Lucien Hyperion",
+#     oc_talent="Ballerina",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164279702970368/PerseusLucienHyperionCard.png",
+# )
 rui_card = Card(
     user_id=723768708433969243,
     oc_name="Rui Kaida",
@@ -196,6 +196,12 @@ yui_card = Card(
     oc_talent="Hair Model",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164334124073010/YuiSakuraCard.png",
 )
+zoe_card = Card(
+    user_id=475324575815565332,
+    oc_name="Zoë Roxanne Taiga",
+    oc_talent="Cinematographer",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068688149250108/ZoeRoxanneTaigaCard.png",
+)
 
 
 participants = [
@@ -213,11 +219,12 @@ participants = [
     kyren_card,
     leo_card,
     masami_card,
-    perseus_card,
+    # perseus_card,
     rui_card,
     shizuru_card,
     suri_card,
     yakichiro_card,
     yui_card,
+    zoe_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
