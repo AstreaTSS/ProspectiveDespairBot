@@ -116,7 +116,7 @@ haru_card = Card(
     user_id=486181655837671425,
     oc_name="Haru Daguchi",
     oc_talent="Parkourist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164247566204978/HaruDaguchiCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887481915622436864/HaruDaguchiCard.png",
 )
 jack_card = Card(
     user_id=206616227588734983,
