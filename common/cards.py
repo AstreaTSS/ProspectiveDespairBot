@@ -142,12 +142,12 @@ katie_card = Card(
     oc_talent="Detective",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164263370342450/KatieCeruleanLockwoodCard.png",
 )
-kyren_card = Card(
-    user_id=103912095455653888,
-    oc_name="Kyren Shinyo",
-    oc_talent="Philologist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164267120046110/KyrenShinyoCard.png",
-)
+# kyren_card = Card(
+#     user_id=103912095455653888,
+#     oc_name="Kyren Shinyo",
+#     oc_talent="Philologist",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164267120046110/KyrenShinyoCard.png",
+# )
 leo_card = Card(
     user_id=191313641943859202,
     oc_name="Leo Kobayashi",
@@ -202,6 +202,12 @@ zoe_card = Card(
     oc_talent="Cinematographer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068688149250108/ZoeRoxanneTaigaCard.png",
 )
+yanna_card = Card(
+    user_id=479102814594007040,
+    oc_name="Yanna Akina",
+    oc_talent="Journalist",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068686182129694/YannaAkinaCard.png",
+)
 
 
 participants = [
@@ -216,7 +222,7 @@ participants = [
     josh_card,
     karen_card,
     katie_card,
-    kyren_card,
+    # kyren_card,
     leo_card,
     masami_card,
     # perseus_card,
@@ -226,5 +232,6 @@ participants = [
     yakichiro_card,
     yui_card,
     zoe_card,
+    yanna_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
