@@ -76,12 +76,12 @@ antomy_card = Card(
 hosts = [talia_card, drake_card, chichi_card, antomy_card]
 
 
-alice_card = Card(
-    user_id=422447246060158996,
-    oc_name="Alice Betterman",
-    oc_talent="Humanitarian",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164203756699748/AliceBettermanCard.png",
-)
+# alice_card = Card(
+#     user_id=422447246060158996,
+#     oc_name="Alice Betterman",
+#     oc_talent="Humanitarian",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164203756699748/AliceBettermanCard.png",
+# )
 cheshire_card = Card(
     user_id=328149026266677248,
     oc_name="Cheshire Cat",
@@ -206,12 +206,18 @@ yanna_card = Card(
     user_id=479102814594007040,
     oc_name="Yanna Akina",
     oc_talent="Journalist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068686182129694/YannaAkinaCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209703010705459/YannaAkinaCard.png",
+)
+evelyn_card = Card(
+    user_id=293549819828633600,
+    oc_name="Evelyn Tsukiki",
+    oc_talent="Lullaby Author",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209047902384148/EvelynTsukikiCard.png",
 )
 
 
 participants = [
-    alice_card,
+    # alice_card,
     cheshire_card,
     chunyu_card,
     codex_card,
@@ -233,5 +239,6 @@ participants = [
     yui_card,
     zoe_card,
     yanna_card,
+    evelyn_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
