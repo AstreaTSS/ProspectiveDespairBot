@@ -122,7 +122,7 @@ jack_card = Card(
     user_id=206616227588734983,
     oc_name="Jack Rylie",
     oc_talent="Barista",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164251525636096/JackRylieCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888876861621411840/JackRylieCard.png",
 )
 josh_card = Card(
     user_id=269156561320935426,
@@ -141,6 +141,7 @@ katie_card = Card(
     oc_name="Katie Cerulean Lockwood",
     oc_talent="Detective",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164263370342450/KatieCeruleanLockwoodCard.png",
+    status=Status.DEAD,
 )
 # kyren_card = Card(
 #     user_id=103912095455653888,
