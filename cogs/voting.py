@@ -49,7 +49,7 @@ class Voting(commands.Cog, name="Voting"):
                 options = [
                     discord.SelectOption(
                         label=get_name_label(card.oc_name),
-                        value=f"vote:{convert_name(card.oc_name)})",
+                        value=f"vote:{convert_name(card.oc_name)}",
                     )
                     for card in cards.participants
                 ]
