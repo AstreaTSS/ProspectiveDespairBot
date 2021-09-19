@@ -196,6 +196,7 @@ yui_card = Card(
     oc_name="Yui Sakura",
     oc_talent="Hair Model",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164334124073010/YuiSakuraCard.png",
+    status=Status.DEAD,
 )
 zoe_card = Card(
     user_id=475324575815565332,
