@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import logging
 import os
 
@@ -51,7 +50,7 @@ async def on_init_load():
     await bot.wait_until_ready()
 
     await Tortoise.init(
-        db_url="sqlite://db.sqlite3", modules={"models": ["common.models"]}
+        db_url=os.environ.get("DB_URL"), modules={"models": ["common.models"]}
     )
 
     application = await bot.application_info()

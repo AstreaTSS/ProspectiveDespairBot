@@ -61,10 +61,18 @@ async def error_handle(
                 "An internal error has occured. The bot owner has been notified."
             )
         else:
-            await ctx.create_response(
-                content="An internal error has occured. The bot owner has been notified.",
-                ephemeral=True,
-            )
+            try:
+                await ctx.create_response(
+                    content="An internal error has occured. The bot owner has been notified.",
+                    ephemeral=True,
+                )
+            except discord.NotFound:
+                try:
+                    await ctx.edit(
+                        content="An internal error has occured. The bot owner has been notified.",
+                    )
+                except discord.HTTPException:
+                    pass
 
 
 async def msg_to_owner(bot, content, split=True):

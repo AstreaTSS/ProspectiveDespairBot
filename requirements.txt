@@ -1,6 +1,6 @@
 git+https://github.com/Rapptz/discord.py.git@45d498c1b76deaf3b394d17ccf56112fa691d160
 dislash.py==1.4.9
-aiosqlite==0.16.1
+asyncpg==0.24.0
 tortoise-orm==0.17.6
 pytz==2021.1
 jishaku==2.3.0
