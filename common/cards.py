@@ -87,6 +87,7 @@ cheshire_card = Card(
     oc_name="Cheshire Cat",
     oc_talent="Stage Magician",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164204994019348/CheshireCatCard.png",
+    status=Status.DEAD,
 )
 chunyu_card = Card(
     user_id=486291559617134592,
@@ -154,6 +155,7 @@ leo_card = Card(
     oc_name="Leo Kobayashi",
     oc_talent="Film-Video Editor",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164271582785556/LeoKobayashiCard.png",
+    status=Status.DEAD,
 )
 masami_card = Card(
     user_id=578757582186086410,
