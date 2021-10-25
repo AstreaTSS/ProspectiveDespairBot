@@ -112,6 +112,7 @@ fusanosuke_card = Card(
     oc_name="Fusanosuke Fukushima",
     oc_talent="Performer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164243455787038/FusanosukeFukushimaCard.png",
+    status=Status.DEAD,
 )
 haru_card = Card(
     user_id=486181655837671425,
@@ -136,6 +137,7 @@ karen_card = Card(
     oc_name="Karen Mahizuna",
     oc_talent="Sommelier",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164259587076126/KarenMahizunaCard.png",
+    status=Status.DEAD,
 )
 katie_card = Card(
     user_id=469806229716205578,
@@ -192,6 +194,7 @@ yakichiro_card = Card(
     oc_name="Yakichiro Toshio Ochi",
     oc_talent="Hotel Manager",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164330965733426/YakichiroToshioOchiCard.png",
+    status=Status.DEAD,
 )
 yui_card = Card(
     user_id=332568615390019604,
