@@ -76,17 +76,18 @@ antomy_card = Card(
 hosts = [talia_card, drake_card, chichi_card, antomy_card]
 
 
-alice_card = Card(
-    user_id=422447246060158996,
-    oc_name="Alice Betterman",
-    oc_talent="Humanitarian",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164203756699748/AliceBettermanCard.png",
-)
+# alice_card = Card(
+#     user_id=422447246060158996,
+#     oc_name="Alice Betterman",
+#     oc_talent="Humanitarian",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164203756699748/AliceBettermanCard.png",
+# )
 cheshire_card = Card(
     user_id=328149026266677248,
     oc_name="Cheshire Cat",
     oc_talent="Stage Magician",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164204994019348/CheshireCatCard.png",
+    status=Status.DEAD,
 )
 chunyu_card = Card(
     user_id=486291559617134592,
@@ -111,18 +112,19 @@ fusanosuke_card = Card(
     oc_name="Fusanosuke Fukushima",
     oc_talent="Performer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164243455787038/FusanosukeFukushimaCard.png",
+    status=Status.DEAD,
 )
 haru_card = Card(
     user_id=486181655837671425,
     oc_name="Haru Daguchi",
     oc_talent="Parkourist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164247566204978/HaruDaguchiCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887481915622436864/HaruDaguchiCard.png",
 )
 jack_card = Card(
     user_id=206616227588734983,
     oc_name="Jack Rylie",
     oc_talent="Barista",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164251525636096/JackRylieCard.png",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888876861621411840/JackRylieCard.png",
 )
 josh_card = Card(
     user_id=269156561320935426,
@@ -135,24 +137,27 @@ karen_card = Card(
     oc_name="Karen Mahizuna",
     oc_talent="Sommelier",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164259587076126/KarenMahizunaCard.png",
+    status=Status.DEAD,
 )
 katie_card = Card(
     user_id=469806229716205578,
     oc_name="Katie Cerulean Lockwood",
     oc_talent="Detective",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164263370342450/KatieCeruleanLockwoodCard.png",
+    status=Status.DEAD,
 )
-kyren_card = Card(
-    user_id=103912095455653888,
-    oc_name="Kyren Shinyo",
-    oc_talent="Philologist",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164267120046110/KyrenShinyoCard.png",
-)
+# kyren_card = Card(
+#     user_id=103912095455653888,
+#     oc_name="Kyren Shinyo",
+#     oc_talent="Philologist",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164267120046110/KyrenShinyoCard.png",
+# )
 leo_card = Card(
     user_id=191313641943859202,
     oc_name="Leo Kobayashi",
     oc_talent="Film-Video Editor",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164271582785556/LeoKobayashiCard.png",
+    status=Status.DEAD,
 )
 masami_card = Card(
     user_id=578757582186086410,
@@ -160,12 +165,12 @@ masami_card = Card(
     oc_talent="Seamstress",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164275756109864/MasamiOkumuraCard.png",
 )
-perseus_card = Card(
-    user_id=745908719786655744,
-    oc_name="Perseus Lucien Hyperion",
-    oc_talent="Ballerina",
-    card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164279702970368/PerseusLucienHyperionCard.png",
-)
+# perseus_card = Card(
+#     user_id=745908719786655744,
+#     oc_name="Perseus Lucien Hyperion",
+#     oc_talent="Ballerina",
+#     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164279702970368/PerseusLucienHyperionCard.png",
+# )
 rui_card = Card(
     user_id=723768708433969243,
     oc_name="Rui Kaida",
@@ -189,17 +194,37 @@ yakichiro_card = Card(
     oc_name="Yakichiro Toshio Ochi",
     oc_talent="Hotel Manager",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164330965733426/YakichiroToshioOchiCard.png",
+    status=Status.DEAD,
 )
 yui_card = Card(
     user_id=332568615390019604,
     oc_name="Yui Sakura",
     oc_talent="Hair Model",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164334124073010/YuiSakuraCard.png",
+    status=Status.DEAD,
+)
+zoe_card = Card(
+    user_id=475324575815565332,
+    oc_name="Zoë Roxanne Taiga",
+    oc_talent="Cinematographer",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068688149250108/ZoeRoxanneTaigaCard.png",
+)
+yanna_card = Card(
+    user_id=479102814594007040,
+    oc_name="Yanna Akina",
+    oc_talent="Journalist",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209703010705459/YannaAkinaCard.png",
+)
+evelyn_card = Card(
+    user_id=293549819828633600,
+    oc_name="Evelyn Tsukiki",
+    oc_talent="Lullaby Author",
+    card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209047902384148/EvelynTsukikiCard.png",
 )
 
 
 participants = [
-    alice_card,
+    # alice_card,
     cheshire_card,
     chunyu_card,
     codex_card,
@@ -210,14 +235,17 @@ participants = [
     josh_card,
     karen_card,
     katie_card,
-    kyren_card,
+    # kyren_card,
     leo_card,
     masami_card,
-    perseus_card,
+    # perseus_card,
     rui_card,
     shizuru_card,
     suri_card,
     yakichiro_card,
     yui_card,
+    zoe_card,
+    yanna_card,
+    evelyn_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
