@@ -214,6 +214,7 @@ yanna_card = Card(
     oc_name="Yanna Akina",
     oc_talent="Journalist",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209703010705459/YannaAkinaCard.png",
+    status=Status.DEAD,
 )
 evelyn_card = Card(
     user_id=293549819828633600,
