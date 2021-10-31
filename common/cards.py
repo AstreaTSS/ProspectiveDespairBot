@@ -50,7 +50,7 @@ talia_card = Card(
     oc_name="Talia Aelius",
     oc_talent="Online Advertiser",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883163389499691089/TaliaAeliusCard.png",
-    status=Status.HOST,
+    status=Status.ALIVE,
 )
 drake_card = Card(
     user_id=229350299909881876,
@@ -73,7 +73,7 @@ antomy_card = Card(
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/884562762435543050/AntomyIderisSanjurokuCard.png",
     status=Status.HOST,
 )
-hosts = [talia_card, drake_card, chichi_card, antomy_card]
+hosts = [drake_card, chichi_card, antomy_card]
 
 
 # alice_card = Card(
@@ -208,6 +208,7 @@ zoe_card = Card(
     oc_name="Zoë Roxanne Taiga",
     oc_talent="Cinematographer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068688149250108/ZoeRoxanneTaigaCard.png",
+    status=Status.DEAD,
 )
 yanna_card = Card(
     user_id=479102814594007040,
@@ -248,5 +249,6 @@ participants = [
     zoe_card,
     yanna_card,
     evelyn_card,
+    talia_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
