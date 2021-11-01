@@ -31,21 +31,22 @@ class AutoAnnouncements(commands.Cog):
         self.bot.loop.create_task(self.webhook_session.close())
 
     def gen_embed(self, day: bool = True):
-        embed = discord.Embed(title="Announcement from Talia Aelius", color=0x155F60)
+        embed = discord.Embed(title="Announcement from Drake Aelius", color=11779669)
         if day:
             str_builder = [
-                "Wake up, sweeties~ it's 9 AM!\n",
-                "The cafeteria and kitchen are now open for your eating "
-                "pleasure~ we wouldn't want to die on an empty stomach, would we?",
-                "\n\nRemember: escape is only a murder away~",
+                "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
+                "you should probably get ready for the day.\n",
+                "And yeah, the cafeteria and kitchen has been unlocked too.",
+                "\n\nRemember: if you want to escape, all you have to do is ",
+                "kill. If you can't convince yourself to do that... how weak.",
             ]
         else:
             str_builder = [
-                "It's 11 PM, sweeties~ time to go to sleep!\n",
-                "The cafeteria and kitchen will close in a few minutes. ",
-                "I would move out of there if you don't want to be shot to ",
-                "death~ it's not exciting as murder or being murder, after all!",
-                "\n\nRemember: escape is only a murder away, especially at night~",
+                "It's 11 PM. Go to sleep.\n",
+                "The cafeteria and kitchen will close in a few minutes. Move out of it ",
+                "quickly: it would be rather pathetic if you died just by being in it.",
+                "\n\nRemember: all you have to do to escape is kill... ",
+                "and I heard night time's the *perfect* time to kill.",
             ]
         embed.description = "".join(str_builder)
         return embed
