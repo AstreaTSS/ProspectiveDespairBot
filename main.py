@@ -90,9 +90,9 @@ class ProspectiveDespairBot(commands.Bot):
         time_format = discord.utils.format_dt(utcnow)
 
         connect_msg = (
-            f"Logged in at `{time_format}`!"
+            f"Logged in at {time_format}!"
             if self.init_load == True
-            else f"Reconnected at `{time_format}`!"
+            else f"Reconnected at {time_format}!"
         )
 
         while not hasattr(self, "owner"):
