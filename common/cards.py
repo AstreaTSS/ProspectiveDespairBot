@@ -50,7 +50,7 @@ talia_card = Card(
     oc_name="Talia Aelius",
     oc_talent="Online Advertiser",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883163389499691089/TaliaAeliusCard.png",
-    status=Status.HOST,
+    status=Status.ALIVE,
 )
 drake_card = Card(
     user_id=229350299909881876,
@@ -73,7 +73,7 @@ antomy_card = Card(
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/884562762435543050/AntomyIderisSanjurokuCard.png",
     status=Status.HOST,
 )
-hosts = [talia_card, drake_card, chichi_card, antomy_card]
+hosts = [drake_card, chichi_card, antomy_card]
 
 
 # alice_card = Card(
@@ -87,6 +87,7 @@ cheshire_card = Card(
     oc_name="Cheshire Cat",
     oc_talent="Stage Magician",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164204994019348/CheshireCatCard.png",
+    status=Status.DEAD,
 )
 chunyu_card = Card(
     user_id=486291559617134592,
@@ -111,6 +112,7 @@ fusanosuke_card = Card(
     oc_name="Fusanosuke Fukushima",
     oc_talent="Performer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164243455787038/FusanosukeFukushimaCard.png",
+    status=Status.DEAD,
 )
 haru_card = Card(
     user_id=486181655837671425,
@@ -135,6 +137,7 @@ karen_card = Card(
     oc_name="Karen Mahizuna",
     oc_talent="Sommelier",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164259587076126/KarenMahizunaCard.png",
+    status=Status.DEAD,
 )
 katie_card = Card(
     user_id=469806229716205578,
@@ -154,6 +157,7 @@ leo_card = Card(
     oc_name="Leo Kobayashi",
     oc_talent="Film-Video Editor",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164271582785556/LeoKobayashiCard.png",
+    status=Status.DEAD,
 )
 masami_card = Card(
     user_id=578757582186086410,
@@ -190,6 +194,7 @@ yakichiro_card = Card(
     oc_name="Yakichiro Toshio Ochi",
     oc_talent="Hotel Manager",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883164330965733426/YakichiroToshioOchiCard.png",
+    status=Status.DEAD,
 )
 yui_card = Card(
     user_id=332568615390019604,
@@ -203,12 +208,14 @@ zoe_card = Card(
     oc_name="Zoë Roxanne Taiga",
     oc_talent="Cinematographer",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/887068688149250108/ZoeRoxanneTaigaCard.png",
+    status=Status.DEAD,
 )
 yanna_card = Card(
     user_id=479102814594007040,
     oc_name="Yanna Akina",
     oc_talent="Journalist",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209703010705459/YannaAkinaCard.png",
+    status=Status.DEAD,
 )
 evelyn_card = Card(
     user_id=293549819828633600,
@@ -242,5 +249,6 @@ participants = [
     zoe_card,
     yanna_card,
     evelyn_card,
+    talia_card,
 ]
 participants.sort(key=lambda card: card.oc_name)
