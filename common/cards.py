@@ -94,6 +94,7 @@ chunyu_card = Card(
     oc_name="Chunyu Tsuguri",
     oc_talent="Surgeon",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883830062925885491/ChunyuTsuguriCard.png",
+    status=Status.DEAD,
 )
 codex_card = Card(
     user_id=397994270226907136,
@@ -222,6 +223,7 @@ evelyn_card = Card(
     oc_name="Evelyn Tsukiki",
     oc_talent="Lullaby Author",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/888209047902384148/EvelynTsukikiCard.png",
+    status=Status.DEAD,
 )
 
 
