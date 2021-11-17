@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import logging
 import os
 
@@ -11,10 +10,11 @@ from tortoise import Tortoise
 from websockets import ConnectionClosedOK
 
 import common.utils as utils
+import keep_alive
 from common.help_cmd import PaginatedHelpCommand
 
 
-load_dotenv()
+# load_dotenv()
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.INFO)
@@ -50,7 +50,7 @@ async def on_init_load():
     await bot.wait_until_ready()
 
     await Tortoise.init(
-        db_url="sqlite://db.sqlite3", modules={"models": ["common.models"]}
+        db_url=os.environ.get("DB_URL"), modules={"models": ["common.models"]}
     )
 
     application = await bot.application_info()
@@ -87,12 +87,12 @@ class DespairsHorizonBot(commands.Bot):
 
     async def on_ready(self):
         utcnow = discord.utils.utcnow()
-        time_format = utcnow.strftime("%x %X UTC")
+        time_format = discord.utils.format_dt(utcnow)
 
         connect_msg = (
-            f"Logged in at `{time_format}`!"
+            f"Logged in at {time_format}!"
             if self.init_load == True
-            else f"Reconnected at `{time_format}`!"
+            else f"Reconnected at {time_format}!"
         )
 
         while not hasattr(self, "owner"):
@@ -132,7 +132,7 @@ class DespairsHorizonBot(commands.Bot):
         return ctx
 
     async def close(self):
-        await Tortoise.close_connections() # this will complain a bit, just ignore it
+        await Tortoise.close_connections()  # this will complain a bit, just ignore it
         return await super().close()
 
 
@@ -148,4 +148,5 @@ bot.init_load = True
 bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
 
 bot.loop.create_task(on_init_load())
+keep_alive.keep_alive()
 bot.run(os.environ.get("MAIN_TOKEN"))

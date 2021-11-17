@@ -27,8 +27,7 @@ class Voting(commands.Cog, name="Voting"):
             def __init__(self):
                 options = [
                     discord.SelectOption(
-                        label=card.oc_name,
-                        value=f"vote:{convert_name(card.oc_name)})",
+                        label=card.oc_name, value=f"vote:{convert_name(card.oc_name)}",
                     )
                     for card in cards.participants
                 ]
@@ -115,8 +114,10 @@ class Voting(commands.Cog, name="Voting"):
         most_common = vote_counter.most_common(
             None
         )  # [('oc name', num of votes)] from most to least votes
-        final_msg_builder = [f"{a_tuple[0]}: {a_tuple[1]}" for a_tuple in most_common]
-        final_msg_builder.insert(0, "__**VOTES:**__")
+        final_msg_builder = [
+            f"**{a_tuple[0]}**: {a_tuple[1]}" for a_tuple in most_common
+        ]
+        final_msg_builder.insert(0, "__**VOTES:**__\n")
 
         await ctx.send("\n".join(final_msg_builder))
 

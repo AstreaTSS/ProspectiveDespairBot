@@ -31,6 +31,42 @@ class AutoAnnouncements(commands.Cog):
     #     self.task.cancel()
     #     self.webhook_session.close()
 
+    def gen_embed(self, day: bool = True):
+        embed = discord.Embed(title="Announcement from Monokuma", color=13632027)
+        embed.set_image(
+            url="https://cdn.discordapp.com/attachments/457939628209602560/861282169276072006/vlcsnap-2021-07-04-12h26m28s639.png"
+        )
+
+        if day:
+            str_builder = [
+                "Yodelay he puhuhuhu! It is now 8 AM and night time is officially ",
+                "over! Time to rise and freeze and get ready for a yodelay great day!",
+            ]
+        else:
+            str_builder = [
+                "Ahem. This is an important announcement. It is now 10 PM. ",
+                "As such, it is officially nighttime. Soon the doors to the ",
+                "buffet will be locked, and entry at that point is strictly ",
+                "prohibited. Okay then... sweet dreams, everyone! Good night, ",
+                "sleep tight, *don’t let the bedbugs bite...*",
+            ]
+        embed.description = "".join(str_builder)
+        return embed
+
+    @commands.command(
+        aliases=["run_night_announce", "night_announcement", "night_announce"]
+    )
+    @utils.proper_permissions()
+    async def run_night_announcement(self, ctx: commands.Context):
+        await self.webhook.send(embed=self.gen_embed(day=False))
+        await ctx.reply("Done!")
+
+    @commands.command(aliases=["run_day_announce", "day_announcement", "day_announce"])
+    @utils.proper_permissions()
+    async def run_day_announcement(self, ctx: commands.Context):
+        await self.webhook.send(embed=self.gen_embed(day=True))
+        await ctx.reply("Done!")
+
     async def auto_run(self):
         while True:
             et_now = datetime.datetime.now(et)
@@ -51,28 +87,8 @@ class AutoAnnouncements(commands.Cog):
 
             await discord.utils.sleep_until(sleep_till)
 
-            embed = discord.Embed(
-                title="Announcement from Monokuma", color=13632027
-            )
-            embed.set_image(url="https://cdn.discordapp.com/attachments/457939628209602560/861282169276072006/vlcsnap-2021-07-04-12h26m28s639.png")
             et_now = datetime.datetime.now(et)
-
-            if et_now.hour == 22:
-                str_builder = [
-                    "Ahem. This is an important announcement. It is now 10 PM. ",
-                    "As such, it is officially nighttime. Soon the doors to the ",
-                    "buffet will be locked, and entry at that point is strictly ",
-                    "prohibited. Okay then... sweet dreams, everyone! Good night, ",
-                    "sleep tight, *don’t let the bedbugs bite...*",
-
-                ]
-            else:
-                str_builder = [
-                    "Yodelay he puhuhuhu! It is now 8 AM and night time is officially ",
-                    "over! Time to rise and freeze and get ready for a yodelay great day!",
-                ]
-
-            embed.description = "".join(str_builder)
+            embed = self.gen_embed(day=bool(et_now.hour != 23))
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 

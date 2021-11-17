@@ -39,14 +39,11 @@ async def error_handle(
 
         error_split = error_str.splitlines()
         chunks = [error_split[x : x + 20] for x in range(0, len(error_split), 20)]
-        for i in range(len(chunks)):
-            chunks[i][0] = f"```py\n{chunks[i][0]}"
-            chunks[i][len(chunks[i]) - 1] += "\n```"
+        for chunk_ in chunks:
+            chunk_[0] = f"```py\n{chunk_[0]}"
+            chunk_[len(chunk_) - 1] += "\n```"
 
-        final_chunks = []
-        for chunk in chunks:
-            final_chunks.append("\n".join(chunk))
-
+        final_chunks = ["\n".join(chunk) for chunk in chunks]
         if ctx and hasattr(ctx, "message") and hasattr(ctx.message, "jump_url"):
             final_chunks.insert(0, f"Error on: {ctx.message.jump_url}")
 
@@ -61,10 +58,18 @@ async def error_handle(
                 "An internal error has occured. The bot owner has been notified."
             )
         else:
-            await ctx.create_response(
-                content="An internal error has occured. The bot owner has been notified.",
-                ephemeral=True,
-            )
+            try:
+                await ctx.create_response(
+                    content="An internal error has occured. The bot owner has been notified.",
+                    ephemeral=True,
+                )
+            except discord.NotFound:
+                try:
+                    await ctx.edit(
+                        content="An internal error has occured. The bot owner has been notified.",
+                    )
+                except discord.HTTPException:
+                    pass
 
 
 async def msg_to_owner(bot, content, split=True):
@@ -176,7 +181,7 @@ def yesno_friendly_str(bool_to_convert):
 
 def error_embed_generate(error_msg):
     return discord.Embed(colour=discord.Colour.red(), description=error_msg)
-    
+
 
 def proper_permissions():
     async def predicate(ctx: commands.Context):

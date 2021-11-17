@@ -215,7 +215,7 @@ class SlashCMDS(commands.Cog):
         async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-            interact.interactions -= count
+            interact.interactions -= actual_count
             if interact.interactions < Decimal(0):
                 interact.interactions == Decimal(0)
             await interact.save()
