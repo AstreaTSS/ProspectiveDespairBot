@@ -25,7 +25,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
             def is_valid(m: discord.Message):
                 return m.author.id == self.bot.user.id
 
-            reference_date = datetime(2021, 6, 17)
+            reference_date = datetime(2021, 11, 17)
             await profile_chan.purge(limit=100, check=is_valid, after=reference_date)
 
             if cards.hosts:
