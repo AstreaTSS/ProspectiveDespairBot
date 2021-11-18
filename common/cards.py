@@ -41,10 +41,14 @@ class Card:
         member = await bot.fetch_user(
             self.user_id
         )  # we're assuming this will never fail because i double check everything
-        embed = discord.Embed(
-            title=self.title_name,
-            description=f"By: {member.mention} ({member})\nStatus: **{self.display_status}**",
-        )
+
+        desc = [
+            f"**OC By:** {member.mention} ({member})",
+            f"**Pronouns:** {self.pronouns}",
+            f"**Status:** {self.display_status.title()}",
+        ]
+
+        embed = discord.Embed(title=self.title_name, description="\n".join(desc))
 
         embed.set_image(url=self.card_url)
         embed.color = self.status.value
