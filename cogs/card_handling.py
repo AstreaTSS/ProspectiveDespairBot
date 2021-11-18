@@ -17,7 +17,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
     @commands.command()
     @commands.is_owner()
-    async def update_cards(self, ctx: commands.Context):
+    async def update_card_data(self, ctx: commands.Context):
         importlib.reload(cards)
 
         extensions = [i for i in self.bot.extensions.keys()]
