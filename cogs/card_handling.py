@@ -16,6 +16,17 @@ class CardHandling(commands.Cog, name="Card Handling"):
         self.bot: commands.Bot = bot
 
     @commands.command()
+    @commands.is_owner()
+    async def update_cards(self, ctx: commands.Context):
+        importlib.reload(cards)
+
+        extensions = [i for i in self.bot.extensions.keys()]
+        for extension in extensions:
+            self.bot.reload_extension(extension)
+
+        await ctx.reply("Done!")
+
+    @commands.command()
     @utils.proper_permissions()
     async def update_cast(self, ctx: commands.Context):
 
@@ -96,7 +107,6 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
 
 def setup(bot):
-    importlib.reload(cards)
     importlib.reload(utils)
     importlib.reload(fuzzys)
     bot.add_cog(CardHandling(bot))

@@ -444,5 +444,4 @@ class SlashCMDS(commands.Cog):
 
 def setup(bot):
     importlib.reload(utils)
-    importlib.reload(cards)
     bot.add_cog(SlashCMDS(bot))
