@@ -304,7 +304,7 @@ class SlashCMDS(commands.Cog):
         options=[],
     )
     async def list_interactions(self, inter: dislash.Interaction):
-        await inter.create_response(type=5)
+        await inter.create_response(type=5, ephemeral=True)
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
