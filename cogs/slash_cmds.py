@@ -64,7 +64,7 @@ class SlashCMDS(commands.Cog):
         await asyncio.sleep(10)
         slash_cmds: typing.List[
             dislash.SlashCommand
-        ] = await self.bot.slash.fetch_guild_commands(786609181855318047)
+        ] = await self.bot.slash.fetch_guild_commands(673355251583025192)
 
         perm_dict = {}
 
@@ -75,7 +75,7 @@ class SlashCMDS(commands.Cog):
                 perm_dict[cmd.id] = admin_perms
 
         await self.bot.slash.batch_edit_guild_command_permissions(
-            786609181855318047, perm_dict
+            673355251583025192, perm_dict
         )
 
     @dislash.slash_command(
@@ -145,12 +145,12 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got an interaction!",
+                description=f"{', '.join(tuple(m.mention for m in members))} got **an** interaction!",
             )
         else:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got {actual_count} interactions!",
+                description=f"{', '.join(tuple(m.mention for m in members))} got **{actual_count}** interactions!",
             )
 
         await inter.edit(embed=embed)
@@ -224,12 +224,12 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed an interaction from: {', '.join(tuple(m.mention for m in members))}.",
+                description=f"Removed **an** interaction from: {', '.join(tuple(m.mention for m in members))}.",
             )
         else:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed {actual_count} interactions from: {', '.join(tuple(m.mention for m in members))}.",
+                description=f"Removed **{actual_count}** interactions from: {', '.join(tuple(m.mention for m in members))}.",
             )
 
         await inter.edit(embed=embed)
@@ -292,7 +292,7 @@ class SlashCMDS(commands.Cog):
         embed = discord.Embed(
             color=self.bot.color,
             description=f"{', '.join(tuple(m.mention for m in members))} have been recorded to be "
-            + "at the event! They get 0.5 interaction points.",
+            + "at the event! They get **0.5** interaction points.",
         )
 
         await inter.edit(embed=embed)
@@ -309,7 +309,7 @@ class SlashCMDS(commands.Cog):
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
-        list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
+        list_inters = tuple(f"<@{i.user_id}>: **{i.interactions}**" for i in inters)
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -410,7 +410,7 @@ class SlashCMDS(commands.Cog):
         if interact:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"You have {interact.interactions} interactions for this cycle!",
+                description=f"You have **{interact.interactions}** interactions for this cycle!",
                 timestamp=discord.utils.utcnow(),
             )
             embed.set_footer(text="As of")
