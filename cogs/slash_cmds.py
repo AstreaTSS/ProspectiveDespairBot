@@ -64,18 +64,15 @@ class SlashCMDS(commands.Cog):
         await asyncio.sleep(10)
         slash_cmds: typing.List[
             dislash.SlashCommand
-        ] = await self.bot.slash.fetch_guild_commands(673355251583025192)
+        ] = await self.bot.slash.fetch_guild_commands(786609181855318047)
 
-        perm_dict = {}
-
-        for cmd in slash_cmds:
-            if cmd.name == "interactions":
-                perm_dict[cmd.id] = alive_player_perms
-            else:
-                perm_dict[cmd.id] = admin_perms
+        perm_dict = {
+            cmd.id: alive_player_perms if cmd.name == "interactions" else admin_perms
+            for cmd in slash_cmds
+        }
 
         await self.bot.slash.batch_edit_guild_command_permissions(
-            673355251583025192, perm_dict
+            786609181855318047, perm_dict
         )
 
     @dislash.slash_command(
