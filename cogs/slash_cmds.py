@@ -65,13 +65,10 @@ class SlashCMDS(commands.Cog):
             dislash.SlashCommand
         ] = await self.bot.slash.fetch_guild_commands(786609181855318047)
 
-        perm_dict = {}
-
-        for cmd in slash_cmds:
-            if cmd.name == "interactions":
-                perm_dict[cmd.id] = alive_player_perms
-            else:
-                perm_dict[cmd.id] = admin_perms
+        perm_dict = {
+            cmd.id: alive_player_perms if cmd.name == "interactions" else admin_perms
+            for cmd in slash_cmds
+        }
 
         await self.bot.slash.batch_edit_guild_command_permissions(
             786609181855318047, perm_dict
@@ -139,6 +136,7 @@ class SlashCMDS(commands.Cog):
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
             interact.interactions += actual_count
+            interact.total_interactions += actual_count
             await interact.save()
 
         if actual_count == Decimal(1):
@@ -215,9 +213,15 @@ class SlashCMDS(commands.Cog):
         async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
+
             interact.interactions -= actual_count
             if interact.interactions < Decimal(0):
                 interact.interactions == Decimal(0)
+
+            interact.total_interactions -= actual_count
+            if interact.total_interactions < Decimal(0):
+                interact.total_interactions == Decimal(0)
+
             await interact.save()
 
         if actual_count == Decimal(1):
@@ -286,6 +290,7 @@ class SlashCMDS(commands.Cog):
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
             interact.interactions += Decimal("0.5")
+            interact.total_interactions += Decimal("0.5")
             await interact.save()
 
         embed = discord.Embed(
@@ -308,7 +313,10 @@ class SlashCMDS(commands.Cog):
 
         inters = await models.UserInteraction.all()
         inters.sort(key=lambda i: i.interactions, reverse=True)
-        list_inters = tuple(f"<@{i.user_id}>: {i.interactions}" for i in inters)
+        list_inters = tuple(
+            f"<@{i.user_id}>: {i.interactions} ({i.total_interactions} total)"
+            for i in inters
+        )
 
         embed = discord.Embed(
             color=self.bot.color,
@@ -328,13 +336,14 @@ class SlashCMDS(commands.Cog):
     async def reset_interactions(self, inter: dislash.Interaction):
         await inter.create_response(type=5)
 
-        await models.UserInteraction.all().delete()
-        user_ids = tuple(
-            c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
+        # keeps parity with old way of functioning
+        # removes any not-alive player from here
+        not_alive_user_ids = tuple(
+            c.user_id for c in cards.participants if c.status != cards.Status.ALIVE
         )
-        for user_id in user_ids:
-            await models.UserInteraction.create(user_id=user_id, interactions=0)
+        await models.UserInteraction.filter(user_id__in=not_alive_user_ids).delete()
 
+        await models.UserInteraction.all().update(interactions=0)
         await inter.edit("Done!")
 
     @dislash.slash_command(
@@ -395,6 +404,27 @@ class SlashCMDS(commands.Cog):
         )
 
     @dislash.slash_command(
+        name="refresh-players-for-interactions",
+        description="COMPLETELY deletes old interaction data and adds in new players.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
+        options=[],
+    )
+    async def refresh_players_for_interactions(self, inter: dislash.Interaction):
+        await inter.create_response(type=5)
+
+        await models.UserInteraction.all().delete()
+        user_ids = tuple(
+            c.user_id for c in cards.participants if c.status == cards.Status.ALIVE
+        )
+        for user_id in user_ids:
+            await models.UserInteraction.create(
+                user_id=user_id, interactions=0, total_interactions=0
+            )
+
+        await inter.edit("Done!")
+
+    @dislash.slash_command(
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[673355251583025192],
@@ -409,7 +439,9 @@ class SlashCMDS(commands.Cog):
         if interact:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"You have {interact.interactions} interactions for this cycle!",
+                description=f"You have {interact.interactions} interactions for this cycle!"
+                + f"\nYou have had {interact.total_interactions} interactions throughout the "
+                + "entire season.",
                 timestamp=discord.utils.utcnow(),
             )
             embed.set_footer(text="As of")
