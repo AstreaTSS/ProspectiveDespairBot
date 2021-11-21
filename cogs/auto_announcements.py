@@ -24,10 +24,10 @@ class AutoAnnouncements(commands.Cog):
             os.environ.get("WEBHOOK_URL"), session=self.webhook_session,
         )
 
-        self.task = self.bot.loop.create_task(self.auto_run())
+        # self.task = self.bot.loop.create_task(self.auto_run())
 
     def cog_unload(self):
-        self.task.cancel()
+        # self.task.cancel()
         self.bot.loop.create_task(self.webhook_session.close())
 
     def gen_embed(self, day: bool = True):
