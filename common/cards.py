@@ -57,7 +57,7 @@ drake_card = Card(
     oc_name="Drake Aelius",
     oc_talent="Youtuber",
     card_url="https://cdn.discordapp.com/attachments/457939628209602560/883163375272624138/DrakeAeliusCard.png",
-    status=Status.HOST,
+    status=Status.DEAD,
 )
 chichi_card = Card(
     user_id=588749122643951616,
