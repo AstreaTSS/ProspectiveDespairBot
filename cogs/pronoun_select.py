@@ -36,7 +36,7 @@ class PronounDropdown(discord.ui.Select):
         super().__init__(
             custom_id="pdpronounselect",
             placeholder="Select your pronouns!",
-            min_values=1,
+            min_values=0,
             max_values=7,
             options=options,
         )
