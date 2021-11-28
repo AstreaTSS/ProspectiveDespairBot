@@ -42,41 +42,44 @@ class PronounDropdown(discord.ui.Select):
         )
 
     async def callback(self, inter: discord.Interaction):
-        member = inter.user
+        if self.values:
+            member = inter.user
 
-        if not isinstance(member, discord.Member):
-            await inter.response.send_message(
-                "An error occured. Please try again.", ephemeral=True
-            )
-            return
+            if not isinstance(member, discord.Member):
+                await inter.response.send_message(
+                    "An error occured. Please try again.", ephemeral=True
+                )
+                return
 
-        # do this weirdness since doing member.roles has a cache
-        # search cost which can be expensive if there are tons of roles
-        member_roles = set(discord.Object(r) for r in member._roles)
-        add_list = []
-        remove_list = []
+            # do this weirdness since doing member.roles has a cache
+            # search cost which can be expensive if there are tons of roles
+            member_roles = set(discord.Object(r) for r in member._roles)
+            add_list = []
+            remove_list = []
 
-        for values in self.values:
-            split_string = values.split("pdpronoun:")[1].split("|")
-            pronoun_role = discord.Object(split_string[0])
-            pronoun_name = split_string[1]
+            for values in self.values:
+                split_string = values.split("pdpronoun:")[1].split("|")
+                pronoun_role = discord.Object(split_string[0])
+                pronoun_name = split_string[1]
 
-            try:
-                member_roles.remove(pronoun_role)
-                remove_list.append(f"`{pronoun_name}`")
-            except KeyError:
-                member_roles.add(pronoun_role)
-                add_list.append(f"`{pronoun_name}`")
+                try:
+                    member_roles.remove(pronoun_role)
+                    remove_list.append(f"`{pronoun_name}`")
+                except KeyError:
+                    member_roles.add(pronoun_role)
+                    add_list.append(f"`{pronoun_name}`")
 
-        await member.edit(roles=list(member_roles))
+            await member.edit(roles=list(member_roles))
 
-        str_builder = []
-        if add_list:
-            str_builder.append("Added Pronouns: " + ", ".join(add_list))
-        if remove_list:
-            str_builder.append("Removed Pronouns: " + ", ".join(remove_list))
+            str_builder = []
+            if add_list:
+                str_builder.append("Added Pronouns: " + ", ".join(add_list))
+            if remove_list:
+                str_builder.append("Removed Pronouns: " + ", ".join(remove_list))
 
-        await inter.response.send_message("\n".join(str_builder), ephemeral=True)
+            await inter.response.send_message("\n".join(str_builder), ephemeral=True)
+        else:
+            await inter.response.send_message("No pronouns edited.")
 
 
 class PronounDropdownView(discord.ui.View):
