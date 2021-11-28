@@ -145,6 +145,7 @@ bot = ProspectiveDespairBot(
 slash = dislash.InteractionClient(bot, modify_send=False)
 
 bot.init_load = True
+bot.added_pronoun_view = False
 bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
 
 bot.loop.create_task(on_init_load())
