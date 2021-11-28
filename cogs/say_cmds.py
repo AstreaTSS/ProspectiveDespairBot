@@ -135,7 +135,7 @@ class SayCMDS(commands.Cog, name="Say"):
 
         question_2 = (
             "2. If you wish to do so, what color, in hex (ex. #000000), would you like the embed to have. Case-insensitive, "
-            + "does not require '#'.\nIf you just want the default color, say \"skip\"."
+            + "*does* require '#'.\nIf you just want the default color, say \"skip\"."
         )
 
         async def color_convert(ctx, content):
