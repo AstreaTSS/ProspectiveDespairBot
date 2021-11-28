@@ -1,3 +1,5 @@
+import importlib
+
 import discord
 from discord.ext import commands
 
@@ -104,3 +106,8 @@ class PronounSelect(commands.Cog, name="Pronoun Select"):
         )
 
         await ctx.send("\n".join(str_builder), view=PronounDropdownView())
+
+
+def setup(bot):
+    importlib.reload(utils)
+    bot.add_cog(PronounSelect(bot))
