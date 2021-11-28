@@ -98,7 +98,7 @@ class PronounSelect(commands.Cog, name="Pronoun Select"):
     @utils.proper_permissions()
     async def send_pronoun_select(self, ctx: commands.Context):
         str_builder = []
-        str_builder.append("**Role Menu: Pronouns")
+        str_builder.append("**Role Menu: Pronouns**")
         str_builder.append("Select the pronouns you wish to have.")
         str_builder.append(
             "Selecting a pronoun while you already have it will remove "
@@ -106,6 +106,7 @@ class PronounSelect(commands.Cog, name="Pronoun Select"):
         )
 
         await ctx.send("\n".join(str_builder), view=PronounDropdownView())
+        await ctx.message.delete()
 
 
 def setup(bot):
