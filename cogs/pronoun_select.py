@@ -79,7 +79,7 @@ class PronounDropdown(discord.ui.Select):
 
             await inter.response.send_message("\n".join(str_builder), ephemeral=True)
         else:
-            await inter.response.send_message("No pronouns edited.")
+            await inter.response.send_message("No pronouns edited.", ephemeral=True)
 
 
 class PronounDropdownView(discord.ui.View):
