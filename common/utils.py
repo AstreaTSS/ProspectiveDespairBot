@@ -39,14 +39,11 @@ async def error_handle(
 
         error_split = error_str.splitlines()
         chunks = [error_split[x : x + 20] for x in range(0, len(error_split), 20)]
-        for i in range(len(chunks)):
-            chunks[i][0] = f"```py\n{chunks[i][0]}"
-            chunks[i][len(chunks[i]) - 1] += "\n```"
+        for chunk_ in chunks:
+            chunk_[0] = f"```py\n{chunk_[0]}"
+            chunk_[len(chunk_) - 1] += "\n```"
 
-        final_chunks = []
-        for chunk in chunks:
-            final_chunks.append("\n".join(chunk))
-
+        final_chunks = ["\n".join(chunk) for chunk in chunks]
         if ctx and hasattr(ctx, "message") and hasattr(ctx.message, "jump_url"):
             final_chunks.insert(0, f"Error on: {ctx.message.jump_url}")
 
@@ -100,7 +97,7 @@ def embed_check(embed: discord.Embed) -> bool:
 
     if embed.title and len(embed.title) > 256:
         return False
-    if embed.description and len(embed.description) > 2048:
+    if embed.description and len(embed.description) > 4096:
         return False
     if embed.author and embed.author.name and len(embed.author.name) > 256:
         return False
@@ -184,6 +181,28 @@ def yesno_friendly_str(bool_to_convert):
 
 def error_embed_generate(error_msg):
     return discord.Embed(colour=discord.Colour.red(), description=error_msg)
+
+
+def generate_mentions(ctx: commands.Context):
+    # sourcery skip: remove-unnecessary-else
+    # generates an AllowedMentions object that is similar to what a user can usually use
+
+    permissions = ctx.channel.permissions_for(ctx.author)
+    can_mention = permissions.administrator or permissions.mention_everyone
+
+    if can_mention:
+        # i could use a default AllowedMentions object, but this is more clear
+        return discord.AllowedMentions(everyone=True, users=True, roles=True)
+    else:
+        pingable_roles = tuple(r for r in ctx.guild.roles if r.mentionable)
+        return discord.AllowedMentions(everyone=False, users=True, roles=pingable_roles)
+
+
+def get_icon_url(asset: discord.Asset, size=128):
+    if asset.is_animated():
+        return str(asset.replace(format="gif", size=size))
+    else:
+        return str(asset.replace(format="png", size=size))
 
 
 def proper_permissions():
