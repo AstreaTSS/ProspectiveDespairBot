@@ -39,16 +39,17 @@ class AutoAnnouncements(commands.Cog):
 
         if day:
             str_builder = [
-                "Yodelay he puhuhuhu! It is now 8 AM and night time is officially ",
-                "over! Time to rise and freeze and get ready for a yodelay great day!",
+                "Ahem, ahem. Wakey, wakey! The sun is shining and everything is ",
+                "beautiful. It is 8 AM and now officially daytime. Wake up, ",
+                "get up, and get out there to greet another exciting day!",
             ]
         else:
             str_builder = [
-                "Ahem. This is an important announcement. It is now 10 PM. ",
-                "As such, it is officially nighttime. Soon the doors to the ",
-                "buffet will be locked, and entry at that point is strictly ",
-                "prohibited. Okay then... sweet dreams, everyone! Good night, ",
-                "sleep tight, *don’t let the bedbugs bite...*",
+                "Helloooo...? Helloooo? This is an important announcement. ",
+                "Can't you see? It's 10 PM, and the moon's already out. ",
+                "As such, it is officially nighttime. Sweet dreams, everyone! ",
+                "Good night, sleep night... You never know what creatures are out ",
+                "in the jungle~",
             ]
         embed.description = "".join(str_builder)
         return embed

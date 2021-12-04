@@ -15,6 +15,7 @@ from common.help_cmd import PaginatedHelpCommand
 
 
 # load_dotenv()
+os.system("git pull")  # stupid way of getting around replit stuff
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.INFO)
