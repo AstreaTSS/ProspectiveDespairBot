@@ -1,6 +1,15 @@
+import datetime
+import importlib
 import time
 
+import dateutil.parser
+import discord.utils
+import pytz
 from discord.ext import commands
+
+import common.utils as utils
+
+et = pytz.timezone("US/Eastern")
 
 
 class EtcCmds(commands.Cog, name="Misc."):
@@ -25,6 +34,26 @@ class EtcCmds(commands.Cog, name="Misc."):
             content=f"Pong!\n`{ping_discord}` ms from Discord.\n`{ping_personal}` ms personally."
         )
 
+    class TimeParser(commands.Converter, datetime.datetime):
+        async def convert(self, ctx: commands.Context, argument: str):
+            try:
+                the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
+                the_time.replace(tzinfo=et)
+                return the_time
+            except dateutil.parser.ParserError:
+                raise commands.BadArgument(
+                    "The argument provided could not be parsed as a time!"
+                )
+
+    @commands.command()
+    @utils.proper_permissions()
+    async def time_format(self, ctx: commands.Context, *, time_str: TimeParser):
+        """Formats the time given into the fancy Discord timestamp markdown.
+        Every time is assumed to be in ET.
+        Times with no dates are assumed to be taking place today."""
+        await ctx.send(discord.utils.format_dt(time_str))
+
 
 def setup(bot):
+    importlib.reload(utils)
     bot.add_cog(EtcCmds(bot))
