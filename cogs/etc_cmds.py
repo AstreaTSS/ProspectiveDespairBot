@@ -1,6 +1,6 @@
-import datetime
 import importlib
 import time
+from typing import TYPE_CHECKING
 
 import dateutil.parser
 import discord.utils
@@ -10,6 +10,26 @@ from discord.ext import commands
 import common.utils as utils
 
 et = pytz.timezone("US/Eastern")
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    class TimeParser(datetime):
+        ...
+
+
+else:
+
+    class TimeParser(commands.Converter):
+        async def convert(self, ctx: commands.Context, argument: str):
+            try:
+                the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
+                the_time.replace(tzinfo=et)
+                return the_time
+            except dateutil.parser.ParserError:
+                raise commands.BadArgument(
+                    "The argument provided could not be parsed as a time!"
+                )
 
 
 class EtcCmds(commands.Cog, name="Misc."):
@@ -34,18 +54,7 @@ class EtcCmds(commands.Cog, name="Misc."):
             content=f"Pong!\n`{ping_discord}` ms from Discord.\n`{ping_personal}` ms personally."
         )
 
-    class TimeParser(commands.Converter, datetime.datetime):
-        async def convert(self, ctx: commands.Context, argument: str):
-            try:
-                the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
-                the_time.replace(tzinfo=et)
-                return the_time
-            except dateutil.parser.ParserError:
-                raise commands.BadArgument(
-                    "The argument provided could not be parsed as a time!"
-                )
-
-    @commands.command()
+    @commands.command(aliases=["format_time"])
     @utils.proper_permissions()
     async def time_format(self, ctx: commands.Context, *, time_str: TimeParser):
         """Formats the time given into the fancy Discord timestamp markdown.
