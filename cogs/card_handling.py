@@ -17,6 +17,17 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
     @commands.command()
     @commands.is_owner()
+    async def update_card_data(self, ctx: commands.Context):
+        importlib.reload(cards)
+
+        extensions = [i for i in self.bot.extensions.keys()]
+        for extension in extensions:
+            self.bot.reload_extension(extension)
+
+        await ctx.reply("Done!")
+
+    @commands.command()
+    @utils.proper_permissions()
     async def update_cast(self, ctx: commands.Context):
 
         async with ctx.typing():
@@ -28,12 +39,13 @@ class CardHandling(commands.Cog, name="Card Handling"):
             reference_date = datetime(2021, 9, 2)
             await profile_chan.purge(limit=100, check=is_valid, after=reference_date)
 
-            await profile_chan.send("```\nKG Hosts\n```")
+            if cards.hosts:
+                await profile_chan.send("```\nKG Hosts\n```")
 
-            for host_card in cards.hosts:
-                embed = await host_card.as_embed(ctx.bot)
-                await profile_chan.send(embed=embed)
-                await asyncio.sleep(1)  # ratelimits
+                for host_card in cards.hosts:
+                    embed = await host_card.as_embed(ctx.bot)
+                    await profile_chan.send(embed=embed)
+                    await asyncio.sleep(1)  # ratelimits
 
             await profile_chan.send("```\nParticipants\n```")
 
@@ -95,7 +107,6 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
 
 def setup(bot):
-    importlib.reload(cards)
     importlib.reload(utils)
     importlib.reload(fuzzys)
     bot.add_cog(CardHandling(bot))

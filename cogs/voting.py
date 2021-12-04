@@ -146,5 +146,4 @@ class Voting(commands.Cog, name="Voting"):
 
 def setup(bot):
     importlib.reload(utils)
-    importlib.reload(cards)
     bot.add_cog(Voting(bot))

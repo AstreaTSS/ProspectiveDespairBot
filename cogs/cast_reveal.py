@@ -59,5 +59,4 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
 
 
 def setup(bot):
-    importlib.reload(cards)
     bot.add_cog(CastReveal(bot))
