@@ -24,8 +24,8 @@ else:
         async def convert(self, ctx: commands.Context, argument: str):
             try:
                 the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
-                the_time.replace(tzinfo=et)
-                return the_time
+                the_time = et.localize(the_time)
+                return the_time.astimezone(pytz.utc)
             except dateutil.parser.ParserError:
                 raise commands.BadArgument(
                     "The argument provided could not be parsed as a time!"
