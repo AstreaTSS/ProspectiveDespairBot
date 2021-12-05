@@ -9,7 +9,7 @@ python-dotenv==0.19.2
 rapidfuzz==1.8.3
 python-dateutil==2.8.2
 flask==2.0.2
-orjson==3.6.4
+orjson==3.6.5
 humanize==3.13.1
 attrs==21.2.0
 rtoml==0.7.0
