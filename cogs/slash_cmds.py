@@ -143,7 +143,7 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got **an** interaction!",
+                description=f"{', '.join(tuple(m.mention for m in members))} got **1** interaction!",
             )
         else:
             embed = discord.Embed(
@@ -228,7 +228,7 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed **an** interaction from: {', '.join(tuple(m.mention for m in members))}.",
+                description=f"Removed **1** interaction from: {', '.join(tuple(m.mention for m in members))}.",
             )
         else:
             embed = discord.Embed(
