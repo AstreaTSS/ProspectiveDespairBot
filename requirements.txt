@@ -12,4 +12,4 @@ flask==2.0.2
 orjson==3.6.5
 humanize==3.13.1
 attrs==21.2.0
-rtoml==0.7.0
+rtoml==0.7.1
