@@ -455,14 +455,14 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description="Removed **1** from total interactions "
-                + f"from: {', '.join(tuple(m.mention for m in members))}.",
+                description="Removed **1** from the total interactions "
+                + f"of: {', '.join(tuple(m.mention for m in members))}.",
             )
         else:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed **{actual_count}** from total "
-                f"interactions from: {', '.join(tuple(m.mention for m in members))}.",
+                description=f"Removed **{actual_count}** from the total "
+                f"interactions of: {', '.join(tuple(m.mention for m in members))}.",
             )
 
         await inter.edit(embed=embed)
