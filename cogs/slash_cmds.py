@@ -309,7 +309,7 @@ class SlashCMDS(commands.Cog):
     @dislash.slash_command(
         name="add-to-total",
         description="Adds an interaction to the members' total interactions.",
-        guild_ids=[673355251583025192],
+        guild_ids=[786609181855318047],
         default_permission=False,
         options=interactions_plus,
     )
@@ -388,7 +388,7 @@ class SlashCMDS(commands.Cog):
     @dislash.slash_command(
         name="remove-from-total",
         description="Removes an interaction from the members' total interactions.",
-        guild_ids=[673355251583025192],
+        guild_ids=[786609181855318047],
         default_permission=False,
         options=interactions_plus,
     )
