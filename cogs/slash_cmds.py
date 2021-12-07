@@ -143,12 +143,14 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got **1** interaction!",
+                description=f"{', '.join(tuple(m.mention for m in members))} "
+                + "got **1** interaction!",
             )
         else:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"{', '.join(tuple(m.mention for m in members))} got **{actual_count}** interactions!",
+                description=f"{', '.join(tuple(m.mention for m in members))} "
+                + f"got **{actual_count}** interactions!",
             )
 
         await inter.edit(embed=embed)
@@ -228,12 +230,14 @@ class SlashCMDS(commands.Cog):
         if actual_count == Decimal(1):
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed **1** interaction from: {', '.join(tuple(m.mention for m in members))}.",
+                description="Removed **1** interaction from: "
+                + f"{', '.join(tuple(m.mention for m in members))}.",
             )
         else:
             embed = discord.Embed(
                 color=self.bot.color,
-                description=f"Removed **{actual_count}** interactions from: {', '.join(tuple(m.mention for m in members))}.",
+                description=f"Removed **{actual_count}** interactions "
+                + f"from: {', '.join(tuple(m.mention for m in members))}.",
             )
 
         await inter.edit(embed=embed)
@@ -299,6 +303,168 @@ class SlashCMDS(commands.Cog):
             description=f"{', '.join(tuple(m.mention for m in members))} have been recorded to be "
             + "at the event! They get **0.5** interaction points.",
         )
+
+        await inter.edit(embed=embed)
+
+    @dislash.slash_command(
+        name="add-to-total",
+        description="Adds an interaction to the members' total interactions.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
+        options=interactions_plus,
+    )
+    async def add_to_total(
+        self,
+        inter: dislash.Interaction,
+        user_1: discord.User,
+        user_2: Optional[discord.User] = None,
+        user_3: Optional[discord.User] = None,
+        user_4: Optional[discord.User] = None,
+        user_5: Optional[discord.User] = None,
+        user_6: Optional[discord.User] = None,
+        user_7: Optional[discord.User] = None,
+        user_8: Optional[discord.User] = None,
+        user_9: Optional[discord.User] = None,
+        user_10: Optional[discord.User] = None,
+        user_11: Optional[discord.User] = None,
+        user_12: Optional[discord.User] = None,
+        user_13: Optional[discord.User] = None,
+        user_14: Optional[discord.User] = None,
+        user_15: Optional[discord.User] = None,
+        count: Optional[float] = None,
+    ):
+        await inter.create_response(type=5)
+
+        if count is None:
+            count = 1
+
+        try:
+            actual_count = Decimal(count)
+        except InvalidOperation:
+            raise dislash.BadArgument("Number provided is not a decimal!")
+
+        all_users = (
+            user_1,
+            user_2,
+            user_3,
+            user_4,
+            user_5,
+            user_6,
+            user_7,
+            user_8,
+            user_9,
+            user_10,
+            user_11,
+            user_12,
+            user_13,
+            user_14,
+            user_15,
+        )
+        members: Tuple[discord.User, ...] = tuple(
+            user for user in all_users if user is not None
+        )
+
+        async for interact in models.UserInteraction.filter(
+            user_id__in=frozenset(m.id for m in members)
+        ).select_for_update():
+            interact.total_interactions += actual_count
+            await interact.save()
+
+        if actual_count == Decimal(1):
+            embed = discord.Embed(
+                color=self.bot.color,
+                description=f"{', '.join(tuple(m.mention for m in members))} "
+                + "got **1** added to their total interactions!",
+            )
+        else:
+            embed = discord.Embed(
+                color=self.bot.color,
+                description=f"{', '.join(tuple(m.mention for m in members))} "
+                + f"got **{actual_count}** added to their total interactions!",
+            )
+
+        await inter.edit(embed=embed)
+
+    @dislash.slash_command(
+        name="remove-from-total",
+        description="Removes an interaction from the members' total interactions.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
+        options=interactions_plus,
+    )
+    async def remove_from_total(
+        self,
+        inter: dislash.Interaction,
+        user_1: discord.User,
+        user_2: Optional[discord.User] = None,
+        user_3: Optional[discord.User] = None,
+        user_4: Optional[discord.User] = None,
+        user_5: Optional[discord.User] = None,
+        user_6: Optional[discord.User] = None,
+        user_7: Optional[discord.User] = None,
+        user_8: Optional[discord.User] = None,
+        user_9: Optional[discord.User] = None,
+        user_10: Optional[discord.User] = None,
+        user_11: Optional[discord.User] = None,
+        user_12: Optional[discord.User] = None,
+        user_13: Optional[discord.User] = None,
+        user_14: Optional[discord.User] = None,
+        user_15: Optional[discord.User] = None,
+        count: Optional[float] = None,
+    ):
+        await inter.create_response(type=5)
+
+        if count is None:
+            count = 1
+
+        try:
+            actual_count = Decimal(count)
+        except InvalidOperation:
+            raise dislash.BadArgument("Number provided is not a decimal!")
+
+        all_users = (
+            user_1,
+            user_2,
+            user_3,
+            user_4,
+            user_5,
+            user_6,
+            user_7,
+            user_8,
+            user_9,
+            user_10,
+            user_11,
+            user_12,
+            user_13,
+            user_14,
+            user_15,
+        )
+        members: Tuple[discord.User, ...] = tuple(
+            user for user in all_users if user is not None
+        )
+
+        async for interact in models.UserInteraction.filter(
+            user_id__in=frozenset(m.id for m in members)
+        ).select_for_update():
+
+            interact.total_interactions -= actual_count
+            if interact.total_interactions < Decimal(0):
+                interact.total_interactions == Decimal(0)
+
+            await interact.save()
+
+        if actual_count == Decimal(1):
+            embed = discord.Embed(
+                color=self.bot.color,
+                description="Removed **1** from total interactions "
+                + f"from: {', '.join(tuple(m.mention for m in members))}.",
+            )
+        else:
+            embed = discord.Embed(
+                color=self.bot.color,
+                description=f"Removed **{actual_count}** from total "
+                f"interactions from: {', '.join(tuple(m.mention for m in members))}.",
+            )
 
         await inter.edit(embed=embed)
 
