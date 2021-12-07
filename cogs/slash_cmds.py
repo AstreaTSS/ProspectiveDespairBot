@@ -44,7 +44,7 @@ interactions_plus = interaction_options.copy()
 interactions_plus.append(
     dislash.Option(
         "count",
-        "How many interactions should be added.",
+        "How many interactions should be added/removed.",
         dislash.OptionType.NUMBER,
         False,
     )
