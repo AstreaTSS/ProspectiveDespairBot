@@ -3,19 +3,11 @@ import importlib
 import typing
 from enum import Enum
 
-import dislash
 import disnake
 from disnake.ext import commands
 
 import common.paginator as paginator
 import common.utils as utils
-
-
-class Dummy:
-    __slots__ = "id"
-
-    def __init__(self) -> None:
-        self.id = None
 
 
 class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
@@ -61,27 +53,26 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
             )
 
         for entry in slash_cmds:
-            if isinstance(entry, dislash.SlashCommand):
-                entry_str_list = []
+            entry_str_list = []
 
-                if entry.description:
-                    entry_str_list.append(entry.description)
-                else:
-                    entry_str_list.append("No description provided.")
+            if entry.description:
+                entry_str_list.append(entry.description)
+            else:
+                entry_str_list.append("No description provided.")
 
-                if entry.options:
-                    entry_str_list.append("__Arguments:__")
+            if entry.options:
+                entry_str_list.append("__Arguments:__")
 
-                    for option in entry.options:
-                        option_type = disnake.OptionType(option.type).name.upper()
-                        required_txt = ", required" if option.required else ""
-                        entry_str_list.append(
-                            f"{option.name} (type {option_type}{required_txt}) - {option.description}"
-                        )
+                for option in entry.options:
+                    option_type = disnake.OptionType(option.type).name.upper()
+                    required_txt = ", required" if option.required else ""
+                    entry_str_list.append(
+                        f"{option.name} (type {option_type}{required_txt}) - {option.description}"
+                    )
 
-                slash_entries.append(
-                    (f"{entry.name} - ID {entry.id}", "\n".join(entry_str_list))
-                )
+            slash_entries.append(
+                (f"{entry.name} - ID {entry.body.id}", "\n".join(entry_str_list))
+            )
 
         pages = paginator.FieldPages(ctx, entries=slash_entries, per_page=6)
         await pages.paginate()
