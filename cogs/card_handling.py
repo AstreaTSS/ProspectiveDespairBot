@@ -1,6 +1,7 @@
 import asyncio
 import importlib
 from datetime import datetime
+from typing import Optional
 from typing import Union
 
 import disnake
@@ -70,44 +71,45 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
         await ctx.reply("Done!")
 
-    @commands.command()
-    async def search(
+    @commands.slash_command(
+        name="query",
+        description="Gets you a specific person's card based on the query provided.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, owner=True)
+    async def query(
         self,
-        ctx: commands.Context,
-        *,
-        query: Union[fuzzys.FuzzyOCNameConverter, fuzzys.FuzzyMemberConverter]
+        inter: disnake.GuildCommandInteraction,
+        user: Optional[disnake.User] = commands.Param(
+            default=None, description="The user who RPs the OC on a card."
+        ),
+        oc_name: Optional[str] = commands.Param(
+            default=None, autocomplete=fuzzys.get_card_name
+        ),
     ):
-        """Allows to you to search and get a person's card based on the query provided.
-        The query can either be the OC's name or their RPer's name.
-        """
+        if user:
+            selected_card = next(
+                (c for c in cards.participants if c.user_id == user.id), None
+            )
+            if not selected_card:
+                selected_card = next(
+                    (c for c in cards.hosts if c.user_id == user.id), None
+                )
 
-        # find all cards that have the same user id the person we got, and put those cards in a list in a list because
-        # the exploit with FuzzyOCNameConverter that we might have to do requires that
-        selected_cards = tuple(
-            [c]
-            for c in tuple(cards.participants + cards.hosts)
-            if c.user_id == query.id
-        )
-
-        if not selected_cards:  # could be a member that doesn't have a card
-            await ctx.reply("Invalid query!")
+            if not selected_card:
+                raise commands.BadArgument("This user doesn't have a card!")
+        elif oc_name:
+            selected_card = next(
+                c
+                for c in tuple(cards.participants + cards.hosts)
+                if c.oc_name == oc_name
+            )
         else:
-            if len(selected_cards) > 1:
-                if not isinstance(query, (disnake.User, disnake.Member)):
-                    # only would happen with oc name converter, which shouldnt be possible
-                    # as there can be only one oc named something
-                    raise utils.CustomCheckFailure(
-                        "This shouldn't happen. Contact Astrea immediately - she has some debugging to do."
-                    )
+            raise commands.BadArgument("No query provided!")
 
-                # time to abuse the converter to do things
-                oc_converter = fuzzys.FuzzyOCNameConverter()
-                card = await oc_converter.selection_handler(ctx, selected_cards)
-            else:
-                card = selected_cards[0][0]
-
-            embed = await card.as_embed(self.bot)
-            await ctx.reply(embed=embed)
+        embed = await selected_card.as_embed(self.bot)
+        await inter.send(embed=embed, ephemeral=True)
 
 
 def setup(bot):
