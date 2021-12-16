@@ -1,8 +1,8 @@
 import asyncio
 import itertools
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 
 import common.paginator as paginator
 
@@ -51,7 +51,7 @@ class HelpPaginator(paginator.Pages):
                 name=f"Page {page}/{self.maximum_pages} ({self.total} commands)"
             )
 
-    async def show_help(self, inter: discord.Interaction):
+    async def show_help(self, inter: disnake.Interaction):
         """shows this message"""
 
         self.embed.title = "Paginator help"
@@ -79,7 +79,7 @@ class HelpPaginator(paginator.Pages):
 
         self.bot.loop.create_task(go_back_to_current_page())
 
-    async def show_bot_help(self, inter: discord.Interaction):
+    async def show_bot_help(self, inter: disnake.Interaction):
         """shows how to use the bot"""
 
         self.embed.title = "Using the bot"
@@ -173,7 +173,7 @@ class PaginatedHelpCommand(commands.HelpCommand):
             total += len(commands)
             actual_cog = bot.get_cog(cog)
             # get the description if it exists (and the cog is valid) or return Empty embed.
-            description = (actual_cog and actual_cog.description) or discord.Embed.Empty
+            description = (actual_cog and actual_cog.description) or disnake.Embed.Empty
             nested_pages.extend(
                 (cog, description, commands[i : i + per_page])
                 for i in range(0, len(commands), per_page)
@@ -207,7 +207,7 @@ class PaginatedHelpCommand(commands.HelpCommand):
 
     async def send_command_help(self, command):
         # No pagination necessary for a single command.
-        embed = discord.Embed(colour=self.context.bot.color)
+        embed = disnake.Embed(colour=self.context.bot.color)
         self.common_command_formatting(embed, command)
         await self.context.reply(embed=embed)
 

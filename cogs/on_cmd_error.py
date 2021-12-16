@@ -2,8 +2,8 @@
 import datetime
 import importlib
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 
 import common.utils as utils
 
@@ -20,7 +20,7 @@ class OnCMDError(commands.Cog):
 
         if isinstance(error, commands.CommandInvokeError):
             original = error.original
-            if not isinstance(original, discord.HTTPException):
+            if not isinstance(original, disnake.HTTPException):
                 await utils.error_handle(self.bot, error, ctx)
         elif isinstance(error, commands.TooManyArguments):
             await ctx.reply(
@@ -30,13 +30,13 @@ class OnCMDError(commands.Cog):
                 )
             )
         elif isinstance(error, commands.CommandOnCooldown):
-            till = discord.utils.utcnow() + datetime.timedelta(
+            till = disnake.utils.utcnow() + datetime.timedelta(
                 seconds=error.retry_after
             )
             await ctx.reply(
                 embed=utils.error_embed_generate(
                     "You're doing that command too fast! "
-                    + f"Try again {discord.utils.format_dt(till, style='R')}."
+                    + f"Try again {disnake.utils.format_dt(till, style='R')}."
                 )
             )
         elif isinstance(

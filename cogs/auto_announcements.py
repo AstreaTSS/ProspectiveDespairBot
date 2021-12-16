@@ -4,10 +4,10 @@ import importlib
 import os
 
 import aiohttp
-import discord
+import disnake
 import pytz
 from dateutil.relativedelta import relativedelta
-from discord.ext import commands
+from disnake.ext import commands
 
 import common.utils as utils
 
@@ -20,7 +20,7 @@ class AutoAnnouncements(commands.Cog):
 
         self.webhook_session = aiohttp.ClientSession()
 
-        self.webhook = discord.Webhook.from_url(
+        self.webhook = disnake.Webhook.from_url(
             os.environ.get("WEBHOOK_URL"), session=self.webhook_session,
         )
 
@@ -31,7 +31,7 @@ class AutoAnnouncements(commands.Cog):
         self.bot.loop.create_task(self.webhook_session.close())
 
     def gen_embed(self, day: bool = True):
-        embed = discord.Embed(title="Announcement from Monokuma", color=13632027)
+        embed = disnake.Embed(title="Announcement from Monokuma", color=13632027)
         embed.set_image(
             url="https://cdn.discordapp.com/attachments/457939628209602560/861282169276072006/vlcsnap-2021-07-04-12h26m28s639.png"
         )
@@ -85,9 +85,9 @@ class AutoAnnouncements(commands.Cog):
                     hour=22, minute=0, second=0, microsecond=0
                 )
 
-            await discord.utils.sleep_until(sleep_till)
-
+            await disnake.utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
+
             embed = self.gen_embed(day=bool(et_now.hour < 12))
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)

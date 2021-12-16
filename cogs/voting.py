@@ -2,8 +2,8 @@ import asyncio
 import collections
 import importlib
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 
 import common.cards as cards
 import common.utils as utils
@@ -23,17 +23,17 @@ class Voting(commands.Cog, name="Voting"):
         """Creates the select component."""
         ori_self = self
 
-        class Dropdown(discord.ui.Select):
+        class Dropdown(disnake.ui.Select):
             def __init__(self):
                 options = [
-                    discord.SelectOption(
+                    disnake.SelectOption(
                         label=card.oc_name, value=f"vote:{convert_name(card.oc_name)}",
                     )
                     for card in cards.participants
                 ]
                 super().__init__(min_values=1, max_values=1, options=options)
 
-            async def callback(self, inter: discord.Interaction):
+            async def callback(self, inter: disnake.Interaction):
                 await inter.response.defer(
                     ephemeral=True
                 )  # make sure interact doesnt errror
@@ -63,12 +63,12 @@ class Voting(commands.Cog, name="Voting"):
                 embed.color = ori_self.bot.color
                 await ori_self.logging_channel.send(embed=embed)
 
-        class DropdownView(discord.ui.View):
+        class DropdownView(disnake.ui.View):
             def __init__(self):
                 super().__init__()
                 self.add_item(Dropdown())
 
-            async def interaction_check(self, interaction: discord.Interaction) -> bool:
+            async def interaction_check(self, interaction: disnake.Interaction) -> bool:
                 return interaction.user.id in ori_self.people_voting
 
         return DropdownView()

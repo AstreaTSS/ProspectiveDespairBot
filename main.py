@@ -2,9 +2,8 @@ import asyncio
 import logging
 import os
 
-import discord
-import dislash
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 from dotenv import load_dotenv
 from tortoise import Tortoise
 from websockets import ConnectionClosedOK
@@ -17,7 +16,7 @@ from common.help_cmd import PaginatedHelpCommand
 # load_dotenv()
 os.system("git pull")  # stupid way of getting around replit stuff
 
-logger = logging.getLogger("discord")
+logger = logging.getLogger("disnake")
 logger.setLevel(logging.INFO)
 handler = logging.FileHandler(
     filename=os.environ.get("LOG_FILE_PATH"), encoding="utf-8", mode="a"
@@ -28,7 +27,7 @@ handler.setFormatter(
 logger.addHandler(handler)
 
 
-async def dh_prefixes(bot: commands.Bot, msg: discord.Message):
+async def dh_prefixes(bot: commands.Bot, msg: disnake.Message):
     mention_prefixes = {f"{bot.user.mention} ", f"<@!{bot.user.id}> "}
     custom_prefixes = {"d!"}
     return mention_prefixes.union(custom_prefixes)
@@ -87,8 +86,8 @@ class DespairsHorizonBot(commands.Bot):
         self._checks.append(global_checks)
 
     async def on_ready(self):
-        utcnow = discord.utils.utcnow()
-        time_format = discord.utils.format_dt(utcnow)
+        utcnow = disnake.utils.utcnow()
+        time_format = disnake.utils.format_dt(utcnow)
 
         connect_msg = (
             f"Logged in at {time_format}!"
@@ -101,8 +100,8 @@ class DespairsHorizonBot(commands.Bot):
 
         await self.owner.send(connect_msg)
 
-        activity = discord.Activity(
-            name="over Despair's Horizon", type=discord.ActivityType.watching
+        activity = disnake.Activity(
+            name="over Despair's Horizon", type=disnake.ActivityType.watching
         )
 
         try:
@@ -111,8 +110,8 @@ class DespairsHorizonBot(commands.Bot):
             await utils.msg_to_owner(self, "Reconnecting...")
 
     async def on_resumed(self):
-        activity = discord.Activity(
-            name="over Despair's Horizon", type=discord.ActivityType.watching
+        activity = disnake.Activity(
+            name="over Despair's Horizon", type=disnake.ActivityType.watching
         )
         await self.change_presence(activity=activity)
 
@@ -137,16 +136,15 @@ class DespairsHorizonBot(commands.Bot):
         return await super().close()
 
 
-intents = discord.Intents.all()
-mentions = discord.AllowedMentions.all()
+intents = disnake.Intents.all()
+mentions = disnake.AllowedMentions.all()
 
 bot = DespairsHorizonBot(
     command_prefix=dh_prefixes, allowed_mentions=mentions, intents=intents,
 )
-slash = dislash.InteractionClient(bot, modify_send=False)
 
 bot.init_load = True
-bot.color = discord.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
+bot.color = disnake.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
 
 bot.loop.create_task(on_init_load())
 keep_alive.keep_alive()

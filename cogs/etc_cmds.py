@@ -3,9 +3,9 @@ import time
 from typing import TYPE_CHECKING
 
 import dateutil.parser
-import discord.utils
+import disnake.utils
 import pytz
-from discord.ext import commands
+from disnake.ext import commands
 
 import common.utils as utils
 
@@ -60,7 +60,7 @@ class EtcCmds(commands.Cog, name="Misc."):
         """Formats the time given into the fancy Discord timestamp markdown.
         Every time is assumed to be in ET.
         Times with no dates are assumed to be taking place today."""
-        await ctx.send(discord.utils.format_dt(time_str))
+        await ctx.send(disnake.utils.format_dt(time_str))
 
 
 def setup(bot):
