@@ -11,13 +11,6 @@ import common.cards as cards
 import common.models as models
 import common.utils as utils
 
-admin_perms = {673635882271637516: True, 673630805343600641: True}
-alive_player_perms = {
-    673635882271637516: True,
-    673630805343600641: True,
-    673640411494875182: True,
-}
-
 
 class SlashCMDS(commands.Cog):
     def __init__(self, bot):
@@ -29,7 +22,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def add_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -136,7 +129,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def remove_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -250,7 +243,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def add_event(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -342,7 +335,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def add_to_total(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -448,7 +441,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def remove_from_total(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -561,7 +554,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def list_interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer(ephemeral=True)
 
@@ -586,7 +579,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def reset_interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
@@ -606,7 +599,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def remove_player_from_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -630,7 +623,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def add_player_to_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -656,7 +649,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=admin_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ADMIN_PERMS)
     async def refresh_players_for_interactions(
         self, inter: disnake.GuildCommandInteraction
     ):
@@ -679,7 +672,7 @@ class SlashCMDS(commands.Cog):
         guild_ids=[673355251583025192],
         default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, role_ids=alive_player_perms)
+    @commands.guild_permissions(673355251583025192, role_ids=utils.ALIVE_PLAYER_PERMS)
     async def interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer(ephemeral=True)
 

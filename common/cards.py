@@ -56,7 +56,7 @@ class Card:
         return embed
 
 
-hosts = []
+hosts: typing.List[Card] = []
 
 participants: typing.List[Card] = []
 cards_url: str = os.environ.get("CARD_FILE_URL")

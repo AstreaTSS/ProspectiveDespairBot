@@ -221,3 +221,12 @@ def deprecated_cmd():
         return True
 
     return commands.check(predicate)
+
+
+ADMIN_PERMS = {673635882271637516: True, 673630805343600641: True}
+
+ALIVE_PLAYER_PERMS = {
+    673635882271637516: True,
+    673630805343600641: True,
+    673640411494875182: True,
+}
