@@ -4,10 +4,10 @@ import io
 
 import aiohttp
 import dateutil.parser
-import discord
+import disnake
 import humanize
 import orjson
-from discord.ext import commands
+from disnake.ext import commands
 
 import common.custom_classes as custom_classes
 import common.utils as utils
@@ -79,7 +79,7 @@ class SayCMDS(commands.Cog, name="Say"):
                     ctx.message.attachments[0].url, 8388608, equal_to=False
                 )  # 8 MiB
                 file_io = io.BytesIO(image_data)
-                file_to_send = discord.File(
+                file_to_send = disnake.File(
                     file_io,
                     filename=ctx.message.attachments[0].filename,
                     spoiler=is_spoiler,
@@ -161,7 +161,7 @@ class SayCMDS(commands.Cog, name="Say"):
             return content
 
         def title_action(ctx, converted, self):
-            self.say_embed = discord.Embed()
+            self.say_embed = disnake.Embed()
             self.say_embed.title = converted
 
         wizard.add_question(question_3, title_convert, title_action)
@@ -225,7 +225,7 @@ class SayCMDS(commands.Cog, name="Say"):
                 )
 
             try:
-                return channel, discord.Embed.from_dict(argument_json)
+                return channel, disnake.Embed.from_dict(argument_json)
             except ValueError:
                 raise commands.BadArgument(
                     "Could not convert argument to an embed. Is it invalid?"
@@ -242,8 +242,8 @@ class SayCMDS(commands.Cog, name="Say"):
         Do not use this if you have no idea what the above means. embed-say works fine.
         If you mention a channel before the embed data, the bot will send it to that channel."""
 
-        chan: discord.TextChannel = data[0]
-        embed: discord.Embed = data[1]
+        chan: disnake.TextChannel = data[0]
+        embed: disnake.Embed = data[1]
 
         if embed.to_dict() == {}:
             raise commands.BadArgument("The data provided is either invalid or empty!")

@@ -5,15 +5,15 @@ import urllib.request
 from dataclasses import dataclass
 from enum import Enum
 
-import discord
+import disnake
 import rtoml
 
 
 class Status(Enum):
-    ALIVE = discord.Color.teal()
-    DEAD = discord.Color.red()
-    ESCAPED = discord.Color.lighter_gray()
-    HOST = discord.Color.darker_gray()
+    ALIVE = disnake.Color.teal()
+    DEAD = disnake.Color.red()
+    ESCAPED = disnake.Color.lighter_gray()
+    HOST = disnake.Color.darker_gray()
 
 
 @dataclass
@@ -37,7 +37,7 @@ class Card:
     def display_status(self):
         return self.status.name if self.status != Status.HOST else "ALIVE"
 
-    async def as_embed(self, bot: discord.Client):
+    async def as_embed(self, bot: disnake.Client):
         member = await bot.fetch_user(
             self.user_id
         )  # we're assuming this will never fail because i double check everything
@@ -48,7 +48,7 @@ class Card:
             f"**Status:** {self.display_status.title()}",
         ]
 
-        embed = discord.Embed(title=self.title_name, description="\n".join(desc))
+        embed = disnake.Embed(title=self.title_name, description="\n".join(desc))
 
         embed.set_image(url=self.card_url)
         embed.color = self.status.value

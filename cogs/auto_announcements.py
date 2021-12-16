@@ -4,10 +4,10 @@ import importlib
 import os
 
 import aiohttp
-import discord
+import disnake
 import pytz
 from dateutil.relativedelta import relativedelta
-from discord.ext import commands
+from disnake.ext import commands
 
 import common.utils as utils
 
@@ -20,7 +20,7 @@ class AutoAnnouncements(commands.Cog):
 
         self.webhook_session = aiohttp.ClientSession()
 
-        self.webhook = discord.Webhook.from_url(
+        self.webhook = disnake.Webhook.from_url(
             os.environ.get("WEBHOOK_URL"), session=self.webhook_session,
         )
 
@@ -31,7 +31,7 @@ class AutoAnnouncements(commands.Cog):
         self.bot.loop.create_task(self.webhook_session.close())
 
     def gen_embed(self, day: bool = True):
-        embed = discord.Embed(title="Announcement from Drake Aelius", color=11779669)
+        embed = disnake.Embed(title="Announcement from Drake Aelius", color=11779669)
         if day:
             str_builder = [
                 "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
@@ -83,7 +83,7 @@ class AutoAnnouncements(commands.Cog):
                     hour=23, minute=0, second=0, microsecond=0
                 )
 
-            await discord.utils.sleep_until(sleep_till)
+            await disnake.utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
 
             embed = self.gen_embed(day=bool(et_now.hour < 12))

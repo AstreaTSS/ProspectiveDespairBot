@@ -2,8 +2,8 @@ import asyncio
 import collections
 import re
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 from rapidfuzz import fuzz
 from rapidfuzz import process
 
@@ -16,7 +16,7 @@ class FuzzyConverter(commands.IDConverter):
     needed to fuzzy convert."""
 
     def embed_gen(self, ctx, description):
-        selection_embed = discord.Embed(
+        selection_embed = disnake.Embed(
             colour=ctx.bot.color, description="\n".join(description)
         )
         selection_embed.set_author(
@@ -39,8 +39,8 @@ class FuzzyConverter(commands.IDConverter):
 
     def unsure_embed_gen(self, ctx, item):
         description = collections.deque()
-        description.append(f"Did you mean `{str(item)}`?.")
-        description.append(f"Reply with yes or no.")
+        description.append(f"Did you mean `{item}`?.")
+        description.append("Reply with yes or no.")
 
         return self.embed_gen(ctx, description)
 
@@ -175,14 +175,14 @@ class FuzzyMemberConverter(FuzzyConverter):
         so we use a quick isinstance to make sure everything goes ok
         without losing too much performance as a try error would do."""
 
-        if isinstance(member, discord.Member):
+        if isinstance(member, disnake.Member):
             return member.display_name.lower()
         else:
             return member
 
     def get_name(self, member):
         """Same thing as above, but with a normal name."""
-        if isinstance(member, discord.Member):
+        if isinstance(member, disnake.Member):
             return member.name.lower()
         else:
             return member
@@ -193,12 +193,12 @@ class FuzzyMemberConverter(FuzzyConverter):
 
         if match != None:
             user_id = int(match.group(1))
-            result = ctx.guild.get_member(user_id) or discord.utils.get(
+            result = ctx.guild.get_member(user_id) or disnake.utils.get(
                 ctx.message.mentions, id=user_id
             )
         elif "#" in argument:
             hash_split = argument.split("#")
-            result = discord.utils.get(
+            result = disnake.utils.get(
                 ctx.guild.members, name=hash_split[0], discriminator=hash_split[1]
             )
 
@@ -240,7 +240,7 @@ class FuzzyOCNameConverter(FuzzyConverter):
         else:
             return card
 
-    async def convert(self, ctx, argument) -> discord.Object:
+    async def convert(self, ctx, argument) -> disnake.Object:
         result = None
         result = await self.extract_from_list(
             ctx,
@@ -251,4 +251,4 @@ class FuzzyOCNameConverter(FuzzyConverter):
 
         if result is None:
             raise commands.BadArgument(f'Role "{argument}" not found.')
-        return discord.Object(result.user_id)
+        return disnake.Object(result.user_id)

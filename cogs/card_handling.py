@@ -3,8 +3,8 @@ import importlib
 from datetime import datetime
 from typing import Union
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 
 import common.cards as cards
 import common.fuzzys as fuzzys
@@ -31,9 +31,9 @@ class CardHandling(commands.Cog, name="Card Handling"):
     async def update_cast(self, ctx: commands.Context):
 
         async with ctx.typing():
-            profile_chan: discord.TextChannel = self.bot.get_channel(786638377801744394)
+            profile_chan: disnake.TextChannel = self.bot.get_channel(786638377801744394)
 
-            def is_valid(m: discord.Message):
+            def is_valid(m: disnake.Message):
                 return m.author.id == self.bot.user.id
 
             reference_date = datetime(2021, 9, 2)
@@ -41,20 +41,24 @@ class CardHandling(commands.Cog, name="Card Handling"):
 
             if cards.hosts:
                 await profile_chan.send("```\nKG Hosts\n```")
-
-                for host_card in cards.hosts:
-                    embed = await host_card.as_embed(ctx.bot)
-                    await profile_chan.send(embed=embed)
-                    await asyncio.sleep(1)  # ratelimits
+                embeds = [
+                    await host_card.as_embed(ctx.bot) for host_card in cards.hosts
+                ]
+                await profile_chan.send(embeds=embeds)
 
             await profile_chan.send("```\nParticipants\n```")
 
-            for participant_card in cards.participants:
-                embed = await participant_card.as_embed(ctx.bot)
-                await profile_chan.send(embed=embed)
+            embeds = [
+                await participant_card.as_embed(ctx.bot)
+                for participant_card in cards.participants
+            ]
+            chunks = [embeds[x : x + 8] for x in range(0, len(embeds), 8)]
+
+            for chunk in chunks:
+                await profile_chan.send(embeds=chunk)
                 await asyncio.sleep(1)
 
-            embed = discord.Embed(timestamp=discord.utils.utcnow())
+            embed = disnake.Embed(timestamp=disnake.utils.utcnow())
             embed.set_footer(text="Last Updated")
 
             await profile_chan.send(
@@ -89,7 +93,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
             await ctx.reply("Invalid query!")
         else:
             if len(selected_cards) > 1:
-                if not isinstance(query, (discord.User, discord.Member)):
+                if not isinstance(query, (disnake.User, disnake.Member)):
                     # only would happen with oc name converter, which shouldnt be possible
                     # as there can be only one oc named something
                     raise utils.CustomCheckFailure(

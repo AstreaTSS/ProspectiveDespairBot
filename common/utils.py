@@ -8,9 +8,8 @@ from decimal import InvalidOperation
 from pathlib import Path
 
 import aiohttp
-import discord
-from discord.ext import commands
-from dislash import SlashInteraction
+import disnake
+from disnake.ext import commands
 
 
 class DecimalConverter(commands.Converter):
@@ -27,7 +26,11 @@ class CustomCheckFailure(commands.CheckFailure):
 
 
 async def error_handle(
-    bot, error, ctx: typing.Union[commands.Context, SlashInteraction, None] = None
+    bot,
+    error,
+    ctx: typing.Union[
+        commands.Context, disnake.ApplicationCommandInteraction, None
+    ] = None,
 ):
     # handles errors and sends them to owner
     if isinstance(error, aiohttp.ServerDisconnectedError):
@@ -35,7 +38,7 @@ async def error_handle(
         split = True
     else:
         error_str = error_format(error)
-        logging.getLogger("discord").error(error_str)
+        logging.getLogger("disnake").error(error_str)
 
         error_split = error_str.splitlines()
         chunks = [error_split[x : x + 20] for x in range(0, len(error_split), 20)]
@@ -58,18 +61,10 @@ async def error_handle(
                 "An internal error has occured. The bot owner has been notified."
             )
         else:
-            try:
-                await ctx.create_response(
-                    content="An internal error has occured. The bot owner has been notified.",
-                    ephemeral=True,
-                )
-            except discord.NotFound:
-                try:
-                    await ctx.edit(
-                        content="An internal error has occured. The bot owner has been notified.",
-                    )
-                except discord.HTTPException:
-                    pass
+            await ctx.send(
+                content="An internal error has occured. The bot owner has been notified.",
+                ephemeral=True,
+            )
 
 
 async def msg_to_owner(bot, content, split=True):
@@ -89,7 +84,7 @@ def line_split(content: str, split_by=20):
     ]
 
 
-def embed_check(embed: discord.Embed) -> bool:
+def embed_check(embed: disnake.Embed) -> bool:
     """Checks if an embed is valid, as per Discord's guidelines.
     See https://discord.com/developers/docs/resources/channel#embed-limits for details."""
     if len(embed) > 6000:
@@ -117,7 +112,7 @@ def embed_check(embed: discord.Embed) -> bool:
 
 def deny_mentions(user):
     # generates an AllowedMentions object that only pings the user specified
-    return discord.AllowedMentions(everyone=False, users=[user], roles=False)
+    return disnake.AllowedMentions(everyone=False, users=[user], roles=False)
 
 
 def error_format(error):
@@ -180,7 +175,7 @@ def yesno_friendly_str(bool_to_convert):
 
 
 def error_embed_generate(error_msg):
-    return discord.Embed(colour=discord.Colour.red(), description=error_msg)
+    return disnake.Embed(colour=disnake.Colour.red(), description=error_msg)
 
 
 def generate_mentions(ctx: commands.Context):
@@ -192,13 +187,13 @@ def generate_mentions(ctx: commands.Context):
 
     if can_mention:
         # i could use a default AllowedMentions object, but this is more clear
-        return discord.AllowedMentions(everyone=True, users=True, roles=True)
+        return disnake.AllowedMentions(everyone=True, users=True, roles=True)
     else:
         pingable_roles = tuple(r for r in ctx.guild.roles if r.mentionable)
-        return discord.AllowedMentions(everyone=False, users=True, roles=pingable_roles)
+        return disnake.AllowedMentions(everyone=False, users=True, roles=pingable_roles)
 
 
-def get_icon_url(asset: discord.Asset, size=128):
+def get_icon_url(asset: disnake.Asset, size=128):
     if asset.is_animated():
         return str(asset.replace(format="gif", size=size))
     else:

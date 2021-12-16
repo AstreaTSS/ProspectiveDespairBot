@@ -5,8 +5,8 @@ from copy import deepcopy
 from datetime import timedelta
 from random import shuffle
 
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 
 import common.cards as cards
 
@@ -24,8 +24,8 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
             + "All entries were randomly shuffled beforehand.\n```\n \n```"
         )
 
-        applied = discord.Object(786619063023566899)
-        alive_player = discord.Object(786610731826544670)
+        applied = disnake.Object(786619063023566899)
+        alive_player = disnake.Object(786610731826544670)
 
         shuffled_participants = deepcopy(cards.participants)
         shuffle(shuffled_participants)
@@ -34,7 +34,7 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
             await asyncio.sleep(10)  # because otherwise it would be done a bit too fast
 
             for index, card in enumerate(shuffled_participants):
-                after_cooldown = discord.utils.utcnow() + timedelta(seconds=60)
+                after_cooldown = disnake.utils.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(ctx.bot)
                 await ctx.send(
@@ -49,7 +49,7 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                     await member.add_roles(alive_player)
 
                 if index != len(shuffled_participants) - 1:
-                    await discord.utils.sleep_until(after_cooldown)
+                    await disnake.utils.sleep_until(after_cooldown)
 
         await ctx.send(
             "**All participants have been revealed.**\nWe apologize if you didn't get in, "

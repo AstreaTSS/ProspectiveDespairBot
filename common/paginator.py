@@ -4,9 +4,9 @@ import uuid
 from dataclasses import dataclass
 from dataclasses import field
 
-import discord
-from discord.ext import commands
-from discord.ext.commands import Paginator as CommandPaginator
+import disnake
+from disnake.ext import commands
+from disnake.ext.commands import Paginator as CommandPaginator
 
 # most of this code has been copied from https://github.com/Rapptz/RoboDanny
 
@@ -25,8 +25,8 @@ class ReactionEmoji:
     uuid: str = field(default_factory=gen_uuid)
 
     def to_button(self):
-        button = discord.ui.Button(
-            style=discord.ButtonStyle.primary,
+        button = disnake.ui.Button(
+            style=disnake.ButtonStyle.primary,
             emoji=self.emoji,
             custom_id=self.uuid,
             row=self.row,
@@ -37,13 +37,13 @@ class ReactionEmoji:
 
 def generate_view(
     emojis: typing.List[ReactionEmoji],
-    author: typing.Union[discord.Member, discord.User],
+    author: typing.Union[disnake.Member, disnake.User],
 ):
-    class PaginatorView(discord.ui.View):
+    class PaginatorView(disnake.ui.View):
         def __init__(self):
             super().__init__(timeout=120)
 
-        async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        async def interaction_check(self, interaction: disnake.Interaction) -> bool:
             return interaction.user.id == author.id
 
         async def on_timeout(self):
@@ -104,7 +104,7 @@ class Pages:
         if left_over:
             pages += 1
         self.maximum_pages = pages
-        self.embed = discord.Embed(colour=ctx.bot.color)
+        self.embed = disnake.Embed(colour=ctx.bot.color)
         self.paginating = len(entries) > per_page
         self.show_entry_count = show_entry_count
         self.reaction_emojis = [
@@ -170,7 +170,7 @@ class Pages:
         self.embed.description = "\n".join(p)
 
     async def show_page(
-        self, page, *, interaction: typing.Optional[discord.Interaction], first=False
+        self, page, *, interaction: typing.Optional[disnake.Interaction], first=False
     ):
         self.current_page = page
         entries = self.get_page(page)
@@ -189,31 +189,31 @@ class Pages:
             view=generate_view(self.reaction_emojis, self.author),
         )
 
-    async def checked_show_page(self, page, inter: discord.Interaction):
+    async def checked_show_page(self, page, inter: disnake.Interaction):
         if page != 0 and page <= self.maximum_pages:
             await self.show_page(page, interaction=inter)
 
-    async def first_page(self, inter: discord.Interaction):
+    async def first_page(self, inter: disnake.Interaction):
         """goes to the first page"""
         await self.show_page(1, interaction=inter)
 
-    async def last_page(self, inter: discord.Interaction):
+    async def last_page(self, inter: disnake.Interaction):
         """goes to the last page"""
         await self.show_page(self.maximum_pages, interaction=inter)
 
-    async def next_page(self, inter: discord.Interaction):
+    async def next_page(self, inter: disnake.Interaction):
         """goes to the next page"""
         await self.checked_show_page(self.current_page + 1, inter)
 
-    async def previous_page(self, inter: discord.Interaction):
+    async def previous_page(self, inter: disnake.Interaction):
         """goes to the previous page"""
         await self.checked_show_page(self.current_page - 1, inter)
 
-    async def show_current_page(self, inter: discord.Interaction):
+    async def show_current_page(self, inter: disnake.Interaction):
         if self.paginating:
             await self.show_page(self.current_page, interaction=inter)
 
-    async def numbered_page(self, inter: discord.Interaction):
+    async def numbered_page(self, inter: disnake.Interaction):
         """lets you type a page number to go to"""
         to_delete = []
         to_delete.append(await self.channel.send("What page do you want to go to?"))
@@ -248,7 +248,7 @@ class Pages:
         except Exception:
             pass
 
-    async def show_help(self, inter: discord.Interaction):
+    async def show_help(self, inter: disnake.Interaction):
         """shows this message"""
         messages = ["Welcome to the interactive paginator!\n"]
         messages.append(
@@ -273,7 +273,7 @@ class Pages:
 
         self.bot.loop.create_task(go_back_to_current_page())
 
-    async def stop_pages(self, inter: discord.Interaction):
+    async def stop_pages(self, inter: disnake.Interaction):
         """stops the interactive pagination session"""
         try:
             await inter.response.edit_message(
@@ -301,7 +301,7 @@ class FieldPages(Pages):
 
     def prepare_embed(self, entries, page, *, first=False):
         self.embed.clear_fields()
-        self.embed.description = discord.Embed.Empty
+        self.embed.description = disnake.Embed.Empty
 
         for key, value in entries:
             self.embed.add_field(name=key, value=value, inline=False)
