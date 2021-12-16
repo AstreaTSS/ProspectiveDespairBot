@@ -64,7 +64,7 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
                 entry_str_list.append("__Arguments:__")
 
                 for option in entry.options:
-                    option_type = disnake.OptionType(option.type).name.upper()
+                    option_type = option.type.name.upper()
                     required_txt = ", required" if option.required else ""
                     entry_str_list.append(
                         f"{option.name} (type {option_type}{required_txt}) - {option.description}"
