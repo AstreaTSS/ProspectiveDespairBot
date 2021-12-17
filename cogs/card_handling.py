@@ -74,7 +74,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
     @commands.slash_command(
         name="query",
         description="Gets you a specific person's card based on the query provided.",
-        guild_ids=[786609181855318047],
+        guild_ids=[673355251583025192],
         default_permission=True,
     )
     async def query(
