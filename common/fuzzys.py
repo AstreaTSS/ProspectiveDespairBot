@@ -6,22 +6,24 @@ import common.cards as cards
 
 
 async def extract_from_list(
-    inter: disnake.ApplicationCommandInteraction, argument, list_of_items, processors,
+    inter: disnake.ApplicationCommandInteraction,
+    argument,
+    list_of_items,
+    processors,
+    score_cutoff=0,
 ):
     """Uses multiple scorers and processors for a good mix of accuracy and fuzzy-ness"""
     combined_list = []
 
     scorers = (fuzz.token_set_ratio, fuzz.WRatio)
-
     for scorer in scorers:
         for processor in processors:
             fuzzy_list = process.extract(
                 argument,
                 list_of_items,
-                processor=processor,
                 scorer=scorer,
-                score_cutoff=80,
-                limit=5,
+                processor=processor,
+                score_cutoff=score_cutoff,
             )
             if fuzzy_list:
                 combined_entries = [e[0] for e in combined_list]
@@ -50,18 +52,18 @@ async def extract_from_list(
     return combined_list
 
 
-def get_card_name(self, card):
+def get_card_name(card):
     if isinstance(card, cards.Card):
-        return card.oc_name
+        return card.oc_name.lower()
     else:
         return card
 
 
 async def extract_cards(inter: disnake.ApplicationCommandInteraction, argument):
-    queried_cards: list[cards.Card] = await extract_from_list(
+    queried_cards: list[list[cards.Card]] = await extract_from_list(
         inter,
         argument.lower(),
         tuple(cards.participants + cards.hosts),
         [get_card_name],
     )
-    return [c.oc_name for c in queried_cards]
+    return [c[0].oc_name for c in queried_cards]
