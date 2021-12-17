@@ -72,20 +72,20 @@ class CardHandling(commands.Cog, name="Card Handling"):
         await ctx.reply("Done!")
 
     @commands.slash_command(
-        name="query",
+        name="card-search",
         description="Gets you a specific person's card based on the query provided.",
         guild_ids=[786609181855318047],
         default_permission=False,
     )
     @commands.guild_permissions(786609181855318047, owner=True)
-    async def query(
+    async def card_search(
         self,
         inter: disnake.GuildCommandInteraction,
         user: Optional[disnake.User] = commands.Param(
             default=None, description="The user who RPs the OC on a card."
         ),
         oc_name: Optional[str] = commands.Param(
-            default=None, autocomplete=fuzzys.get_card_name
+            default=None, autocomplete=fuzzys.extract_cards
         ),
     ):
         if user:
