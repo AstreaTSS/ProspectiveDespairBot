@@ -77,7 +77,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
         guild_ids=[673355251583025192],
         default_permission=True,
     )
-    async def search(
+    async def card_search(
         self,
         inter: disnake.GuildCommandInteraction,
         user: Optional[disnake.User] = commands.Param(

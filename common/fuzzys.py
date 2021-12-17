@@ -1,21 +1,22 @@
 import disnake
 from rapidfuzz import fuzz
 from rapidfuzz import process
+from rapidfuzz import string_metric
 
 import common.cards as cards
 
 
-async def extract_from_list(
+def extract_from_list(
     inter: disnake.ApplicationCommandInteraction,
     argument,
     list_of_items,
     processors,
-    score_cutoff=0,
+    score_cutoff=80,
+    scorers=(fuzz.WRatio),
 ):
     """Uses multiple scorers and processors for a good mix of accuracy and fuzzy-ness"""
     combined_list = []
 
-    scorers = (fuzz.token_set_ratio, fuzz.WRatio)
     for scorer in scorers:
         for processor in processors:
             fuzzy_list = process.extract(
@@ -36,15 +37,11 @@ async def extract_from_list(
                         for e in fuzzy_list
                         if e[0] not in combined_entries
                         and (len(processor(e[0])) >= 2 or len(argument) <= 2)
-                        and argument.lower() in processor(e[0])
                     ]
 
                 else:
                     new_members = [
-                        e
-                        for e in fuzzy_list
-                        if e[0] not in combined_entries
-                        and argument.lower() in processor(e[0])
+                        e for e in fuzzy_list if e[0] not in combined_entries
                     ]
 
                 combined_list.extend(new_members)
@@ -60,10 +57,11 @@ def get_card_name(card):
 
 
 async def extract_cards(inter: disnake.ApplicationCommandInteraction, argument):
-    queried_cards: list[list[cards.Card]] = await extract_from_list(
-        inter,
-        argument.lower(),
-        tuple(cards.participants + cards.hosts),
-        [get_card_name],
+    queried_cards: list[list[cards.Card]] = extract_from_list(
+        inter=inter,
+        argument=argument.lower(),
+        list_of_items=tuple(cards.participants + cards.hosts),
+        processors=[get_card_name],
+        score_cutoff=60,
     )
     return [c[0].oc_name for c in queried_cards]
