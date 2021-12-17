@@ -12,7 +12,7 @@ def extract_from_list(
     list_of_items,
     processors,
     score_cutoff=80,
-    scorers=(fuzz.WRatio),
+    scorers=[fuzz.WRatio],
 ):
     """Uses multiple scorers and processors for a good mix of accuracy and fuzzy-ness"""
     combined_list = []
