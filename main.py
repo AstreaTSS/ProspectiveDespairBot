@@ -140,7 +140,10 @@ intents = disnake.Intents.all()
 mentions = disnake.AllowedMentions.all()
 
 bot = DespairsHorizonBot(
-    command_prefix=dh_prefixes, allowed_mentions=mentions, intents=intents,
+    command_prefix=pd_prefixes,
+    allowed_mentions=mentions,
+    intents=intents,
+    sync_permissions=True,
 )
 
 bot.init_load = True
