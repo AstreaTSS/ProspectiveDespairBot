@@ -9,6 +9,102 @@ from disnake.ext import commands
 import common.utils as utils
 
 
+@attr.s(slots=True, init=False)
+class SelectionPrompt:
+    ctx: typing.Union[
+        commands.Context[commands.Bot], disnake.ApplicationCommandInteraction
+    ] = attr.ib()
+    entries: typing.List[typing.Any] = attr.ib()
+    ephemeral: bool = attr.ib()
+
+    view: disnake.ui.View = attr.ib()
+    stop: asyncio.Event = attr.ib()
+    value: typing.Optional[str] = attr.ib()
+
+    def __init__(
+        self,
+        ctx: typing.Union[commands.Context, disnake.ApplicationCommandInteraction],
+        entries: typing.List[typing.Any],
+        ephemeral: bool = False,
+    ):
+        self.ctx = ctx
+        self.entries = entries
+        self.ephemeral = ephemeral
+
+        self.value = None
+        self.stop = asyncio.Event()
+        self.view = self.create_select()
+
+    def create_select(self):
+        ori_self = self
+
+        class Selector(disnake.ui.Select):
+            def __init__(self, entries: typing.List[typing.Any]):
+                options = [disnake.SelectOption(label=str(e)) for e in entries]
+
+                super().__init__(
+                    placeholder="Choose an option:",
+                    min_values=1,
+                    max_values=1,
+                    options=options,
+                )
+
+            async def callback(self, inter: disnake.MessageInteraction):
+                ori_self.value = inter.values[0]
+                ori_self.stop.set()
+
+        class SelectorView(disnake.ui.View):
+            def __init__(self, entries: typing.List[typing.Any]):
+                super().__init__(timeout=10)
+
+                self.add_item(Selector(entries))
+
+            async def interaction_check(
+                self, inter: disnake.MessageInteraction
+            ) -> bool:
+                return ori_self.ctx.author == inter.user
+
+            async def on_timeout(self) -> None:
+                ori_self.stop.set()
+
+        return SelectorView(self.entries)
+
+    async def run(self):
+        embed = disnake.Embed(
+            color=self.ctx.bot.color,
+            description="Multiple options detected. Please select an option.",
+        )
+
+        mes: typing.Union[
+            disnake.Message, disnake.WebhookMessage, disnake.InteractionMessage, None
+        ] = None
+
+        if isinstance(self.ctx, commands.Context):
+            mes = await self.ctx.reply(embed=embed, view=self.view)
+        else:
+            if self.ctx.response.is_done():
+                mes = await self.ctx.followup.send(
+                    embed=embed, view=self.view, ephemeral=self.ephemeral, wait=True
+                )
+            else:
+                await self.ctx.response.send_message(
+                    embed=embed, view=self.view, ephemeral=self.ephemeral
+                )
+                try:
+                    mes = await self.ctx.original_message()
+                except disnake.HTTPException:
+                    pass
+
+        await self.stop.wait()
+        if mes:
+            try:
+                await mes.delete()
+            except disnake.HTTPException:
+                pass
+
+        return self.value
+
+
 @attr.s(slots=True)
 class WizardQuestion:
     question: str = attr.ib()
