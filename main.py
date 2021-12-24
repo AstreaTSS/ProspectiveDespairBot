@@ -151,5 +151,5 @@ bot.added_pronoun_view = False
 bot.color = disnake.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
 
 bot.loop.create_task(on_init_load())
-keep_alive.keep_alive()
+# keep_alive.keep_alive()
 bot.run(os.environ.get("MAIN_TOKEN"))
