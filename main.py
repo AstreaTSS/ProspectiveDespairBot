@@ -13,7 +13,7 @@ import keep_alive
 from common.help_cmd import PaginatedHelpCommand
 
 
-# load_dotenv()
+load_dotenv()
 os.system("git pull")  # stupid way of getting around replit stuff
 
 logger = logging.getLogger("disnake")
@@ -150,5 +150,5 @@ bot.init_load = True
 bot.color = disnake.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
 
 bot.loop.create_task(on_init_load())
-keep_alive.keep_alive()
+# keep_alive.keep_alive()
 bot.run(os.environ.get("MAIN_TOKEN"))
