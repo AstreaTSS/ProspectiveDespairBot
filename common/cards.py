@@ -72,7 +72,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # suggesting how critical these cards are, id say its worth it
 with urllib.request.urlopen(cards_url, timeout=1) as response:
     data = response.read().decode("utf-8")
-    cards_dict = tomli.load(data)
+    cards_dict = tomli.loads(data)
 
     for card_data in cards_dict["cards"]:
         participants.append(
