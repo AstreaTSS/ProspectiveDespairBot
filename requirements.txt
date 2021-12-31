@@ -1,6 +1,6 @@
 disnake==2.3.0
 asyncpg==0.25.0
-tortoise-orm==0.17.8
+tortoise-orm==0.18.0
 pytz==2021.3
 disnake-jishaku==2.6.5
 websockets==10.1
