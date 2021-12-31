@@ -53,19 +53,27 @@ class AutoAnnouncements(commands.Cog):
         embed.description = "".join(str_builder)
         return embed
 
-    @commands.command(
-        aliases=["run_night_announce", "night_announcement", "night_announce"]
+    @commands.slash_command(
+        name="run-night-announcement",
+        description="Runs the nighttime announcement automatically.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
     )
-    @utils.proper_permissions()
-    async def run_night_announcement(self, ctx: commands.Context):
+    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    async def run_night_announcement(self, inter: disnake.GuildCommandInteraction):
         await self.webhook.send(embed=self.gen_embed(day=False))
-        await ctx.reply("Done!")
+        await inter.send("Done!")
 
-    @commands.command(aliases=["run_day_announce", "day_announcement", "day_announce"])
-    @utils.proper_permissions()
-    async def run_day_announcement(self, ctx: commands.Context):
+    @commands.slash_command(
+        name="run-day-announcement",
+        description="Runs the daytime announcement automatically.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
+    )
+    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    async def run_day_announcement(self, inter: disnake.GuildCommandInteraction):
         await self.webhook.send(embed=self.gen_embed(day=True))
-        await ctx.reply("Done!")
+        await inter.send("Done!")
 
     async def auto_run(self):
         while True:

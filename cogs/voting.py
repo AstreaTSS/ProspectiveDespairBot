@@ -73,9 +73,14 @@ class Voting(commands.Cog, name="Voting"):
 
         return DropdownView()
 
-    @commands.command(aliases=["voting"])
-    @utils.proper_permissions()
-    async def vote(self, ctx: commands.Context):
+    @commands.slash_command(
+        name="vote",
+        description="Starts the automatic voting system for trials.",
+        guild_ids=[673355251583025192],
+        default_permission=False,
+    )
+    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    async def vote(self, inter: disnake.GuildCommandInteraction):
         if (
             self.is_voting
         ):  # voting would break if there was more than one vote going on
@@ -87,15 +92,17 @@ class Voting(commands.Cog, name="Voting"):
             "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
         ]
 
-        alive_people_role = ctx.guild.get_role(673640411494875182)  # alive player role
-        self.logging_channel = ctx.bot.get_channel(675339100806447125)  # #logs
+        alive_people_role = inter.guild.get_role(
+            673640411494875182
+        )  # alive player role
+        self.logging_channel = self.bot.get_channel(675339100806447125)  # #logs
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
 
-        self.voting_msg = await ctx.send("\n".join(prompt_builder), view=voting_view)
+        self.voting_msg = await inter.send("\n".join(prompt_builder), view=voting_view)
         self.is_voting = True
 
-        async with ctx.typing():
+        async with inter.channel.typing():
             try:
                 # we abuse timeouts in order to stop this function
                 # process_votes runs forever, but wait_for will stop it
@@ -119,7 +126,7 @@ class Voting(commands.Cog, name="Voting"):
         ]
         final_msg_builder.insert(0, "__**VOTES:**__\n")
 
-        await ctx.send("\n".join(final_msg_builder))
+        await inter.channel.send("\n".join(final_msg_builder))
 
 
 def setup(bot):
