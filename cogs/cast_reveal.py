@@ -15,11 +15,15 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @commands.command()
-    @commands.is_owner()
-    async def cast_reveal(self, ctx: commands.Context):
-        await ctx.message.delete()
-        await ctx.send(
+    @commands.slash_command(
+        name="cast-reveal",
+        description="A command that automates the cast reveal.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, owner=True)
+    async def cast_reveal(self, inter: disnake.GuildCommandInteraction):
+        await inter.send(
             "Preparing cast reveal. One person will be revealed roughly every minute. "
             + "All entries were randomly shuffled beforehand.\n```\n \n```"
         )
@@ -30,20 +34,20 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
         shuffled_participants = deepcopy(cards.participants)
         shuffle(shuffled_participants)
 
-        async with ctx.typing():
-            await asyncio.sleep(10)  # because otherwise it would be done a bit too fast
+        async with inter.channel.typing():
+            await asyncio.sleep(20)  # because otherwise it would be done a bit too fast
 
             for index, card in enumerate(shuffled_participants):
                 after_cooldown = disnake.utils.utcnow() + timedelta(seconds=60)
 
-                embed = await card.as_embed(ctx.bot)
-                await ctx.send(
+                embed = await card.as_embed(self.bot)
+                await inter.channel.send(
                     f"**Welcome {card.title_name}!**\nRPed by: {card.mention}",
                     embed=embed,
                 )
-                await ctx.send("```\n \n```")  # looks neater
+                await inter.channel.send("```\n \n```")  # looks neater
 
-                member = ctx.guild.get_member(card.user_id)
+                member = inter.guild.get_member(card.user_id)
                 if member:  # amazing 10/10 error prevention code
                     await member.remove_roles(applied)
                     await member.add_roles(alive_player)
@@ -51,7 +55,7 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                 if index != len(shuffled_participants) - 1:
                     await disnake.utils.sleep_until(after_cooldown)
 
-        await ctx.send(
+        await inter.channel.send(
             "**All participants have been revealed.**\nWe apologize if you didn't get in, "
             + "but there were *a lot* of applications this season. We sadly can't accept everyone. "
             + "Astrea will be sending a concluding message shortly about backups and other details."

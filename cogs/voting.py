@@ -14,27 +14,6 @@ def convert_name(oc_name: str):
     return oc_name.replace(" ", "").lower()
 
 
-def get_name_label(oc_name: str):
-    """Because sometimes, things don't work out."""
-
-    if len(oc_name) <= 25:
-        return oc_name
-
-    name_split = oc_name.split(" ")
-
-    first_last = f"{name_split[0]} {name_split[-1]}"
-
-    if oc_name != first_last and len(first_last) <= 25:
-        return first_last
-
-    first = name_split[0]
-
-    if len(first) <= 25:
-        return first
-
-    return oc_name[:25]
-
-
 class Voting(commands.Cog, name="Voting"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -48,8 +27,7 @@ class Voting(commands.Cog, name="Voting"):
             def __init__(self):
                 options = [
                     disnake.SelectOption(
-                        label=get_name_label(card.oc_name),
-                        value=f"vote:{convert_name(card.oc_name)}",
+                        label=card.oc_name, value=f"vote:{convert_name(card.oc_name)}",
                     )
                     for card in cards.participants
                 ]
@@ -95,9 +73,14 @@ class Voting(commands.Cog, name="Voting"):
 
         return DropdownView()
 
-    @commands.command(aliases=["voting"])
-    @utils.proper_permissions()
-    async def vote(self, ctx: commands.Context):
+    @commands.slash_command(
+        name="vote",
+        description="Starts the automatic voting system for trials.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def vote(self, inter: disnake.GuildCommandInteraction):
         if (
             self.is_voting
         ):  # voting would break if there was more than one vote going on
@@ -109,15 +92,17 @@ class Voting(commands.Cog, name="Voting"):
             "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
         ]
 
-        alive_people_role = ctx.guild.get_role(786610731826544670)  # alive player role
-        self.logging_channel = ctx.bot.get_channel(786622913587576832)  # #logs
+        alive_people_role = inter.guild.get_role(
+            786610731826544670
+        )  # alive player role
+        self.logging_channel = self.bot.get_channel(786622913587576832)  # #logs
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
 
-        self.voting_msg = await ctx.send("\n".join(prompt_builder), view=voting_view)
+        self.voting_msg = await inter.send("\n".join(prompt_builder), view=voting_view)
         self.is_voting = True
 
-        async with ctx.typing():
+        async with inter.channel.typing():
             try:
                 # we abuse timeouts in order to stop this function
                 # process_votes runs forever, but wait_for will stop it
@@ -141,7 +126,7 @@ class Voting(commands.Cog, name="Voting"):
         ]
         final_msg_builder.insert(0, "__**VOTES:**__\n")
 
-        await ctx.send("\n".join(final_msg_builder))
+        await inter.channel.send("\n".join(final_msg_builder))
 
 
 def setup(bot):

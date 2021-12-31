@@ -37,15 +37,18 @@ class Etc(commands.Cog, name="Misc."):
         self.bot = bot
         self.member_role = disnake.Object(786610276606279680)
 
-    @commands.command()
-    async def ping(self, ctx):
-        """Pings the bot. Great way of finding out if the bot’s working correctly, but otherwise has no real use."""
-
+    @commands.slash_command(
+        name="ping",
+        description="Pings the bot. Great way of finding out if the bot’s working, but has no real use.",
+        guild_ids=[786609181855318047],
+    )
+    async def ping(self, inter: disnake.GuildCommandInteraction):
         start_time = time.perf_counter()
         ping_discord = round((self.bot.latency * 1000), 2)
 
-        mes = await ctx.reply(
-            f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal ping..."
+        mes = await inter.followup.send(
+            f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal ping...",
+            wait=True,
         )
 
         end_time = time.perf_counter()
