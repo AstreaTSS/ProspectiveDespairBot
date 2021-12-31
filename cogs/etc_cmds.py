@@ -42,12 +42,13 @@ class EtcCmds(commands.Cog, name="Misc."):
         guild_ids=[673355251583025192],
     )
     async def ping(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
         start_time = time.perf_counter()
         ping_discord = round((self.bot.latency * 1000), 2)
 
-        mes = await inter.followup.send(
-            f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal ping...",
-            wait=True,
+        mes = await inter.edit_original_message(
+            content=f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal ping...",
         )
 
         end_time = time.perf_counter()
