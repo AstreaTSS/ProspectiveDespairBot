@@ -693,23 +693,6 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
                 ephemeral=True,
             )
 
-    @commands.Cog.listener()
-    async def on_slash_command_error(
-        self, inter: disnake.GuildCommandInteraction, error: commands.CommandError
-    ):
-        if isinstance(error, commands.BadArgument):
-            await inter.send(
-                embed=utils.error_embed_generate(str(error)), ephemeral=True
-            )
-        elif "Unknown interaction" in str(error):
-            await inter.channel.send(
-                f"{inter.author.mention}, the bot is a bit slow and so cannot do slash commands "
-                + "right now. Please wait a bit and try again.",
-                delete_after=3,
-            )
-        else:
-            await utils.error_handle(self.bot, error, inter)
-
 
 def setup(bot):
     importlib.reload(utils)
