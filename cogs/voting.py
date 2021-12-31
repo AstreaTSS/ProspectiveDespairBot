@@ -19,7 +19,7 @@ class Voting(commands.Cog, name="Voting"):
         self.bot: commands.Bot = bot
         self.is_voting = False
 
-    def create_select(self):
+    def create_select(self, disabled: bool = False):
         """Creates the select component."""
         ori_self = self
 
@@ -31,7 +31,9 @@ class Voting(commands.Cog, name="Voting"):
                     )
                     for card in cards.participants
                 ]
-                super().__init__(min_values=1, max_values=1, options=options)
+                super().__init__(
+                    min_values=1, max_values=1, options=options, disabled=disabled
+                )
 
             async def callback(self, inter: disnake.Interaction):
                 await inter.response.defer(
@@ -71,6 +73,11 @@ class Voting(commands.Cog, name="Voting"):
             async def interaction_check(self, interaction: disnake.Interaction) -> bool:
                 return interaction.user.id in ori_self.people_voting
 
+            async def on_error(
+                self, error: Exception, _, inter: disnake.MessageInteraction
+            ) -> None:
+                await utils.error_handle(ori_self.bot, error, inter)
+
         return DropdownView()
 
     @commands.slash_command(
@@ -86,10 +93,13 @@ class Voting(commands.Cog, name="Voting"):
         ):  # voting would break if there was more than one vote going on
             raise utils.CustomCheckFailure("There is already a vote going on!")
 
+        await inter.response.defer()
+
         voting_view = self.create_select()
         prompt_builder = [
             "It's time to vote! Please use this drop-down menu in order to do so.",
-            "Participants have 5 minutes to vote. You may change your vote before the timer runs out.",
+            "Participants have 5 minutes to vote. You may change your vote before the"
+            " timer runs out.",
         ]
 
         alive_people_role = inter.guild.get_role(
@@ -99,7 +109,9 @@ class Voting(commands.Cog, name="Voting"):
         self.votes = {}  # will store votes of each person who does
         self.people_voting = frozenset(m.id for m in alive_people_role.members)
 
-        self.voting_msg = await inter.send("\n".join(prompt_builder), view=voting_view)
+        self.voting_msg = await inter.edit_original_message(
+            content="\n".join(prompt_builder), view=voting_view
+        )
         self.is_voting = True
 
         async with inter.channel.typing():
@@ -127,6 +139,10 @@ class Voting(commands.Cog, name="Voting"):
         final_msg_builder.insert(0, "__**VOTES:**__\n")
 
         await inter.channel.send("\n".join(final_msg_builder))
+
+        voting_view = self.create_select(disabled=True)
+        await self.voting_msg.edit(content="\n".join(prompt_builder), view=voting_view)
+        voting_view.stop()
 
 
 def setup(bot):
