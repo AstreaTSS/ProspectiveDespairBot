@@ -12,7 +12,7 @@ import common.models as models
 import common.utils as utils
 
 
-class SlashCMDS(commands.Cog):
+class InteractionCMDs(commands.Cog, name="Interaction"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
@@ -713,4 +713,4 @@ class SlashCMDS(commands.Cog):
 
 def setup(bot):
     importlib.reload(utils)
-    bot.add_cog(SlashCMDS(bot))
+    bot.add_cog(InteractionCMDs(bot))
