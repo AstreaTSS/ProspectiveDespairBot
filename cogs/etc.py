@@ -3,7 +3,7 @@ import time
 from typing import TYPE_CHECKING
 
 import dateutil.parser
-import disnake.utils
+import disnake
 import pytz
 from disnake.ext import commands
 
@@ -32,9 +32,10 @@ else:
                 )
 
 
-class EtcCmds(commands.Cog, name="Misc."):
+class Etc(commands.Cog, name="Misc."):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.member_role = disnake.Object(786610276606279680)
 
     @commands.command()
     async def ping(self, ctx):
@@ -62,7 +63,12 @@ class EtcCmds(commands.Cog, name="Misc."):
         Times with no dates are assumed to be taking place today."""
         await ctx.send(disnake.utils.format_dt(time_str))
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before: disnake.Member, after: disnake.Member):
+        if before.pending and not after.pending:
+            await after.add_roles(self.member_role, reason="User has verified.")
+
 
 def setup(bot):
     importlib.reload(utils)
-    bot.add_cog(EtcCmds(bot))
+    bot.add_cog(Etc(bot))
