@@ -3,7 +3,7 @@ import time
 from typing import TYPE_CHECKING
 
 import dateutil.parser
-import disnake.utils
+import disnake
 import pytz
 from disnake.ext import commands
 
