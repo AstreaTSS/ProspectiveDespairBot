@@ -47,7 +47,7 @@ class AutoAnnouncements(commands.Cog):
                 "Helloooo...? Helloooo? This is an important announcement. ",
                 "Can't you see? It's 10 PM, and the moon's already out. ",
                 "As such, it is officially nighttime. Sweet dreams, everyone! ",
-                "Good night, sleep night... You never know what creatures are out ",
+                "Good night, sleep tight... You never know what creatures are out ",
                 "in the jungle~",
             ]
         embed.description = "".join(str_builder)
