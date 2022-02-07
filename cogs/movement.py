@@ -1,5 +1,6 @@
 import importlib
 import typing
+import unicodedata
 
 import disnake
 from disnake.ext import commands
@@ -7,6 +8,9 @@ from disnake.ext import commands
 import common.fuzzys as fuzzys
 import common.models as models
 import common.utils as utils
+
+
+DORM_LINK_CHAN_ID = 938607273486471209
 
 
 async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
@@ -55,7 +59,9 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         self.bot: commands.Bot = bot
 
         guild = self.bot.get_guild(786609181855318047)
-        self.participant_role = guild.get_role(939993631140495360)
+        self.participant_role: disnake.Role = guild.get_role(939993631140495360)  # type: ignore
+        self.dorm_category: disnake.CategoryChannel = guild.get_channel(938606098204749914)  # type: ignore
+        self.dorm_link_chan: disnake.TextChannel = guild.get_channel(DORM_LINK_CHAN_ID)  # type: ignore
 
     deny = disnake.PermissionOverwrite(
         view_channel=False, send_messages=False, send_messages_in_threads=False
@@ -84,6 +90,23 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await dest_channel.send(
             f"{member.mention} entered from `{entry_channel.name}.`",
             allowed_mentions=disnake.AllowedMentions.none(),
+        )
+
+    async def _create_links(
+        self,
+        entry_channel: disnake.TextChannel,
+        dest_channel: disnake.TextChannel,
+        member: typing.Optional[disnake.Member],
+    ):
+        await models.MovementEntry.create(
+            entry_channel_id=entry_channel.id,
+            dest_channel_id=dest_channel.id,
+            user_id=member.id if member else None,
+        )
+        await models.MovementEntry.create(
+            entry_channel_id=dest_channel.id,
+            dest_channel_id=entry_channel.id,
+            user_id=member.id if member else None,
         )
 
     @commands.slash_command(
@@ -174,16 +197,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         )
 
         if not exists:
-            await models.MovementEntry.create(
-                entry_channel_id=entry_channel.id,
-                dest_channel_id=dest_channel.id,
-                user_id=user.id if user else None,
-            )
-            await models.MovementEntry.create(
-                entry_channel_id=dest_channel.id,
-                dest_channel_id=entry_channel.id,
-                user_id=user.id if user else None,
-            )
+            await self._create_links(entry_channel, dest_channel, user)
             await inter.send("Done!")
         else:
             await inter.send("This entry already exists!")
@@ -211,13 +225,8 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.response.defer()
 
         num_deleted = await models.MovementEntry.filter(
-            entry_channel_id=entry_channel.id,
-            dest_channel_id=dest_channel.id,
-            user_id=user.id if user else None,
-        ).delete()
-        num_deleted += await models.MovementEntry.filter(
-            entry_channel_id=dest_channel.id,
-            dest_channel_id=entry_channel.id,
+            entry_channel_id__in=[entry_channel.id, dest_channel.id],
+            dest_channel_id__in=[dest_channel.id, entry_channel.id],
             user_id=user.id if user else None,
         ).delete()
 
@@ -226,7 +235,48 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         else:
             await inter.send("This entry doesn't exist!")
 
-    # TODO: dorm generation, link viewing
+    @commands.slash_command(
+        name="dorm-generation",
+        description="Generates dorms for all participants.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def dorm_generation(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        dorm_category: disnake.CategoryChannel = inter.guild.get_channel(938606098204749914)  # type: ignore
+
+        for channel in dorm_category.text_channels:
+            await channel.delete()
+
+        for member in self.participant_role.members:
+            # this first line is more or less black magic, but it basically translates characters like 𝓭𝓼𝓰𝓼𝓭𝓰
+            # into dsgsdg, which is easier to type
+            # source - https://github.com/daveoncode/python-string-utils/blob/78929d/string_utils/manipulation.py#L433
+            ascii_name = (
+                unicodedata.normalize("NFKD", member.name.lower())
+                .encode("ascii", "ignore")
+                .decode("utc-8")
+            )
+
+            # then this is basically a bunch of basic conversion notes to make the process easier
+            # not perfect, but the api can take it from here, i think
+            somewhat_valid_name = (
+                ascii_name.replace(" ", "-")
+                .replace('"', "")
+                .replace("'", "")
+                .replace(".", "")
+            )
+
+            chan = await dorm_category.create_text_channel(
+                name=f"{somewhat_valid_name}-{member.discriminator}-dorm"
+            )
+            await self._create_links(chan, self.dorm_link_chan, member)
+
+        await inter.send("Done!")
+
+    # TODO: link viewing
 
 
 def setup(bot: commands.Bot):
