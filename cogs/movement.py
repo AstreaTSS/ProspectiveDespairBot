@@ -1,4 +1,5 @@
 import importlib
+import typing
 
 import disnake
 from disnake.ext import commands
@@ -53,6 +54,9 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
+        guild = self.bot.get_guild(786609181855318047)
+        self.participant_role = guild.get_role(939993631140495360)
+
     deny = disnake.PermissionOverwrite(
         view_channel=False, send_messages=False, send_messages_in_threads=False
     )
@@ -61,19 +65,22 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     )
 
     async def _move(
-        self, inter: disnake.GuildCommandInteraction, dest_channel: disnake.TextChannel
+        self,
+        member: disnake.Member,
+        inter: disnake.GuildCommandInteraction,
+        dest_channel: disnake.TextChannel,
     ):
         entry_channel = inter.channel
         if isinstance(entry_channel, disnake.Thread):
             entry_channel = entry_channel.parent
 
-        await entry_channel.set_permissions(inter.user, overwrite=self.deny)
+        await entry_channel.set_permissions(member, overwrite=self.deny)
         await entry_channel.send(
-            f"{inter.user.mention} left to `{dest_channel.name}.`",
+            f"{member.mention} left to `{dest_channel.name}.`",
             allowed_mentions=disnake.AllowedMentions.none(),
         )
 
-        await dest_channel.set_permissions(inter.user, overwrite=self.allow)
+        await dest_channel.set_permissions(member, overwrite=self.allow)
         await dest_channel.send(
             f"{inter.user.mention} entered from `{entry_channel.name}.`",
             allowed_mentions=disnake.AllowedMentions.none(),
@@ -98,7 +105,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     ):
         dest_channel = inter.guild.get_channel(channel_id)
         await inter.send("Sending...", ephemeral=True)
-        await self._move(inter, dest_channel)
+        await self._move(inter.user, inter, dest_channel)
 
     @commands.slash_command(
         name="allowed-to-move",
@@ -133,11 +140,83 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     ):
         await inter.response.defer(ephemeral=True)
 
-        participants = inter.guild.get_role(939993631140495360)
-        for member in participants.members:
-            await self._move(inter, channel)
+        for member in self.participant_role.members:
+            await self._move(member, inter, channel)
 
         await inter.send("Done!", ephemeral=True)
+
+    @commands.slash_command(
+        name="link-channels",
+        description="Link channels for movement.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def link_channels(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        entry_chanel: disnake.TextChannel = commands.Param(
+            description="The starting channel."
+        ),
+        dest_channel: disnake.TextChannel = commands.Param(
+            description="The exit channel."
+        ),
+        user: disnake.Member = commands.Param(
+            None, description="The user to link this for, if desired."
+        ),
+    ):
+        await inter.response.defer()
+
+        exists = await models.MovementEntry.exists(
+            entry_channel_id=entry_chanel.id,
+            dest_channel_id=dest_channel.id,
+            user_id=user.id if user else None,
+        )
+
+        if not exists:
+            await models.MovementEntry.create(
+                entry_channel_id=entry_chanel.id,
+                dest_channel_id=dest_channel.id,
+                user_id=user.id if user else None,
+            )
+            await inter.send("Done!")
+        else:
+            await inter.send("This entry already exists!")
+
+    @commands.slash_command(
+        name="unlink-channels",
+        description="Unlinks channels for movement.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def unlink_channels(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        entry_chanel: disnake.TextChannel = commands.Param(
+            description="The starting channel."
+        ),
+        dest_channel: disnake.TextChannel = commands.Param(
+            description="The exit channel."
+        ),
+        user: disnake.Member = commands.Param(
+            None, description="The user to unlink this for, if specified."
+        ),
+    ):
+        await inter.response.defer()
+
+        num_deleted = await models.MovementEntry.filter(
+            entry_channel_id=entry_chanel.id,
+            dest_channel_id=dest_channel.id,
+            user_id=user.id if user else None,
+        ).delete()
+
+        if num_deleted > 0:
+            await inter.send("Done!")
+        else:
+            await inter.send("This entry doesn't exist!")
+
+    # TODO: dorm generation, link viewing
 
 
 def setup(bot: commands.Bot):
