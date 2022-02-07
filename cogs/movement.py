@@ -68,7 +68,16 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             entry_channel = entry_channel.parent
 
         await entry_channel.set_permissions(inter.user, overwrite=self.deny)
+        await entry_channel.send(
+            f"{inter.user.mention} left to `{dest_channel.name}.`",
+            allowed_mentions=disnake.AllowedMentions.none(),
+        )
+
         await dest_channel.set_permissions(inter.user, overwrite=self.allow)
+        await dest_channel.send(
+            f"{inter.user.mention} entered from `{entry_channel.name}.`",
+            allowed_mentions=disnake.AllowedMentions.none(),
+        )
 
     @commands.slash_command(
         name="move",
