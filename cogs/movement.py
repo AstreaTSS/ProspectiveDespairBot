@@ -155,7 +155,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def link_channels(
         self,
         inter: disnake.GuildCommandInteraction,
-        entry_chanel: disnake.TextChannel = commands.Param(
+        entry_channel: disnake.TextChannel = commands.Param(
             description="The starting channel."
         ),
         dest_channel: disnake.TextChannel = commands.Param(
@@ -168,15 +168,20 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.response.defer()
 
         exists = await models.MovementEntry.exists(
-            entry_channel_id=entry_chanel.id,
-            dest_channel_id=dest_channel.id,
+            entry_channel_id__in=[entry_channel.id, dest_channel.id],
+            dest_channel_id__in=[dest_channel.id, entry_channel.id],
             user_id=user.id if user else None,
         )
 
         if not exists:
             await models.MovementEntry.create(
-                entry_channel_id=entry_chanel.id,
+                entry_channel_id=entry_channel.id,
                 dest_channel_id=dest_channel.id,
+                user_id=user.id if user else None,
+            )
+            await models.MovementEntry.create(
+                entry_channel_id=dest_channel.id,
+                dest_channel_id=entry_channel.id,
                 user_id=user.id if user else None,
             )
             await inter.send("Done!")
@@ -193,7 +198,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def unlink_channels(
         self,
         inter: disnake.GuildCommandInteraction,
-        entry_chanel: disnake.TextChannel = commands.Param(
+        entry_channel: disnake.TextChannel = commands.Param(
             description="The starting channel."
         ),
         dest_channel: disnake.TextChannel = commands.Param(
@@ -206,8 +211,13 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.response.defer()
 
         num_deleted = await models.MovementEntry.filter(
-            entry_channel_id=entry_chanel.id,
+            entry_channel_id=entry_channel.id,
             dest_channel_id=dest_channel.id,
+            user_id=user.id if user else None,
+        ).delete()
+        num_deleted += await models.MovementEntry.filter(
+            entry_channel_id=dest_channel.id,
+            dest_channel_id=entry_channel.id,
             user_id=user.id if user else None,
         ).delete()
 
