@@ -12,21 +12,22 @@ def extract_from_list(
     list_of_items,
     processors,
     score_cutoff=80,
-    scorers=[fuzz.WRatio],
+    scorers=None,
 ):
     """Uses multiple scorers and processors for a good mix of accuracy and fuzzy-ness"""
+    if scorers is None:
+        scorers = [fuzz.WRatio]
     combined_list = []
 
     for scorer in scorers:
         for processor in processors:
-            fuzzy_list = process.extract(
+            if fuzzy_list := process.extract(
                 argument,
                 list_of_items,
                 scorer=scorer,
                 processor=processor,
                 score_cutoff=score_cutoff,
-            )
-            if fuzzy_list:
+            ):
                 combined_entries = [e[0] for e in combined_list]
 
                 if (
@@ -50,10 +51,7 @@ def extract_from_list(
 
 
 def get_card_name(card):
-    if isinstance(card, cards.Card):
-        return card.oc_name.lower()
-    else:
-        return card
+    return card.oc_name.lower() if isinstance(card, cards.Card) else card
 
 
 async def extract_cards(inter: disnake.ApplicationCommandInteraction, argument):

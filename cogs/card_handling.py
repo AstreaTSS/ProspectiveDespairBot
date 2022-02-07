@@ -2,7 +2,6 @@ import asyncio
 import importlib
 from datetime import datetime
 from typing import Optional
-from typing import Union
 
 import disnake
 from disnake.ext import commands
