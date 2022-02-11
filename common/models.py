@@ -33,4 +33,4 @@ class MiniKGPoints(Model):
     user_id: int = fields.BigIntField(pk=True)
     points: Decimal = fields.DecimalField(5, 2)
     rollover_points: Decimal = fields.DecimalField(5, 2, default=0)
-    in_game: bool = fields.BooleanField(default=True)  # type: ignore
+    in_game: bool = fields.BooleanField(default=False)  # type: ignore

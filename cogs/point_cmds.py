@@ -7,7 +7,6 @@ from typing import Tuple
 import disnake
 from disnake.ext import commands
 
-import common.cards as cards
 import common.models as models
 import common.utils as utils
 
@@ -16,7 +15,9 @@ class PointCMDs(commands.Cog, name="Point"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    async def _clear_person(self, user_id: int, deny_in_game: bool = False):
+    async def _clear_person(
+        self, user_id: int, deny_in_game: bool = False, set_in_game: bool = False
+    ):
         points = await models.MiniKGPoints.get_or_none(user_id=user_id)
         if points:
             if deny_in_game and points.in_game:
@@ -24,10 +25,19 @@ class PointCMDs(commands.Cog, name="Point"):
 
             points.points = points.rollover_points
             points.rollover_points = Decimal(0)
+
+            if set_in_game:
+                points.in_game = True
+
             await points.save()
             return points
         else:
-            return await models.MiniKGPoints.create(user_id=user_id, points=0)
+            if set_in_game:
+                return await models.MiniKGPoints.create(
+                    user_id=user_id, points=0, in_game=True
+                )
+            else:
+                return await models.MiniKGPoints.create(user_id=user_id, points=0)
 
     @commands.slash_command(
         name="add-points",
@@ -83,7 +93,7 @@ class PointCMDs(commands.Cog, name="Point"):
             default=None, description="The fifteenth user."
         ),
         count: float = commands.Param(
-            default=1, description="How many interactions should be added/removed."
+            default=1, description="How many points should be added/removed."
         ),
     ):
         await inter.response.defer()
@@ -471,7 +481,7 @@ class PointCMDs(commands.Cog, name="Point"):
         default_permission=False,
     )
     @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
-    async def list_interactions(self, inter: disnake.GuildCommandInteraction):
+    async def list_points(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer(ephemeral=True)
 
         points = await models.MiniKGPoints.filter(in_game=True)
@@ -521,11 +531,11 @@ class PointCMDs(commands.Cog, name="Point"):
         if points:
             points.in_game = False
             await points.save()
-            await inter.send(f"{user.mention} deleted!",)
+            await inter.send(f"{user.mention} removed!",)
         else:
             await inter.send(
                 embed=utils.error_embed_generate(
-                    f"Member {user.mention} does not exist in interactions!"
+                    f"Member {user.mention} does not exist in the points system!"
                 )
             )
 
@@ -543,11 +553,27 @@ class PointCMDs(commands.Cog, name="Point"):
     ):
         await inter.response.defer()
 
-        points = await self._clear_person(user.id, deny_in_game=True)
+        points = await self._clear_person(user.id, deny_in_game=True, set_in_game=True)
         if not points:
             await inter.send("This person is already in the KG!")
         else:
             await inter.send(f"Added {user.mention}!")
+
+    @commands.slash_command(
+        name="setup-minikg-points",
+        description="Sets up points for everyone with the Mini-KG Participant role.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def setup_minikg_points(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        participant_role = inter.guild.get_role(939993631140495360)
+        for member in participant_role.members:
+            await self._clear_person(member.id, set_in_game=True)
+
+        await inter.send("Done!")
 
     @commands.slash_command(
         name="points",
@@ -565,7 +591,9 @@ class PointCMDs(commands.Cog, name="Point"):
         if points:
             embed = disnake.Embed(
                 color=self.bot.color,
-                description=f"You have **{points.points}** points!",
+                description=f"You have **{points.points}** points!"
+                + f"\nYou have {points.rollover_points} points that will"
+                + " be added next time you play.",
                 timestamp=disnake.utils.utcnow(),
             )
             embed.set_footer(text="As of")
