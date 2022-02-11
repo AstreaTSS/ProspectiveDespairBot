@@ -55,6 +55,9 @@ def get_card_name(card):
 
 
 async def extract_cards(inter: disnake.ApplicationCommandInteraction, argument):
+    if not argument:
+        return [c.oc_name for c in tuple(cards.participants + cards.hosts)]
+
     queried_cards: list[list[cards.Card]] = extract_from_list(
         inter=inter,
         argument=argument.lower(),
