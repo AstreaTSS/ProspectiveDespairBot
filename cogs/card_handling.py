@@ -94,7 +94,9 @@ class CardHandling(commands.Cog, name="Card Handling"):
             default=None, description="The user who RPs the OC on a card."
         ),
         oc_name: Optional[str] = commands.Param(
-            default=None, autocomplete=fuzzys.extract_cards
+            default=None,
+            description="The name of the OC.",
+            autocomplete=fuzzys.extract_cards,
         ),
     ):
         if user:
