@@ -32,6 +32,9 @@ async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
     )
     channels = tuple(c for c in channels if c is not None)
 
+    if not argument:
+        return {f"#{c.name}": c.id for c in channels}
+
     def get_channel_name(channel: disnake.TextChannel):
         return (
             channel.name.lower()
