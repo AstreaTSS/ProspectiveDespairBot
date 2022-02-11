@@ -1,5 +1,6 @@
 import typing
 from decimal import Decimal
+from email.policy import default
 
 from tortoise import fields
 from tortoise.models import Model
@@ -31,5 +32,5 @@ class MiniKGPoints(Model):
 
     user_id: int = fields.BigIntField(pk=True)
     points: Decimal = fields.DecimalField(5, 2)
-    rollover_points: Decimal = fields.DecimalField(5, 2)
+    rollover_points: Decimal = fields.DecimalField(5, 2, default=True)
     in_game: bool = fields.BooleanField(default=True)  # type: ignore
