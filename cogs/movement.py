@@ -1,3 +1,4 @@
+import collections
 import importlib
 import typing
 import unicodedata
@@ -7,6 +8,7 @@ from disnake.ext import commands
 
 import common.fuzzys as fuzzys
 import common.models as models
+import common.paginator as paginator
 import common.utils as utils
 
 
@@ -276,10 +278,73 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
 
         await inter.send("Done!")
 
-    # TODO: link viewing
+    @commands.slash_command(
+        name="view-links",
+        description="Views the link for channels.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def view_links(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        entry_channel: disnake.TextChannel = commands.Param(
+            None, description="The entry channel to view."
+        ),
+    ):
+        await inter.response.defer()
+
+        if entry_channel:
+            channel_entries = await models.MovementEntry.filter(
+                entry_channel_id=entry_channel.id,
+            )
+
+            chan_entry_strs = [
+                f"<#{e.dest_channel_id}> {f'(<@{e.user_id}>)' if e.user_id else ''}"
+                for e in channel_entries
+            ]
+
+            if not chan_entry_strs:
+                await inter.send("There's no links for this channel!")
+
+            chan_entry_embed = disnake.Embed(
+                color=self.bot.color,
+                title=f"Destination channels for #{entry_channel.name}",
+                description="\n".join(chan_entry_strs),
+            )
+            await inter.send(embed=chan_entry_embed)
+        else:
+            channel_dict: typing.DefaultDict[
+                int, typing.List[models.MovementEntry]
+            ] = collections.defaultdict(list)
+
+            async for channel_entry in models.MovementEntry.all():
+                channel_dict[channel_entry.entry_channel_id].append(channel_entry)
+
+            channel_pages_dicts: typing.List[typing.Dict[str, str]] = []
+
+            for channel_id, channel_entries in channel_dict.items():
+                chan_entry_strs = [
+                    f"<#{e.dest_channel_id}> {f'(<@{e.user_id}>)' if e.user_id else ''}"
+                    for e in channel_entries
+                ]
+                entry_chan = inter.guild.get_channel(channel_id)
+                channel_pages_dicts.append(
+                    {
+                        f"Destination channels for #{entry_chan.name}": "\n".join(
+                            chan_entry_strs
+                        )
+                    }
+                )
+
+            channel_paginator = paginator.FieldPages(
+                inter, entries=channel_pages_dicts, per_page=1
+            )
+            await channel_paginator.paginate()
 
 
 def setup(bot: commands.Bot):
     importlib.reload(utils)
     importlib.reload(fuzzys)
+    importlib.reload(paginator)
     bot.add_cog(Movement(bot))

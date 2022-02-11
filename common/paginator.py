@@ -72,7 +72,7 @@ class Pages:
     interface exits automatically.
     Parameters
     ------------
-    ctx: Context
+    ctx: Context | ApplicationCommandInteraction
         The context of the command.
     entries: List[str]
         A list of entries to paginate.
@@ -91,12 +91,16 @@ class Pages:
     """
 
     def __init__(
-        self, ctx: commands.Context, *, entries, per_page=12, show_entry_count=True
+        self,
+        ctx: typing.Union[commands.Context, disnake.ApplicationCommandInteraction],
+        *,
+        entries,
+        per_page=12,
+        show_entry_count=True,
     ):
         self.bot = ctx.bot
         self.context = ctx
         self.entries = entries
-        self.message = ctx.message
         self.channel = ctx.channel
         self.author = ctx.author
         self.per_page = per_page
@@ -116,6 +120,9 @@ class Pages:
             ReactionEmoji("⏹️", 1, self.stop_pages),
             ReactionEmoji("ℹ️", 1, self.show_help),
         ]
+
+        if isinstance(ctx, disnake.ApplicationCommandInteraction):
+            self.context.reply = self.context.send  # just a hack to make things work
 
         if ctx.guild is not None:
             self.permissions = self.channel.permissions_for(ctx.guild.me)
@@ -183,7 +190,7 @@ class Pages:
         if not first:
             return await interaction.response.edit_message(content=content, embed=embed)
 
-        self.message = await self.context.reply(
+        await self.context.reply(
             content=content,
             embed=embed,
             view=generate_view(self.reaction_emojis, self.author),
