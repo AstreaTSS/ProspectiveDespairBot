@@ -19,25 +19,26 @@ class PointCMDs(commands.Cog, name="Point"):
         self, user_id: int, deny_in_game: bool = False, set_in_game: bool = False
     ):
         points = await models.MiniKGPoints.get_or_none(user_id=user_id)
-        if points:
-            if deny_in_game and points.in_game:
-                return None
-
-            points.points = points.rollover_points
-            points.rollover_points = Decimal(0)
-
-            if set_in_game:
-                points.in_game = True
-
-            await points.save()
-            return points
-        else:
-            if set_in_game:
-                return await models.MiniKGPoints.create(
+        if not points:
+            return (
+                await models.MiniKGPoints.create(
                     user_id=user_id, points=0, in_game=True
                 )
-            else:
-                return await models.MiniKGPoints.create(user_id=user_id, points=0)
+                if set_in_game
+                else await models.MiniKGPoints.create(user_id=user_id, points=0)
+            )
+
+        if deny_in_game and points.in_game:
+            return None
+
+        points.points = points.rollover_points
+        points.rollover_points = Decimal(0)
+
+        if set_in_game:
+            points.in_game = True
+
+        await points.save()
+        return points
 
     @commands.slash_command(
         name="add-points",
@@ -560,13 +561,13 @@ class PointCMDs(commands.Cog, name="Point"):
             await inter.send(f"Added {user.mention}!")
 
     @commands.slash_command(
-        name="setup-minikg-points",
+        name="setup-mini-kg-points",
         description="Sets up points for everyone with the Mini-KG Participant role.",
         guild_ids=[786609181855318047],
         default_permission=False,
     )
     @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
-    async def setup_minikg_points(self, inter: disnake.GuildCommandInteraction):
+    async def setup_mini_kg_points(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
         participant_role = inter.guild.get_role(939993631140495360)
