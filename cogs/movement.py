@@ -47,7 +47,7 @@ async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
         argument=argument.lower(),
         list_of_items=channels,
         processors=[get_channel_name],
-        score_cutoff=0,
+        score_cutoff=60,
     )
     return {f"#{c[0].name}": c[0].id for c in queried_channels}
 
