@@ -1,4 +1,4 @@
-disnake==2.3.2
+disnake==2.4.0
 asyncpg==0.25.0
 tortoise-orm==0.18.1
 pytz==2021.3
