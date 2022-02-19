@@ -193,7 +193,9 @@ class Voting(commands.Cog, name="Voting"):
         async for user_entry in models.MiniKGPoints.filter(
             user_id__in=list(self.people_voting)
         ):
-            vote_weight_dict[user_entry.user_id] = user_entry.points
+            vote_weight_dict[user_entry.user_id] = (
+                user_entry.points if user_entry.points > 0 else 0.5
+            )
 
         # transfer the format of [discord_user_id] = 'oc name'
         # to ['oc name'] = number_of_votes
