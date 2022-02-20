@@ -278,9 +278,6 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def dorm_generation(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
-        for channel in self.dorm_category.text_channels:
-            await channel.delete()
-
         for member in self.participant_role.members:
             # this first line is more or less black magic, but it basically translates characters like 𝓭𝓼𝓰𝓼𝓭𝓰
             # into dsgsdg, which is easier to type
@@ -304,6 +301,28 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
                 name=f"{somewhat_valid_name}-{member.discriminator}-dorm"
             )
             await self._create_links(chan, self.dorm_link_chan, member)
+
+        await inter.send("Done!")
+
+    @commands.slash_command(
+        name="delete-dorms",
+        description="Deletes the dorms and their database entries.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def delete_dorms(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        channel_ids = []
+
+        for channel in self.dorm_category.text_channels:
+            channel_ids.append(channel.id)
+            await channel.delete()
+
+        await models.MovementEntry.filter(
+            Q(entry_channel_id__in=channel_ids) | Q(dest_channel_id__in=channel_ids)
+        ).delete()
 
         await inter.send("Done!")
 
