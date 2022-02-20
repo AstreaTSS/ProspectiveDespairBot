@@ -1,3 +1,4 @@
+import asyncio
 import collections
 import importlib
 import typing
@@ -5,6 +6,7 @@ import unicodedata
 
 import disnake
 from disnake.ext import commands
+from tortoise.expressions import Q
 
 import common.fuzzys as fuzzys
 import common.models as models
@@ -15,14 +17,26 @@ import common.utils as utils
 DORM_LINK_CHAN_ID = 938607273486471209
 
 
+async def move_check(inter: disnake.ApplicationCommandInteraction):
+    return inter.bot.allowed_to_move and (
+        inter.channel.category_id
+        and inter.channel.category_id in {938606024523387000, 938606098204749914}
+    )
+
+
 async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
+    can_move = await move_check(inter)
+    if not can_move:
+        return {}
+
     if isinstance(inter.channel, disnake.Thread):
         chan_id = inter.channel.parent_id
     else:
         chan_id = inter.channel.id
 
     channel_entries = await models.MovementEntry.filter(
-        entry_channel_id=chan_id, user_id__in=[inter.user.id, None]
+        Q(entry_channel_id=chan_id)
+        & (Q(user_id=inter.user.id) | Q(user_id__isnull=True))
     )
     if not channel_entries:
         return {}
@@ -33,7 +47,7 @@ async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
     channels = tuple(c for c in channels if c is not None)
 
     if not argument:
-        return {f"#{c.name}": c.id for c in channels}
+        return {f"#{c.name}": str(c.id) for c in channels}
 
     def get_channel_name(channel: disnake.TextChannel):
         return (
@@ -49,14 +63,7 @@ async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
         processors=[get_channel_name],
         score_cutoff=60,
     )
-    return {f"#{c[0].name}": c[0].id for c in queried_channels}
-
-
-async def move_check(inter: disnake.ApplicationCommandInteraction):
-    return inter.bot.allowed_to_move and (
-        inter.channel.category_id
-        and inter.channel.category_id in {938606024523387000, 938606098204749914}
-    )
+    return {f"#{c[0].name}": str(c[0].id) for c in queried_channels}
 
 
 class Movement(commands.Cog, name="Mini-KG Movement"):
@@ -69,10 +76,16 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         self.dorm_link_chan: disnake.TextChannel = guild.get_channel(DORM_LINK_CHAN_ID)  # type: ignore
 
     deny = disnake.PermissionOverwrite(
-        view_channel=False, send_messages=False, send_messages_in_threads=False
+        view_channel=False,
+        send_messages=False,
+        read_message_history=False,
+        send_messages_in_threads=False,
     )
     allow = disnake.PermissionOverwrite(
-        view_channel=True, send_messages=True, send_messages_in_threads=True
+        view_channel=True,
+        send_messages=True,
+        read_message_history=False,
+        send_messages_in_threads=True,
     )
 
     async def _move(
@@ -85,17 +98,31 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         if isinstance(entry_channel, disnake.Thread):
             entry_channel = entry_channel.parent
 
-        await entry_channel.set_permissions(member, overwrite=self.deny)
-        await entry_channel.send(
-            f"{member.mention} left to `{dest_channel.name}.`",
-            allowed_mentions=disnake.AllowedMentions.none(),
-        )
+        valid_category = entry_channel.category_id in {
+            938606024523387000,
+            938606098204749914,
+        }
+
+        if valid_category:
+            await entry_channel.set_permissions(member, overwrite=self.deny)
+            await entry_channel.send(
+                f"{member.mention} left to `#{dest_channel.name}`.",
+                allowed_mentions=disnake.AllowedMentions.none(),
+            )
 
         await dest_channel.set_permissions(member, overwrite=self.allow)
-        await dest_channel.send(
-            f"{member.mention} entered from `{entry_channel.name}.`",
-            allowed_mentions=disnake.AllowedMentions.none(),
-        )
+
+        await asyncio.sleep(1)
+        if valid_category:
+            await dest_channel.send(
+                f"{member.mention} entered from `#{entry_channel.name}`.",
+                allowed_mentions=disnake.AllowedMentions.all(),
+            )
+        else:
+            await dest_channel.send(
+                f"{member.mention} entered `#{dest_channel.name}`.",
+                allowed_mentions=disnake.AllowedMentions.all(),
+            )
 
     async def _create_links(
         self,
@@ -125,13 +152,13 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def move(
         self,
         inter: disnake.GuildCommandInteraction,
-        channel_id: int = commands.Param(
+        channel_id: str = commands.Param(
             name="channel",
             description="The channel to move to.",
             autocomplete=move_autocomplete,
         ),
     ):
-        dest_channel = inter.guild.get_channel(channel_id)
+        dest_channel = inter.guild.get_channel(int(channel_id))
         await inter.send("Sending...", ephemeral=True)
         await self._move(inter.user, inter, dest_channel)
 
@@ -169,6 +196,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.response.defer(ephemeral=True)
 
         for member in self.participant_role.members:
+            print(member)
             await self._move(member, inter, channel)
 
         await inter.send("Done!", ephemeral=True)
@@ -262,7 +290,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             ascii_name = (
                 unicodedata.normalize("NFKD", member.name.lower())
                 .encode("ascii", "ignore")
-                .decode("utc-8")
+                .decode("utf-8")
             )
 
             # then this is basically a bunch of basic conversion notes to make the process easier
@@ -324,7 +352,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             async for channel_entry in models.MovementEntry.all():
                 channel_dict[channel_entry.entry_channel_id].append(channel_entry)
 
-            channel_pages_dicts: typing.List[typing.Dict[str, str]] = []
+            channel_pages: typing.List[typing.Tuple[str, str]] = []
 
             for channel_id, channel_entries in channel_dict.items():
                 chan_entry_strs = [
@@ -332,16 +360,15 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
                     for e in channel_entries
                 ]
                 entry_chan = inter.guild.get_channel(channel_id)
-                channel_pages_dicts.append(
-                    {
-                        f"Destination channels for #{entry_chan.name}": "\n".join(
-                            chan_entry_strs
-                        )
-                    }
+                channel_pages.append(
+                    (
+                        f"Destination channels for #{entry_chan.name}",
+                        "\n".join(chan_entry_strs),
+                    )
                 )
 
             channel_paginator = paginator.FieldPages(
-                inter, entries=channel_pages_dicts, per_page=1
+                inter, entries=channel_pages, per_page=1
             )
             await channel_paginator.paginate()
 

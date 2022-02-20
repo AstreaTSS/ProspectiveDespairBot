@@ -66,6 +66,12 @@ class OnCMDError(commands.Cog):
             await inter.send(
                 embed=utils.error_embed_generate(str(error)), ephemeral=True
             )
+        elif isinstance(error, commands.CheckFailure):
+            await inter.send(
+                embed=utils.error_embed_generate(
+                    "You cannot use this command right now."
+                )
+            )
         elif "Unknown interaction" in str(error):
             await inter.channel.send(
                 f"{inter.author.mention}, the bot is a bit slow and so cannot do slash"
