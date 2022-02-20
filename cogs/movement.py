@@ -278,9 +278,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def dorm_generation(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
-        dorm_category: disnake.CategoryChannel = inter.guild.get_channel(938606098204749914)  # type: ignore
-
-        for channel in dorm_category.text_channels:
+        for channel in self.dorm_category.text_channels:
             await channel.delete()
 
         for member in self.participant_role.members:
@@ -302,7 +300,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
                 .replace(".", "")
             )
 
-            chan = await dorm_category.create_text_channel(
+            chan = await self.dorm_category.create_text_channel(
                 name=f"{somewhat_valid_name}-{member.discriminator}-dorm"
             )
             await self._create_links(chan, self.dorm_link_chan, member)
