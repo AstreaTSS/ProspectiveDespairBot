@@ -26,7 +26,9 @@ class CustomCheckFailure(commands.CheckFailure):
 
 
 async def error_handle(
-    bot, error, ctx: typing.Union[commands.Context, disnake.Interaction, None] = None,
+    bot,
+    error,
+    ctx: typing.Union[commands.Context, disnake.Interaction, None] = None,
 ):
     # handles errors and sends them to owner
     if isinstance(error, aiohttp.ServerDisconnectedError):

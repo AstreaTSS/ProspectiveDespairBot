@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     class TimeParser(datetime):
         ...
 
-
 else:
 
     class TimeParser(commands.Converter):

@@ -609,7 +609,9 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
 
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
-            await inter.send(f"{user.mention} deleted!",)
+            await inter.send(
+                f"{user.mention} deleted!",
+            )
         else:
             await inter.send(
                 embed=utils.error_embed_generate(

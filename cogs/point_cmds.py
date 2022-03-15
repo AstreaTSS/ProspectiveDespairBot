@@ -532,7 +532,9 @@ class PointCMDs(commands.Cog, name="Point"):
         if points:
             points.in_game = False
             await points.save()
-            await inter.send(f"{user.mention} removed!",)
+            await inter.send(
+                f"{user.mention} removed!",
+            )
         else:
             await inter.send(
                 embed=utils.error_embed_generate(

@@ -100,7 +100,8 @@ class Voting(commands.Cog, name="Voting"):
 
         options = [
             disnake.SelectOption(
-                label=card.oc_name, value=f"vote:{convert_name(card.oc_name)}",
+                label=card.oc_name,
+                value=f"vote:{convert_name(card.oc_name)}",
             )
             for card in cards.participants
         ]
@@ -178,7 +179,8 @@ class Voting(commands.Cog, name="Voting"):
 
         options = [
             disnake.SelectOption(
-                label=f"{member.display_name} ({member})", value=f"vote:{member.id}",
+                label=f"{member.display_name} ({member})",
+                value=f"vote:{member.id}",
             )
             for member in participant_role_members
         ]

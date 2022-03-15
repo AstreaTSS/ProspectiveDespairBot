@@ -21,7 +21,8 @@ class AutoAnnouncements(commands.Cog):
         self.webhook_session = aiohttp.ClientSession()
 
         self.webhook = disnake.Webhook.from_url(
-            os.environ.get("WEBHOOK_URL"), session=self.webhook_session,
+            os.environ.get("WEBHOOK_URL"),
+            session=self.webhook_session,
         )
 
         # self.task = self.bot.loop.create_task(self.auto_run())
