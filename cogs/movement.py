@@ -163,6 +163,20 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await self._move(inter.user, inter, dest_channel)
 
     @commands.slash_command(
+        name="room-description",
+        description="Gets the current room's description during Mini-KGs.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.MINI_KG_PERMS)
+    async def room_description(self, inter: disnake.GuildCommandInteraction):
+        channel = inter.channel
+        if isinstance(channel, disnake.Thread):
+            channel = channel.parent
+
+        await inter.send(channel.topic)
+
+    @commands.slash_command(
         name="allowed-to-move",
         description="Should people be allowed to move around the channels?",
         guild_ids=[786609181855318047],
