@@ -34,7 +34,7 @@ async def pd_prefixes(bot: commands.Bot, msg: disnake.Message):
     return mention_prefixes.union(custom_prefixes)
 
 
-def global_checks(ctx: commands.Context):
+def global_checks(ctx: commands.Context[commands.Bot]):
     if not ctx.bot.is_ready():
         return False
 
@@ -44,7 +44,7 @@ def global_checks(ctx: commands.Context):
     if not ctx.guild:
         return False
 
-    return ctx.guild.id == 786609181855318047 or ctx.author.id == ctx.bot.owner.id
+    return ctx.guild.id == 786609181855318047 or ctx.author.id == ctx.bot.owner_id
 
 
 async def on_init_load():
