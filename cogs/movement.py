@@ -165,7 +165,14 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             autocomplete=move_autocomplete,
         ),
     ):
-        dest_channel = inter.guild.get_channel(int(channel_id))
+        try:
+            dest_channel = inter.guild.get_channel(int(channel_id))
+        except ValueError:
+            raise commands.BadArgument("Invalid channel!")
+
+        if not dest_channel:
+            raise commands.BadArgument("Invalid channel!")
+
         await inter.send("Sending...", ephemeral=True)
         await self._move(inter.user, inter, dest_channel)
 
