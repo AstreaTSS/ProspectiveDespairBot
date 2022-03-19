@@ -213,11 +213,11 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             description="Should the target be able to move around?"
         ),
         user: disnake.Member = commands.Param(
+            default=None,
             description=(
                 "The user to toggle. If none are provided, all alive players are"
                 " affected."
             ),
-            required=False,
         ),
     ):
         str_allowed = "T" if allowed else "F"
