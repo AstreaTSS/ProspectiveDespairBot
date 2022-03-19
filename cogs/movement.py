@@ -18,7 +18,9 @@ DORM_LINK_CHAN_ID = 938607273486471209
 
 
 async def allowed_to_move(inter: disnake.ApplicationCommandInteraction) -> bool:
-    result: str = await inter.bot.redis.get(f"{inter.bot.user.id}{inter.user.id}")
+    result: str = await inter.bot.redis.hget(
+        f"{inter.bot.user.id}{inter.user.id}", "allowed_to_move"
+    )
     return result == "T"
 
 
@@ -101,14 +103,18 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         inter: disnake.GuildCommandInteraction,
         dest_channel: disnake.TextChannel,
     ):
-        entry_channel = inter.channel
-        if isinstance(entry_channel, disnake.Thread):
-            entry_channel = entry_channel.parent
-
-        valid_category = entry_channel.category_id in {
-            938606024523387000,
-            938606098204749914,
-        }
+        entry_channel_id: typing.Optional[str] = await inter.bot.redis.hget(
+            f"{inter.bot.user.id}{member.id}", "current_channel"
+        )
+        if entry_channel_id:
+            entry_channel = inter.guild.get_channel(int(entry_channel_id))
+            valid_category = entry_channel.category_id in {
+                938606024523387000,
+                938606098204749914,
+            }
+        else:
+            entry_channel = None
+            valid_category = False
 
         if valid_category:
             await entry_channel.set_permissions(member, overwrite=self.deny)
@@ -118,6 +124,9 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             )
 
         await dest_channel.set_permissions(member, overwrite=self.allow)
+        await inter.bot.redis.hset(
+            f"{inter.bot.user.id}{member.id}", "current_channel", str(dest_channel.id)
+        )
 
         await asyncio.sleep(1)
         if valid_category:
@@ -213,13 +222,33 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     ):
         str_allowed = "T" if allowed else "F"
         if user:
-            await inter.bot.redis.set(f"{inter.bot.user.id}{user.id}", str_allowed)
+            await inter.bot.redis.hset(
+                f"{inter.bot.user.id}{user.id}", "allowed_to_move", str_allowed
+            )
         else:
             for member in self.participant_role.members:
-                await inter.bot.redis.set(
-                    f"{inter.bot.user.id}{member.id}", str_allowed
+                await inter.bot.redis.hset(
+                    f"{inter.bot.user.id}{member.id}", "allowed_to_move", str_allowed
                 )
         await inter.send("Done!")
+
+    @commands.slash_command(
+        name="force-move",
+        description="Forcibily move a player to a channel.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def force_move(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        user: disnake.Member = commands.Param(description="The user to force move."),
+        channel: disnake.TextChannel = commands.Param(
+            description="The channel to move the player to."
+        ),
+    ):
+        await inter.response.defer(ephemeral=True)
+        await self._move(user, inter, channel)
 
     @commands.slash_command(
         name="mass-move",
@@ -238,7 +267,6 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.response.defer(ephemeral=True)
 
         for member in self.participant_role.members:
-            print(member)
             await self._move(member, inter, channel)
 
         await inter.send("Done!", ephemeral=True)
