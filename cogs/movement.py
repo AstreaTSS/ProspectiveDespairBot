@@ -17,14 +17,21 @@ import common.utils as utils
 DORM_LINK_CHAN_ID = 938607273486471209
 
 
+async def allowed_to_move(inter: disnake.ApplicationCommandInteraction) -> bool:
+    result: str = await inter.bot.redis.get(f"{inter.bot.user.id}{inter.user.id}")
+    return result == "T"
+
+
 async def move_check(inter: disnake.ApplicationCommandInteraction):
-    return inter.bot.allowed_to_move and (
+    return await allowed_to_move(inter) and (
         inter.channel.category_id
         and inter.channel.category_id in {938606024523387000, 938606098204749914}
     )
 
 
-async def move_autocomplete(inter: disnake.CommandInteraction, argument: str):
+async def move_autocomplete(
+    inter: disnake.ApplicationCommandInteraction, argument: str
+):
     can_move = await move_check(inter)
     if not can_move:
         return {}
@@ -178,7 +185,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
 
     @commands.slash_command(
         name="allowed-to-move",
-        description="Should people be allowed to move around the channels?",
+        description="Control if people/everyone should be allowed to move around.",
         guild_ids=[786609181855318047],
         default_permission=False,
     )
@@ -187,10 +194,24 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         self,
         inter: disnake.GuildCommandInteraction,
         allowed: bool = commands.Param(
-            description="Should people be around to move around?"
+            description="Should the target be able to move around?"
+        ),
+        user: disnake.Member = commands.Param(
+            description=(
+                "The user to toggle. If none are provided, all alive players are"
+                " affected."
+            ),
+            required=False,
         ),
     ):
-        inter.bot.allowed_to_move = allowed
+        str_allowed = "T" if allowed else "F"
+        if user:
+            await inter.bot.redis.set(f"{inter.bot.user.id}{user.id}", str_allowed)
+        else:
+            for member in self.participant_role.members:
+                await inter.bot.redis.set(
+                    f"{inter.bot.user.id}{member.id}", str_allowed
+                )
         await inter.send("Done!")
 
     @commands.slash_command(

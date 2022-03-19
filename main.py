@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 
+import aioredis
 import disnake
 from disnake.ext import commands
 from dotenv import load_dotenv
@@ -52,6 +53,7 @@ async def on_init_load():
     await Tortoise.init(
         db_url=os.environ.get("DB_URL"), modules={"models": ["common.models"]}
     )
+    bot.redis = aioredis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
 
     application = await bot.application_info()
     bot.owner = application.owner
@@ -109,6 +111,15 @@ class ProspectiveDespairBot(commands.Bot):
         except ConnectionClosedOK:
             await utils.msg_to_owner(self, "Reconnecting...")
 
+    async def on_disconnect(self):
+        # basically, this needs to be done as otherwise, when the bot reconnects,
+        # redis may complain that a connection was closed by a peer
+        # this isnt a great solution, but it should work
+        try:
+            await self.redis.connection_pool.disconnect(inuse_connections=True)
+        except Exception:
+            pass
+
     async def on_resumed(self):
         activity = disnake.Activity(
             name="over Prospective Despair", type=disnake.ActivityType.watching
@@ -148,7 +159,6 @@ bot = ProspectiveDespairBot(
 
 bot.init_load = True
 bot.added_pronoun_view = False
-bot.allowed_to_move = os.environ.get("STARTUP_MOVEMENT") != "false"
 bot.color = disnake.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
 
 bot.loop.create_task(on_init_load())
