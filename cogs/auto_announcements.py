@@ -44,7 +44,8 @@ class AutoAnnouncements(commands.Cog):
         else:
             str_builder = [
                 "It's 11 PM. Go to sleep.\n",
-                "The cafeteria and kitchen will close in a few minutes. Move out of it ",
+                "The cafeteria and kitchen will close in a few minutes. Move out"
+                " of it ",
                 "quickly: it would be rather pathetic if you died just by being in it.",
                 "\n\nRemember: all you have to do to escape is kill... ",
                 "and I heard night time's the *perfect* time to kill.",

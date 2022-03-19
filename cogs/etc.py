@@ -38,7 +38,10 @@ class Etc(commands.Cog, name="Misc."):
 
     @commands.slash_command(
         name="ping",
-        description="Pings the bot. Great way of finding out if the bot’s working, but has no real use.",
+        description=(
+            "Pings the bot. Great way of finding out if the bot’s working, but has no"
+            " real use."
+        ),
         guild_ids=[786609181855318047],
     )
     async def ping(self, inter: disnake.GuildCommandInteraction):
@@ -48,14 +51,20 @@ class Etc(commands.Cog, name="Misc."):
         ping_discord = round((self.bot.latency * 1000), 2)
 
         mes = await inter.edit_original_message(
-            content=f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal ping...",
+            content=(
+                f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal"
+                " ping..."
+            ),
         )
 
         end_time = time.perf_counter()
         ping_personal = round(((end_time - start_time) * 1000), 2)
 
         await mes.edit(
-            content=f"Pong!\n`{ping_discord}` ms from Discord.\n`{ping_personal}` ms personally."
+            content=(
+                f"Pong!\n`{ping_discord}` ms from Discord.\n`{ping_personal}` ms"
+                " personally."
+            )
         )
 
     @commands.command(aliases=["format_time"])

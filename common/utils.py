@@ -60,7 +60,9 @@ async def error_handle(
             )
         else:
             await ctx.send(
-                content="An internal error has occured. The bot owner has been notified.",
+                content=(
+                    "An internal error has occured. The bot owner has been notified."
+                ),
                 ephemeral=True,
             )
 
