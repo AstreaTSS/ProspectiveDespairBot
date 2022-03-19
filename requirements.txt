@@ -1,11 +1,11 @@
-disnake==2.3.2
+disnake==2.4.0
 asyncpg==0.25.0
 tortoise-orm==0.18.1
 pytz==2021.3
 disnake-jishaku==2.6.5
-websockets==10.1
+websockets==10.2
 python-dotenv==0.19.2
-rapidfuzz==2.0.1
+rapidfuzz==2.0.7
 python-dateutil==2.8.2
-flask==2.0.2
+flask==2.0.3
 tomli==2.0.1
