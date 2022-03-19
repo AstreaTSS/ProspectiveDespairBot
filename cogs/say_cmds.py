@@ -30,12 +30,14 @@ class SayCMDS(commands.Cog, name="Say"):
                             limit + 1
                         )  # we want this to error out even if the file is exactly the limit
                         raise commands.BadArgument(
-                            f"The file/URL given is over {humanize.naturalsize(limit, binary=True)}!"
+                            "The file/URL given is over"
+                            f" {humanize.naturalsize(limit, binary=True)}!"
                         )
                     else:
                         await resp.content.readexactly(limit)
                         raise commands.BadArgument(
-                            f"The file/URL given is at or over {humanize.naturalsize(limit, binary=True)}!"
+                            "The file/URL given is at or over"
+                            f" {humanize.naturalsize(limit, binary=True)}!"
                         )
 
                 except asyncio.IncompleteReadError as e:
@@ -46,7 +48,10 @@ class SayCMDS(commands.Cog, name="Say"):
     @commands.command()
     @utils.proper_permissions()
     async def say(
-        self, ctx: commands.Context, *, message: str,
+        self,
+        ctx: commands.Context,
+        *,
+        message: str,
     ):
         """Allows people with Manage Server permissions to speak with the bot.
         You can provide a channel and upload any attachments you wish to use."""
@@ -69,7 +74,8 @@ class SayCMDS(commands.Cog, name="Say"):
         if ctx.message.attachments:
             if len(ctx.message.attachments) > 1:
                 raise utils.CustomCheckFailure(
-                    "I cannot say messages with more than one attachment due to resource limits."
+                    "I cannot say messages with more than one attachment due to"
+                    " resource limits."
                 )
 
             try:
@@ -118,8 +124,10 @@ class SayCMDS(commands.Cog, name="Say"):
         )
 
         question_1 = (
-            "Because of this command's complexity, this command requires a little wizard.\n\n"
-            + "1. If you wish to do so, which channel do you want to send this message to? If you just want to send it in "
+            "Because of this command's complexity, this command requires a little"
+            " wizard.\n\n"
+            + "1. If you wish to do so, which channel do you want to send this message"
+            " to? If you just want to send it in "
             + 'this channel, just say "skip".'
         )
 
@@ -134,7 +142,8 @@ class SayCMDS(commands.Cog, name="Say"):
         wizard.add_question(question_1, chan_convert, chan_action)
 
         question_2 = (
-            "2. If you wish to do so, what color, in hex (ex. #000000), would you like the embed to have? Case-insensitive, "
+            "2. If you wish to do so, what color, in hex (ex. #000000), would you like"
+            " the embed to have? Case-insensitive, "
             + "does not require '#'.\nIf you just want the default color, say \"skip\"."
         )
 
@@ -151,7 +160,8 @@ class SayCMDS(commands.Cog, name="Say"):
         wizard.add_question(question_2, color_convert, color_action)
 
         question_3 = (
-            "3. What will be the title of the embed? Markdown (fancy discord editing) will work with titles.\n"
+            "3. What will be the title of the embed? Markdown (fancy discord editing)"
+            " will work with titles.\n"
             + "Make sure the title is less than or equal to 256 characters."
         )
 
@@ -166,7 +176,10 @@ class SayCMDS(commands.Cog, name="Say"):
 
         wizard.add_question(question_3, title_convert, title_action)
 
-        question_4 = "4. What will be the content of the embed? Markdown (fancy discord editing) will work with content."
+        question_4 = (
+            "4. What will be the content of the embed? Markdown (fancy discord editing)"
+            " will work with content."
+        )
 
         def no_convert(ctx, content):
             return content
@@ -234,7 +247,10 @@ class SayCMDS(commands.Cog, name="Say"):
     @commands.command()
     @utils.proper_permissions()
     async def raw_embed_say(
-        self, ctx: commands.Context, *, data: RawEmbedSayConverter,
+        self,
+        ctx: commands.Context,
+        *,
+        data: RawEmbedSayConverter,
     ):
         """Allows people with Manage Server permissions to speak with the bot with a fancy embed with the JSON provided.
         This is a more low-level alternative to embed-say. If you know Discord Embed JSON, this allows you to use that.
@@ -250,7 +266,8 @@ class SayCMDS(commands.Cog, name="Say"):
         elif not utils.embed_check(embed):
             raise commands.BadArgument(
                 "The embed violates one or more of Discord's limits.\n"
-                + "See https://discord.com/developers/docs/resources/channel#embed-limits for more information."
+                + "See https://discord.com/developers/docs/resources/channel#embed-limits"
+                " for more information."
             )
         else:
             await chan.send(embed=embed)

@@ -323,7 +323,10 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
 
         embed = disnake.Embed(
             color=self.bot.color,
-            description=f"{', '.join(tuple(m.mention for m in members))} have been recorded to be "
+            description=(
+                f"{', '.join(tuple(m.mention for m in members))} have been recorded"
+                " to be "
+            )
             + "at the event! They get **0.5** interaction points.",
         )
 
@@ -542,8 +545,10 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         else:
             embed = disnake.Embed(
                 color=self.bot.color,
-                description=f"Removed **{actual_count}** from the total "
-                f"interactions of: {', '.join(tuple(m.mention for m in members))}.",
+                description=(
+                    f"Removed **{actual_count}** from the total "
+                    f"interactions of: {', '.join(tuple(m.mention for m in members))}."
+                ),
             )
 
         await inter.send(embed=embed)
@@ -609,7 +614,9 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
 
         num_deleted = await models.UserInteraction.filter(user_id=user.id).delete()
         if num_deleted > 0:
-            await inter.send(f"{user.mention} deleted!",)
+            await inter.send(
+                f"{user.mention} deleted!",
+            )
         else:
             await inter.send(
                 embed=utils.error_embed_generate(
@@ -680,8 +687,11 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         if interact:
             embed = disnake.Embed(
                 color=self.bot.color,
-                description=f"You have **{interact.interactions}** interactions for this cycle!"
-                + f"\n*You have had {interact.total_interactions} interactions throughout the "
+                description=(
+                    f"You have **{interact.interactions}** interactions for this cycle!"
+                )
+                + f"\n*You have had {interact.total_interactions} interactions"
+                " throughout the "
                 + "entire season.*",
                 timestamp=disnake.utils.utcnow(),
             )

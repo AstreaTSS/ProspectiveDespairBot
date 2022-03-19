@@ -100,7 +100,8 @@ class Voting(commands.Cog, name="Voting"):
 
         options = [
             disnake.SelectOption(
-                label=card.oc_name, value=f"vote:{convert_name(card.oc_name)}",
+                label=card.oc_name,
+                value=f"vote:{convert_name(card.oc_name)}",
             )
             for card in cards.participants
         ]
@@ -178,7 +179,8 @@ class Voting(commands.Cog, name="Voting"):
 
         options = [
             disnake.SelectOption(
-                label=f"{member.display_name} ({member})", value=f"vote:{member.id}",
+                label=f"{member.display_name} ({member})",
+                value=f"vote:{member.id}",
             )
             for member in participant_role_members
         ]
@@ -187,8 +189,8 @@ class Voting(commands.Cog, name="Voting"):
             "It's time to vote! Please use this drop-down menu in order to do so.",
             "Participants have 5 minutes to vote. You may change your vote before the"
             " timer runs out.",
-            "(Vote for the *user whose OC is the blackened* - do *not* vote by their OC's"
-            " name.)",
+            "(Vote for the *user whose OC is the blackened* - do *not* vote by their"
+            " OC's name.)",
         ]
 
         self.logging_channel = self.bot.get_channel(786622913587576832)  # #logs

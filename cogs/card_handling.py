@@ -72,9 +72,12 @@ class CardHandling(commands.Cog, name="Card Handling"):
         embed.set_footer(text="Last Updated")
 
         await profile_chan.send(
-            "All participant cards should be in alphabetical order and easily searchable.\n"
-            + "All host cards should be displayed in the order in which they were revealed.\n"
-            + "If any information is wrong, ping or DM Astrea about it and she'll change it ASAP.",
+            "All participant cards should be in alphabetical order and easily"
+            " searchable.\n"
+            + "All host cards should be displayed in the order in which they were"
+            " revealed.\n"
+            + "If any information is wrong, ping or DM Astrea about it and she'll"
+            " change it ASAP.",
             embed=embed,
         )
 

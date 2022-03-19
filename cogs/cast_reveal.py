@@ -56,9 +56,12 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                     await disnake.utils.sleep_until(after_cooldown)
 
         await inter.channel.send(
-            "**All participants have been revealed.**\nWe apologize if you didn't get in, "
-            + "but there were *a lot* of applications this season. We sadly can't accept everyone. "
-            + "Astrea will be sending a concluding message shortly about backups and other details."
+            "**All participants have been revealed.**\nWe apologize if you didn't get"
+            " in, "
+            + "but there were *a lot* of applications this season. We sadly can't"
+            " accept everyone. "
+            + "Astrea will be sending a concluding message shortly about backups and"
+            " other details."
         )
 
 

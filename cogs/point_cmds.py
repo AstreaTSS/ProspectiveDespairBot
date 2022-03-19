@@ -469,8 +469,10 @@ class PointCMDs(commands.Cog, name="Point"):
         else:
             embed = disnake.Embed(
                 color=self.bot.color,
-                description=f"Removed **{actual_count}** from the rollover "
-                f"points of: {', '.join(tuple(m.mention for m in members))}.",
+                description=(
+                    f"Removed **{actual_count}** from the rollover "
+                    f"points of: {', '.join(tuple(m.mention for m in members))}."
+                ),
             )
 
         await inter.send(embed=embed)
@@ -532,7 +534,9 @@ class PointCMDs(commands.Cog, name="Point"):
         if points:
             points.in_game = False
             await points.save()
-            await inter.send(f"{user.mention} removed!",)
+            await inter.send(
+                f"{user.mention} removed!",
+            )
         else:
             await inter.send(
                 embed=utils.error_embed_generate(

@@ -67,7 +67,8 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
                     option_type = option.type.name.upper()
                     required_txt = ", required" if option.required else ""
                     entry_str_list.append(
-                        f"{option.name} (type {option_type}{required_txt}) - {option.description}"
+                        f"{option.name} (type {option_type}{required_txt}) -"
+                        f" {option.description}"
                     )
 
             slash_entries.append(
