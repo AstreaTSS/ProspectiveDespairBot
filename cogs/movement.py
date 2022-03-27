@@ -81,6 +81,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
 
         guild = self.bot.get_guild(786609181855318047)
         self.participant_role: disnake.Role = guild.get_role(939993631140495360)  # type: ignore
+        self.signed_up_role: disnake.Role = guild.get_role(954196014322053170)  # type: ignore
         self.dorm_category: disnake.CategoryChannel = guild.get_channel(938606098204749914)  # type: ignore
         self.dorm_link_chan: disnake.TextChannel = guild.get_channel(DORM_LINK_CHAN_ID)  # type: ignore
 
@@ -348,7 +349,7 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
     async def dorm_generation(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
-        for member in self.participant_role.members:
+        for member in self.signed_up_role.members:
             # this first line is more or less black magic, but it basically translates characters like 𝓭𝓼𝓰𝓼𝓭𝓰
             # into dsgsdg, which is easier to type
             # source - https://github.com/daveoncode/python-string-utils/blob/78929d/string_utils/manipulation.py#L433
