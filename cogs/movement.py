@@ -460,6 +460,21 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
             )
             await channel_paginator.paginate()
 
+    @commands.slash_command(
+        name="mini-kg-participant-role",
+        description="Gives the participant role to everywhone who has signed up.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def add_participant_role(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        for member in self.signed_up_role.members:
+            await member.add_roles(self.participant_role)
+
+        await inter.send("Done!")
+
 
 def setup(bot: commands.Bot):
     importlib.reload(utils)
