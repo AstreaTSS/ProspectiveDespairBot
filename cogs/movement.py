@@ -475,6 +475,24 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
 
         await inter.send("Done!")
 
+    @commands.slash_command(
+        name="sync-mini-kg-rooms",
+        description="Syncs Mini-KG room permissions.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def sync_mini_kg_rooms(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        area_category: disnake.CategoryChannel = inter.guild.get_channel(938606024523387000)  # type: ignore
+        channels = area_category.text_channels + self.dorm_category.text_channels
+
+        for channel in channels:
+            await channel.edit(sync_permissions=True)
+
+        await inter.send("Done!")
+
 
 def setup(bot: commands.Bot):
     importlib.reload(utils)
