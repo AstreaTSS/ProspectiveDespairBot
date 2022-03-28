@@ -75,7 +75,7 @@ async def move_autocomplete(
     return {f"#{c[0].name}": str(c[0].id) for c in queried_channels}
 
 
-class Movement(commands.Cog, name="Mini-KG Movement"):
+class MiniKG(commands.Cog, name="Mini-KG"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
@@ -516,4 +516,4 @@ def setup(bot: commands.Bot):
     importlib.reload(utils)
     importlib.reload(fuzzys)
     importlib.reload(paginator)
-    bot.add_cog(Movement(bot))
+    bot.add_cog(MiniKG(bot))
