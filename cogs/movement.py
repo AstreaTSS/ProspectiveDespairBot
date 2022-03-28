@@ -476,6 +476,24 @@ class Movement(commands.Cog, name="Mini-KG Movement"):
         await inter.send("Done!")
 
     @commands.slash_command(
+        name="remove-mini-kg-roles",
+        description="Removes Mini KG roles from people",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def remove_mini_kg_roles(self, inter: disnake.GuildCommandInteraction):
+        await inter.response.defer()
+
+        members = set(self.signed_up_role.members).union(self.participant_role.members)
+        roles = (self.signed_up_role, self.participant_role)
+
+        for member in members:
+            await member.remove_roles(*roles)
+
+        await inter.send("Done!")
+
+    @commands.slash_command(
         name="sync-mini-kg-rooms",
         description="Syncs Mini-KG room permissions.",
         guild_ids=[786609181855318047],
