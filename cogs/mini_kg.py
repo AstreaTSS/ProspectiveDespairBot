@@ -158,6 +158,68 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             user_id=member.id if member else None,
         )
 
+    async def _create_move_select(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        member: disnake.Member,
+    ):
+        """Creates the select component."""
+        ori_self = self
+
+        if isinstance(inter.channel, disnake.Thread):
+            chan_id = inter.channel.parent_id
+        else:
+            chan_id = inter.channel.id
+
+        channel_entries = await models.MovementEntry.filter(
+            Q(entry_channel_id=chan_id)
+            & (Q(user_id=member.id) | Q(user_id__isnull=True))
+        )
+
+        if not channel_entries:
+            return None
+
+        channels = tuple(
+            inter.guild.get_channel(c.dest_channel_id) for c in channel_entries
+        )
+        channels = tuple(c for c in channels if c is not None)
+
+        options = [
+            disnake.SelectOption(label=f"#{c.name}", value=f"pdminimove:{c.id}")
+            for c in channels
+        ]
+
+        class Dropdown(disnake.ui.Select):
+            def __init__(self):
+                super().__init__(
+                    min_values=1,
+                    max_values=1,
+                    options=options,
+                )
+
+            async def callback(self, inter: disnake.Interaction):
+                await inter.response.defer(ephemeral=True)
+
+                channel_id = int(self.values[0].replace("pdminimove:", ""))
+                channel = inter.guild.get_channel(channel_id)
+
+                await ori_self._move(member, inter, channel)
+
+        class DropdownView(disnake.ui.View):
+            def __init__(self):
+                super().__init__()
+                self.add_item(Dropdown())
+
+            async def interaction_check(self, interaction: disnake.Interaction) -> bool:
+                return interaction.user.id == member.id
+
+            async def on_error(
+                self, error: Exception, _, inter: disnake.MessageInteraction
+            ) -> None:
+                await utils.error_handle(ori_self.bot, error, inter)
+
+        return DropdownView()
+
     @commands.slash_command(
         name="move",
         description="Allows you to move around in the Mini-KG.",
@@ -185,6 +247,33 @@ class MiniKG(commands.Cog, name="Mini-KG"):
 
         await inter.send("Sending...", ephemeral=True)
         await self._move(inter.user, inter, dest_channel)
+
+    @commands.slash_command(
+        name="backup-move",
+        description=(
+            "An alternative way to move if you have an unstable internet connection."
+        ),
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.MINI_KG_PERMS)
+    @commands.check(move_check)  # type: ignore
+    async def backup_move(self, inter: disnake.GuildCommandInteraction):
+        can_move = await move_check(inter)
+        if not can_move:
+            await inter.send(
+                "You are not allowed to move at this time.", ephemeral=True
+            )
+            return
+
+        select_view = await self._create_move_select(inter, inter.user)
+        if not select_view:
+            await inter.send("There are no channels to move to.", ephemeral=True)
+            return
+
+        await inter.send(
+            "Please select a channel to move to.", view=select_view, ephemeral=True
+        )
 
     @commands.slash_command(
         name="room-description",
