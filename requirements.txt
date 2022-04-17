@@ -13,3 +13,4 @@ humanize==4.0.0
 attrs==21.4.0
 rtoml==0.7.1
 aioredis[hiredis]==2.0.1
+chat-exporter==2.1.1
