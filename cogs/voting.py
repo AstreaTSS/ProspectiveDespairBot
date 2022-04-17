@@ -7,11 +7,10 @@ import disnake
 from disnake.ext import commands
 
 import common.cards as cards
-import common.models as models
 import common.utils as utils
 
 
-def convert_name(name: str):
+def convert_name(name: typing.Any):
     """Simple function to convert a name into something that can be used as a value."""
     return str(name).replace(" ", "").lower()
 
@@ -26,9 +25,14 @@ class Voting(commands.Cog, name="Voting"):
         options: typing.List[disnake.SelectOption],
         full_list: typing.List,
         attr_name: str,
+        display_attr_name: typing.Optional[str] = None,
         disabled: bool = False,
     ):
         """Creates the select component."""
+
+        if not display_attr_name:
+            display_attr_name = attr_name
+
         ori_self = self
 
         class Dropdown(disnake.ui.Select):
@@ -53,9 +57,11 @@ class Voting(commands.Cog, name="Voting"):
                         item_needed = item
 
                 assert item_needed != None
-                display_name = getattr(item_needed, attr_name)
 
-                ori_self.votes[inter.user.id] = display_name
+                display_name = getattr(item_needed, str(display_attr_name))
+                internal_name = convert_name(getattr(item_needed, attr_name))
+
+                ori_self.votes[inter.user.id] = internal_name
 
                 await inter.followup.send(
                     f"Voted for **{display_name}**!", ephemeral=True
@@ -184,7 +190,9 @@ class Voting(commands.Cog, name="Voting"):
             )
             for member in participant_role_members
         ]
-        voting_view = self.create_select(options, participant_role_members, "id")
+        voting_view = self.create_select(
+            options, participant_role_members, "id", display_attr_name="display_name"
+        )
         prompt_builder = [
             "It's time to vote! Please use this drop-down menu in order to do so.",
             "Participants have 5 minutes to vote. You may change your vote before the"
@@ -221,14 +229,18 @@ class Voting(commands.Cog, name="Voting"):
             None
         )  # [('voted name', num of votes)] from most to least votes
         final_msg_builder = [
-            f"**{a_tuple[0]}**: {a_tuple[1]}" for a_tuple in most_common
+            f"**{a_tuple[0]}**: <@{a_tuple[1]}>" for a_tuple in most_common
         ]
         final_msg_builder.insert(0, "__**VOTES:**__\n")
 
         await inter.channel.send("\n".join(final_msg_builder))
 
         voting_view = self.create_select(
-            options, participant_role_members, "id", disabled=True
+            options,
+            participant_role_members,
+            "id",
+            display_attr_name="display_name",
+            disabled=True,
         )
         await self.voting_msg.edit(content="\n".join(prompt_builder), view=voting_view)
         voting_view.stop()
