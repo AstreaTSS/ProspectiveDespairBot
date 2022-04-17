@@ -701,12 +701,12 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             )
             await msg.edit(embed=embed, view=None)
 
-            LIMIT = 2
+            LIMIT = 3
             first_message = True
             messages_embeded: typing.List[disnake.Embed] = []
             count_towards_limit = 0
 
-            async for message in inter.channel.history(limit=21):
+            async for message in inter.channel.history(limit=16):
                 if first_message:
                     # this is the bots confirmation message
                     first_message = False
