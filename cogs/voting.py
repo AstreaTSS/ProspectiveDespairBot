@@ -211,19 +211,11 @@ class Voting(commands.Cog, name="Voting"):
                 self.is_voting = False
                 voting_view.stop()
 
-        vote_weight_dict = {}
-        async for user_entry in models.MiniKGPoints.filter(
-            user_id__in=list(self.people_voting)
-        ):
-            vote_weight_dict[user_entry.user_id] = (
-                user_entry.points if user_entry.points >= 1 else 0.5
-            )
-
         # transfer the format of [discord_user_id] = 'voted name'
         # to ['voted name'] = number_of_votes
         vote_counter = collections.Counter()
-        for user_id, vote in self.votes.items():
-            vote_counter[vote] += vote_weight_dict[user_id]
+        for vote in self.votes.values():
+            vote_counter[vote] += 1
 
         most_common = vote_counter.most_common(
             None
@@ -231,7 +223,7 @@ class Voting(commands.Cog, name="Voting"):
         final_msg_builder = [
             f"**{a_tuple[0]}**: {a_tuple[1]}" for a_tuple in most_common
         ]
-        final_msg_builder.insert(0, "__**WEIGHTED VOTES:**__\n")
+        final_msg_builder.insert(0, "__**VOTES:**__\n")
 
         await inter.channel.send("\n".join(final_msg_builder))
 
