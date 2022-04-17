@@ -632,14 +632,18 @@ class MiniKG(commands.Cog, name="Mini-KG"):
                 ] = None
 
             async def interaction_check(self, inter: disnake.Interaction):
-                # ironically, we want anyone BUT the original author to confirm it
+                # funny enough, we want anyone BUT the original author to confirm it
                 return inter.author.id != author_id
 
             @disnake.ui.button(
                 label="Yes, I do.", emoji="✅", style=disnake.ButtonStyle.green
             )
             async def confirm(self, _, inter: disnake.MessageInteraction):
-                await inter.response.send_message("Confirming.", ephemeral=True)
+                if inter.author.id == author_id:
+                    await inter.send("You can't confirm yourself!")
+                    return
+
+                await inter.send("Confirming.", ephemeral=True)
                 self.confirmed = True
                 self.confirmee = inter.user
                 self.stop()
@@ -689,14 +693,17 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         if not view.confirmed:
             embed = disnake.Embed(
                 title="Message History Request",
-                description="Request timed out.",
+                description=f"{inter.user.mention}'s request timed out.",
                 color=disnake.Color.red(),
             )
             await msg.edit(embed=embed, view=None)
         else:
             embed = disnake.Embed(
                 title="Message History Request",
-                description=f"Request confirmed by {view.confirmee.mention}.",
+                description=(
+                    f"{inter.user.mention}'s request confirmed by"
+                    f" {view.confirmee.mention}."
+                ),
                 color=disnake.Color.green(),
             )
             await msg.edit(embed=embed, view=None)
