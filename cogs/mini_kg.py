@@ -657,6 +657,13 @@ class MiniKG(commands.Cog, name="Mini-KG"):
     )
     @commands.guild_permissions(786609181855318047, roles=utils.MINI_KG_PERMS)
     async def view_history(self, inter: disnake.GuildCommandInteraction):
+        if not (
+            inter.channel.category_id
+            and inter.channel.category_id in {938606024523387000, 938606098204749914}
+        ):
+            await inter.send("This command can't be run here!", ephemeral=True)
+            return
+
         await inter.send("Sending request.", ephemeral=True)
 
         view = self._create_history_button(inter.user.id)
