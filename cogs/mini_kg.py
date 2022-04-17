@@ -640,7 +640,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             )
             async def confirm(self, _, inter: disnake.MessageInteraction):
                 if inter.author.id == author_id:
-                    await inter.send("You can't confirm yourself!")
+                    await inter.send("You can't confirm yourself!", ephemeral=True)
                     return
 
                 await inter.send("Confirming.", ephemeral=True)
