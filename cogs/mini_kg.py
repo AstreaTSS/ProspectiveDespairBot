@@ -701,7 +701,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             embed = disnake.Embed(
                 title="Message History Request",
                 description=(
-                    f"{inter.user.mention}'s request confirmed by"
+                    f"{inter.user.mention}'s request was confirmed by"
                     f" {view.confirmee.mention}."
                 ),
                 color=disnake.Color.green(),
