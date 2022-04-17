@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import disnake
-import rtoml
+import tomli
 
 
 class Status(Enum):
@@ -75,7 +75,7 @@ if cards_url:
     # suggesting how critical these cards are, id say its worth it
     with urllib.request.urlopen(cards_url, timeout=1) as response:
         data = response.read().decode("utf-8")
-        cards_dict = rtoml.load(data)
+        cards_dict = tomli.load(data)
 
         for card_data in cards_dict["cards"]:
             participants.append(

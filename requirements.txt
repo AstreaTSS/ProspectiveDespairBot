@@ -11,5 +11,5 @@ flask==2.1.1
 orjson==3.6.7
 humanize==4.0.0
 attrs==21.4.0
-rtoml==0.7.1
+tomli==2.0.1
 aioredis[hiredis]==2.0.1
