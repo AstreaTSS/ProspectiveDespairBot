@@ -694,9 +694,9 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             )
             await msg.edit(embed=embed, view=None)
 
+            LIMIT = 2
             first_message = True
             messages_embeded: typing.List[disnake.Embed] = []
-            LIMIT = 2
             count_towards_limit = 0
 
             async for message in inter.channel.history(limit=21):
