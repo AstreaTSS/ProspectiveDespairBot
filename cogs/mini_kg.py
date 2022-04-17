@@ -10,6 +10,7 @@ from tortoise.expressions import Q
 
 import common.fuzzys as fuzzys
 import common.models as models
+import common.msg_gen as msg_gen
 import common.paginator as paginator
 import common.utils as utils
 
@@ -98,6 +99,22 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         send_messages_in_threads=True,
     )
 
+    async def _detect_empty(self, channel: disnake.TextChannel):
+        # this next line is dangerous, but the redis we use maybe has
+        # a thousand keys at once. it is much faster than using a scan method
+        # and is very unlikely to affect our db
+        # that being said, switching to a scan in the future isn't exactly the
+        # worst thing in the world.
+        keys = await self.bot.redis.keys(f"{self.bot.user.id}*")
+        for key in keys:
+            channel_id = await self.bot.redis.hget(key, "current_channel")
+            if str(channel.id) == channel_id:
+                break
+
+        # this lets the history viewer know we dont need anything
+        # before this
+        await channel.send("```\nEnd.\n```")
+
     async def _move(
         self,
         member: disnake.Member,
@@ -128,6 +145,11 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         await inter.bot.redis.hset(
             f"{inter.bot.user.id}{member.id}", "current_channel", str(dest_channel.id)
         )
+
+        if entry_channel and valid_category:
+            # this is a potentially somewhat long lasting function - its best if we
+            # offload it like this
+            asyncio.create_task(self._detect_empty(entry_channel))
 
         await asyncio.sleep(1)
         if valid_category:
@@ -600,9 +622,135 @@ class MiniKG(commands.Cog, name="Mini-KG"):
 
         await inter.send("Done!")
 
+    def _create_history_button(self, author_id: int):
+        class HistoryConfirm(disnake.ui.View):
+            def __init__(self):
+                super().__init__(timeout=60)
+                self.confirmed = False
+                self.confirmee: typing.Optional[
+                    typing.Union[disnake.User, disnake.Member]
+                ] = None
+
+            async def interaction_check(self, inter: disnake.Interaction):
+                # ironically, we want anyone BUT the original author to confirm it
+                return inter.author.id != author_id
+
+            @disnake.ui.button(
+                label="Yes, I do.", emoji="✅", style=disnake.ButtonStyle.green
+            )
+            async def confirm(self, _, inter: disnake.MessageInteraction):
+                await inter.response.send_message("Confirming.", ephemeral=True)
+                self.confirmed = True
+                self.confirmee = inter.user
+                self.stop()
+
+        return HistoryConfirm()
+
+    @commands.slash_command(
+        name="view-history",
+        description=(
+            "DMs the last couple of messages in a channel if given permission by"
+            " someone else."
+        ),
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.MINI_KG_PERMS)
+    async def view_history(self, inter: disnake.GuildCommandInteraction):
+        await inter.send("Sending request.", ephemeral=True)
+
+        view = self._create_history_button(inter.user.id)
+        embed = disnake.Embed(
+            title="Message History Request",
+            description=(
+                f"{inter.user.mention} wishes to view the last few messages from this"
+                " channel. Do you wish for them to do so?"
+            ),
+            color=disnake.Color.orange(),
+        )
+        embed.set_footer(
+            text=(
+                "Anyone who can view this channel can accept this request besides for"
+                " the requester. To deny this request, simply wait 60 seconds for this"
+                " request to time out."
+            )
+        )
+
+        msg = await inter.channel.send(embed=embed, view=view)
+        await view.wait()
+
+        if not view.confirmed:
+            embed = disnake.Embed(
+                title="Message History Request",
+                description="Request timed out.",
+                color=disnake.Color.red(),
+            )
+            await msg.edit(embed=embed, view=None)
+        else:
+            embed = disnake.Embed(
+                title="Message History Request",
+                description=f"Request confirmed by {view.confirmee.mention}.",
+                color=disnake.Color.green(),
+            )
+            await msg.edit(embed=embed, view=None)
+
+            first_message = True
+            messages_embeded: typing.List[disnake.Embed] = []
+            LIMIT = 2
+            count_towards_limit = 0
+
+            async for message in inter.channel.history(limit=21):
+                if first_message:
+                    # this is the bots confirmation message
+                    first_message = False
+                    continue
+
+                if "".join(message.content.split()).lower() in {
+                    "```end.```",
+                    "```end```",
+                }:
+                    break
+
+                embed = await msg_gen.base_generate(self.bot, message)
+                messages_embeded.append(embed)
+
+                if message.author.id == self.bot.user.id or message.content.startswith(
+                    ("/", "(")
+                ):
+                    continue
+
+                count_towards_limit += 1
+                if count_towards_limit >= LIMIT:
+                    break
+
+            current_time = disnake.utils.utcnow()
+            current_format_time = disnake.utils.format_dt(current_time)
+
+            try:
+                await inter.user.send(
+                    f"Messages for {inter.channel.name} at {current_format_time}:",
+                )
+                for embed in reversed(messages_embeded):
+                    await inter.user.send(embed=embed)
+                    await asyncio.sleep(1)
+                await inter.user.send("Finished!")
+            except disnake.Forbidden:
+                await inter.send(
+                    "Please turn on your DMs for this server! I can't send the message"
+                    " history otherwise.",
+                    ephemeral=True,
+                )
+            except disnake.HTTPException:
+                await inter.send(
+                    "Sending the messages errored out. Please ask someone for the"
+                    " messages. Sorry!",
+                    ephemeral=True,
+                )
+
 
 def setup(bot: commands.Bot):
     importlib.reload(utils)
     importlib.reload(fuzzys)
     importlib.reload(paginator)
+    importlib.reload(msg_gen)
     bot.add_cog(MiniKG(bot))
