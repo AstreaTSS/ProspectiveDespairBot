@@ -1,16 +1,17 @@
 import asyncio
 import collections
 import importlib
+import io
 import typing
 import unicodedata
 
+import chat_exporter
 import disnake
 from disnake.ext import commands
 from tortoise.expressions import Q
 
 import common.fuzzys as fuzzys
 import common.models as models
-import common.msg_gen as msg_gen
 import common.paginator as paginator
 import common.utils as utils
 
@@ -737,7 +738,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
 
             LIMIT = 3
             first_message = True
-            messages_embeded: typing.List[disnake.Embed] = []
+            messages_archived: typing.List[disnake.Message] = []
             count_towards_limit = 0
 
             async for message in inter.channel.history(limit=16):
@@ -752,8 +753,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
                 }:
                     break
 
-                embed = await msg_gen.base_generate(self.bot, message)
-                messages_embeded.append(embed)
+                messages_archived.append(message)
 
                 if message.author.id == self.bot.user.id or message.content.startswith(
                     ("/", "(")
@@ -764,17 +764,39 @@ class MiniKG(commands.Cog, name="Mini-KG"):
                 if count_towards_limit >= LIMIT:
                     break
 
+            if not messages_archived:
+                await inter.send("There's no messages to view!", ephemeral=True)
+
+            transcript = await chat_exporter.raw_export(
+                inter.channel,
+                messages=messages_archived,
+                guild=inter.guild,
+                bot=inter.bot,
+            )
+            transcript_file = disnake.File(
+                io.BytesIO(transcript.encode()),
+                filename=f"transcript-{inter.channel.name}.html",
+            )
+
             current_time = disnake.utils.utcnow()
             current_format_time = disnake.utils.format_dt(current_time)
 
             try:
-                await inter.user.send(
-                    f"Messages for {inter.channel.name} at {current_format_time}:",
+                msg = await inter.user.send(
+                    f"Messages for {inter.channel.name} at {current_format_time} are"
+                    " below.\nViewable URL: Getting...",
+                    file=transcript_file,
                 )
-                for embed in reversed(messages_embeded):
-                    await inter.user.send(embed=embed)
-                    await asyncio.sleep(1)
-                await inter.user.send("Finished!")
+
+                attachment_url = msg.attachments[0].url
+                await msg.edit(
+                    content=(
+                        f"Messages for {inter.channel.name} at"
+                        f" {current_format_time} are below.\nViewable URL:"
+                        f" http://htmlpreview.github.io/?{attachment_url}"
+                    )
+                )
+                del transcript_file
             except disnake.Forbidden:
                 await inter.send(
                     "Please turn on your DMs for this server! I can't send the message"
@@ -825,5 +847,4 @@ def setup(bot: commands.Bot):
     importlib.reload(utils)
     importlib.reload(fuzzys)
     importlib.reload(paginator)
-    importlib.reload(msg_gen)
     bot.add_cog(MiniKG(bot))
