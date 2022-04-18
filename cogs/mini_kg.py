@@ -796,7 +796,9 @@ class MiniKG(commands.Cog, name="Mini-KG"):
                         f" http://htmlpreview.github.io/?{attachment_url}"
                     )
                 )
+
                 del transcript_file
+                del transcript
             except disnake.Forbidden:
                 await inter.send(
                     "Please turn on your DMs for this server! I can't send the message"
