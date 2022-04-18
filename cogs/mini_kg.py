@@ -83,6 +83,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         guild = self.bot.get_guild(786609181855318047)
         self.participant_role: disnake.Role = guild.get_role(939993631140495360)  # type: ignore
         self.signed_up_role: disnake.Role = guild.get_role(954196014322053170)  # type: ignore
+        self.spectator_role: disnake.Role = guild.get_role(965405511354843166)  # type: ignore
         self.dorm_category: disnake.CategoryChannel = guild.get_channel(938606098204749914)  # type: ignore
         self.dorm_link_chan: disnake.TextChannel = guild.get_channel(DORM_LINK_CHAN_ID)  # type: ignore
 
@@ -584,6 +585,9 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         for member in self.signed_up_role.members:
             await member.add_roles(self.participant_role)
 
+            if member.get_role(self.spectator_role.id):
+                await member.remove_roles(self.spectator_role)
+
         await inter.send("Done!")
 
     @commands.slash_command(
@@ -760,6 +764,38 @@ class MiniKG(commands.Cog, name="Mini-KG"):
                     " messages. Sorry!",
                     ephemeral=True,
                 )
+
+    @commands.slash_command(
+        name="mini-kg-spectator",
+        description=(
+            "Adds (or removes) the Mini-KG Spectator role. This role cannot be gotten"
+            " by Mini-KG Participants."
+        ),
+        guild_ids=[786609181855318047],
+        default_permission=True,
+    )
+    async def mini_kg_spectator(self, inter: disnake.GuildCommandInteraction):
+        if not isinstance(inter.user, disnake.Member):
+            await inter.send(
+                "Discord did something weird and I can't add the role. Sorry - please"
+                " try again!",
+                ephemeral=True,
+            )
+            return
+
+        if inter.user.get_role(self.participant_role.id):
+            await inter.send(
+                "You have the Mini-KG Participant role - you can't get this!",
+                ephemeral=True,
+            )
+            return
+
+        if inter.user.get_role(self.spectator_role.id):
+            await inter.user.remove_roles(self.spectator_role)
+            await inter.send("Removed role!", ephemeral=True)
+        else:
+            await inter.user.add_roles(self.spectator_role)
+            await inter.send("Added role!", ephemeral=True)
 
 
 def setup(bot: commands.Bot):
