@@ -111,7 +111,7 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         for key in keys:
             channel_id = await self.bot.redis.hget(key, "current_channel")
             if str(channel.id) == channel_id:
-                break
+                return
 
         # this lets the history viewer know we dont need anything
         # before this
