@@ -627,6 +627,8 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         await inter.send("Done!")
 
     def _create_history_button(self, author_id: int):
+        ori_self = self
+
         class HistoryConfirm(disnake.ui.View):
             def __init__(self):
                 super().__init__(timeout=60)
@@ -637,7 +639,19 @@ class MiniKG(commands.Cog, name="Mini-KG"):
 
             async def interaction_check(self, inter: disnake.Interaction):
                 # funny enough, we want anyone BUT the original author to confirm it
-                return inter.author.id != author_id
+                if inter.author.id == author_id:
+                    return False
+
+                if isinstance(inter.author, disnake.Member):
+                    # never deny admins
+                    if inter.author.guild_permissions.administrator:
+                        return True
+
+                    # we dont want mini-kg spectators to confirm
+                    if inter.author.get_role(ori_self.spectator_role.id):
+                        return False
+
+                return True
 
             @disnake.ui.button(
                 label="Yes, I do.", emoji="✅", style=disnake.ButtonStyle.green
@@ -645,6 +659,15 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             async def confirm(self, _, inter: disnake.MessageInteraction):
                 if inter.author.id == author_id:
                     await inter.send("You can't confirm yourself!", ephemeral=True)
+                    return
+                if (
+                    isinstance(inter.author, disnake.Member)
+                    and not inter.author.get_role(ori_self.spectator_role.id)
+                    and not inter.author.guild_permissions.administrator
+                ):
+                    await inter.send(
+                        "Mini-KG Spectators can't confirm this!", ephemeral=True
+                    )
                     return
 
                 await inter.send("Confirming.", ephemeral=True)
@@ -685,8 +708,8 @@ class MiniKG(commands.Cog, name="Mini-KG"):
         )
         embed.set_footer(
             text=(
-                "Anyone who can view this channel can accept this request besides for"
-                " the requester. To deny this request, simply wait 60 seconds for this"
+                "Anyone who is not the requester or a Mini-KG Spectator can accept this"
+                " request. To deny this request, simply wait 60 seconds for this"
                 " request to time out."
             )
         )
