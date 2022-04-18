@@ -842,6 +842,34 @@ class MiniKG(commands.Cog, name="Mini-KG"):
             await inter.user.add_roles(self.spectator_role)
             await inter.send("Added role!", ephemeral=True)
 
+    @commands.slash_command(
+        name="remove-from-mini-kg",
+        description="Correctly removes a player from the Mini-KG.",
+        guild_ids=[786609181855318047],
+        default_permission=False,
+    )
+    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
+    async def remove_from_mini_kg(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        user: disnake.Member = commands.Param(description="The user to remove."),
+    ):
+        if not user.get_role(self.participant_role.id):
+            await inter.send("This user is not a participant!", ephemeral=True)
+            return
+
+        await inter.response.defer(ephemeral=True)
+
+        await user.remove_roles(self.participant_role)
+
+        area_category: disnake.CategoryChannel = inter.guild.get_channel(938606024523387000)  # type: ignore
+        channels = area_category.text_channels + self.dorm_category.text_channels
+
+        for channel in channels:
+            await channel.set_permissions(user, overwrite=None)
+
+        await inter.send("Done!", ephemeral=True)
+
 
 def setup(bot: commands.Bot):
     importlib.reload(utils)
