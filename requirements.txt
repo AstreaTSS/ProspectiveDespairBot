@@ -5,7 +5,7 @@ pytz==2022.1
 disnake-jishaku==2.6.5
 websockets==10.3
 python-dotenv==0.20.0
-rapidfuzz==2.0.10
+rapidfuzz==2.0.11
 python-dateutil==2.8.2
 flask==2.1.1
 orjson==3.6.8
