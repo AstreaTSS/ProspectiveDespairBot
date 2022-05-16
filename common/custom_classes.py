@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.8
 import asyncio
+import contextlib
 import typing
 
 import attr
@@ -81,27 +82,20 @@ class SelectionPrompt:
 
         if isinstance(self.ctx, commands.Context):
             mes = await self.ctx.reply(embed=embed, view=self.view)
+        elif self.ctx.response.is_done():
+            mes = await self.ctx.followup.send(
+                embed=embed, view=self.view, ephemeral=self.ephemeral, wait=True
+            )
         else:
-            if self.ctx.response.is_done():
-                mes = await self.ctx.followup.send(
-                    embed=embed, view=self.view, ephemeral=self.ephemeral, wait=True
-                )
-            else:
-                await self.ctx.response.send_message(
-                    embed=embed, view=self.view, ephemeral=self.ephemeral
-                )
-                try:
-                    mes = await self.ctx.original_message()
-                except disnake.HTTPException:
-                    pass
-
+            await self.ctx.response.send_message(
+                embed=embed, view=self.view, ephemeral=self.ephemeral
+            )
+            with contextlib.suppress(disnake.HTTPException):
+                mes = await self.ctx.original_message()
         await self.stop.wait()
         if mes:
-            try:
+            with contextlib.suppress(disnake.HTTPException):
                 await mes.delete()
-            except disnake.HTTPException:
-                pass
-
         return self.value
 
 

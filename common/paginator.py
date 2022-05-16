@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import typing
 import uuid
 from dataclasses import dataclass
@@ -47,10 +48,8 @@ def generate_view(
             return interaction.user.id == author.id
 
         async def on_timeout(self):
-            try:
+            with contextlib.suppress(TypeError):
                 self.stop()
-            except TypeError:
-                pass  # ??????
 
     view = PaginatorView()
 
@@ -171,8 +170,9 @@ class Pages:
             self.embed.set_footer(text=text)
 
         if self.paginating and first:
-            p.append("")
-            p.append("Confused? Use the \N{INFORMATION SOURCE} button for more info.")
+            p.extend(
+                ("", "Confused? Use the \N{INFORMATION SOURCE} button for more info.")
+            )
 
         self.embed.description = "\n".join(p)
 

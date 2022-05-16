@@ -96,7 +96,7 @@ class AutoAnnouncements(commands.Cog):
             await disnake.utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
 
-            embed = self.gen_embed(day=bool(et_now.hour < 12))
+            embed = self.gen_embed(day=et_now.hour < 12)
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 

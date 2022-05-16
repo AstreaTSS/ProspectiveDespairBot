@@ -161,17 +161,11 @@ def get_all_extensions(str_path, folder="cogs"):
 
 
 def toggle_friendly_str(bool_to_convert):
-    if bool_to_convert == True:
-        return "on"
-    else:
-        return "off"
+    return "on" if bool_to_convert == True else "off"
 
 
 def yesno_friendly_str(bool_to_convert):
-    if bool_to_convert == True:
-        return "yes"
-    else:
-        return "no"
+    return "yes" if bool_to_convert == True else "no"
 
 
 def error_embed_generate(error_msg):
@@ -183,9 +177,7 @@ def generate_mentions(ctx: commands.Context):
     # generates an AllowedMentions object that is similar to what a user can usually use
 
     permissions = ctx.channel.permissions_for(ctx.author)
-    can_mention = permissions.administrator or permissions.mention_everyone
-
-    if can_mention:
+    if can_mention := permissions.administrator or permissions.mention_everyone:
         # i could use a default AllowedMentions object, but this is more clear
         return disnake.AllowedMentions(everyone=True, users=True, roles=True)
     else:

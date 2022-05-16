@@ -8,17 +8,15 @@ import common.utils as utils
 
 class PronounDropdown(disnake.ui.Select):
     def __init__(self):
-        self.pronoun_roles = set(
-            (
-                disnake.Object(879921959176126464),
-                disnake.Object(879925849871224873),
-                disnake.Object(879921936480743454),
-                disnake.Object(879921972614660207),
-                disnake.Object(879922010141118464),
-                disnake.Object(879921990599847977),
-                disnake.Object(879926017236553749),
-            )
-        )
+        self.pronoun_roles = {
+            disnake.Object(879921959176126464),
+            disnake.Object(879925849871224873),
+            disnake.Object(879921936480743454),
+            disnake.Object(879921972614660207),
+            disnake.Object(879922010141118464),
+            disnake.Object(879921990599847977),
+            disnake.Object(879926017236553749),
+        }
 
         options = [
             disnake.SelectOption(

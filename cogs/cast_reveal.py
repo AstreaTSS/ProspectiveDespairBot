@@ -47,8 +47,7 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
                 )
                 await inter.channel.send("```\n \n```")  # looks neater
 
-                member = inter.guild.get_member(card.user_id)
-                if member:  # amazing 10/10 error prevention code
+                if member := inter.guild.get_member(card.user_id):
                     await member.remove_roles(applied)
                     await member.add_roles(alive_player)
 

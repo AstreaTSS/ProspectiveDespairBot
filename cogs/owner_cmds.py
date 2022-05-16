@@ -36,14 +36,15 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
         self, ctx: commands.Context[commands.Bot], guild: typing.Optional[disnake.Guild]
     ):
 
-        if not guild:
-            slash_cmds = [s for s in ctx.bot.slash_commands if not s.guild_only]
-        else:
-            slash_cmds = [
+        slash_cmds = (
+            [
                 s
                 for s in ctx.bot.slash_commands
                 if s.guild_ids and guild.id in s.guild_ids
             ]
+            if guild
+            else [s for s in ctx.bot.slash_commands if not s.guild_only]
+        )
 
         slash_entries = []
 
