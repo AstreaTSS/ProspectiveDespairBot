@@ -3,53 +3,53 @@ import importlib
 from datetime import datetime
 from typing import Optional
 
-import disnake
-from disnake.ext import commands
+import naff
 
 import common.cards as cards
-import common.fuzzys as fuzzys
+import common.fuzzy as fuzzy
 import common.utils as utils
 
 
-class CardHandling(commands.Cog, name="Card Handling"):
+class CardHandling(utils.Extension):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot: naff.Client = bot
+        self.display_name = "Card Handling"
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="update-card-data",
         description="Updates the internal card data.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
+        default_member_permissions=naff.Permissions.ADMINISTRATOR,
     )
-    @commands.guild_permissions(786609181855318047, owner=True)
-    async def update_card_data(self, inter: disnake.GuildCommandInteraction):
-        await inter.response.defer()
+    async def update_card_data(self, ctx: naff.InteractionContext):
+        await ctx.defer()
 
         importlib.reload(cards)
 
-        extensions = list(self.bot.extensions.keys())
+        extensions = list(self.bot.ext.keys())
         for extension in extensions:
             self.bot.reload_extension(extension)
 
-        await inter.send("Done!")
+        await ctx.send("Done!")
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="update-cast",
         description="Updates the cards for the cast.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
+        default_member_permissions=naff.Permissions.ADMINISTRATOR,
     )
-    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
-    async def update_cast(self, inter: disnake.GuildCommandInteraction):
-        await inter.response.defer()
+    async def update_cast(self, ctx: naff.InteractionContext):
+        await ctx.defer()
 
-        profile_chan: disnake.TextChannel = self.bot.get_channel(786638377801744394)
+        profile_chan: naff.GuildText = ctx.bot.get_channel(786638377801744394)
 
-        def is_valid(m: disnake.Message):
+        def is_valid(m: naff.Message):
             return m.author.id == self.bot.user.id
 
-        reference_date = datetime(2021, 9, 2)
-        await profile_chan.purge(limit=100, check=is_valid, after=reference_date)
+        reference_date = naff.Timestamp(2021, 9, 2).to_snowflake()
+        await profile_chan.purge(
+            search_limit=100, predicate=is_valid, after=reference_date
+        )
 
         if cards.hosts:
             await profile_chan.send("```\nKG Hosts\n```")
@@ -68,7 +68,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
             await profile_chan.send(embeds=chunk)
             await asyncio.sleep(1)
 
-        embed = disnake.Embed(timestamp=disnake.utils.utcnow())
+        embed = naff.Embed(timestamp=naff.Timestamp.utcnow())
         embed.set_footer(text="Last Updated")
 
         await profile_chan.send(
@@ -81,26 +81,31 @@ class CardHandling(commands.Cog, name="Card Handling"):
             embed=embed,
         )
 
-        await inter.send("Done!")
+        await ctx.send("Done!")
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="card-search",
         description="Gets you a specific person's card based on the query provided.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
     )
-    @commands.guild_permissions(786609181855318047, owner=True)
+    @naff.slash_option(
+        "user",
+        "The user who RPs the OC on a card.",
+        opt_type=naff.OptionTypes.USER,
+        required=False,
+    )
+    @naff.slash_option(
+        "oc_name",
+        "The name of the OC.",
+        opt_type=naff.OptionTypes.STRING,
+        required=False,
+        autocomplete=True,
+    )
     async def card_search(
         self,
-        inter: disnake.GuildCommandInteraction,
-        user: Optional[disnake.User] = commands.Param(
-            default=None, description="The user who RPs the OC on a card."
-        ),
-        oc_name: Optional[str] = commands.Param(
-            default=None,
-            description="The name of the OC.",
-            autocomplete=fuzzys.extract_cards,
-        ),
+        ctx: naff.InteractionContext,
+        user: Optional[naff.User] = None,
+        oc_name: Optional[str] = None,
     ):
         if user:
             selected_card = next(
@@ -112,7 +117,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
                 )
 
             if not selected_card:
-                raise commands.BadArgument("This user doesn't have a card!")
+                raise naff.errors.BadArgument("This user doesn't have a card!")
         elif oc_name:
             selected_card = next(
                 c
@@ -120,13 +125,17 @@ class CardHandling(commands.Cog, name="Card Handling"):
                 if c.oc_name == oc_name
             )
         else:
-            raise commands.BadArgument("No query provided!")
+            raise naff.errors.BadArgument("No query provided!")
 
         embed = await selected_card.as_embed(self.bot)
-        await inter.send(embed=embed, ephemeral=True)
+        await ctx.send(embed=embed, ephemeral=True)
+
+    @card_search.autocomplete("oc_name")
+    async def wrap(self, ctx, oc_name):
+        await fuzzy.fuzzy_autocomplete(ctx, oc_name)
 
 
 def setup(bot):
     importlib.reload(utils)
-    importlib.reload(fuzzys)
-    bot.add_cog(CardHandling(bot))
+    importlib.reload(fuzzy)
+    CardHandling(bot)

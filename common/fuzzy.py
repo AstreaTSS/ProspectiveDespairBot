@@ -1,13 +1,13 @@
-import disnake
+import typing
+
+import naff
 from rapidfuzz import fuzz
 from rapidfuzz import process
-from rapidfuzz import string_metric
 
 import common.cards as cards
 
 
 def extract_from_list(
-    inter: disnake.ApplicationCommandInteraction,
     argument,
     list_of_items,
     processors,
@@ -54,15 +54,19 @@ def get_card_name(card):
     return card.oc_name.lower() if isinstance(card, cards.Card) else card
 
 
-async def extract_cards(inter: disnake.ApplicationCommandInteraction, argument):
+async def extract_cards(argument):
     if not argument:
         return [c.oc_name for c in tuple(cards.participants + cards.hosts)]
 
     queried_cards: list[list[cards.Card]] = extract_from_list(
-        inter=inter,
         argument=argument.lower(),
         list_of_items=tuple(cards.participants + cards.hosts),
         processors=[get_card_name],
         score_cutoff=60,
     )
     return [c[0].oc_name for c in queried_cards]
+
+
+async def fuzzy_autocomplete(ctx: naff.AutocompleteContext, arg: str):
+    card_list = await extract_cards(arg)
+    await ctx.send(card_list)

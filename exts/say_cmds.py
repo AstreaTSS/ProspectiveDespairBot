@@ -4,38 +4,38 @@ import io
 
 import aiohttp
 import dateutil.parser
-import disnake
 import humanize
+import naff
 import orjson
-from disnake.ext import commands
 
-import common.custom_classes as custom_classes
+import common.custom_classes as cclasses
 import common.utils as utils
 
 
-class SayCMDS(commands.Cog, name="Say"):
+class SayCMDS(utils.Extension):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot: naff.Client = bot
+        self.display_name = "Say"
 
     async def get_file_bytes(self, url: str, limit: int, equal_to=True):
         # gets a file as long as it's under the limit (in bytes)
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
-                    raise commands.BadArgument("I can't get this file/URL!")
+                    raise naff.errors.BadArgument("I can't get this file/URL!")
 
                 try:
                     if equal_to:
                         await resp.content.readexactly(
                             limit + 1
                         )  # we want this to error out even if the file is exactly the limit
-                        raise commands.BadArgument(
+                        raise naff.errors.BadArgument(
                             "The file/URL given is over"
                             f" {humanize.naturalsize(limit, binary=True)}!"
                         )
                     else:
                         await resp.content.readexactly(limit)
-                        raise commands.BadArgument(
+                        raise naff.errors.BadArgument(
                             "The file/URL given is at or over"
                             f" {humanize.naturalsize(limit, binary=True)}!"
                         )
@@ -45,11 +45,11 @@ class SayCMDS(commands.Cog, name="Say"):
                     # the url given is less than the limit
                     return e.partial
 
-    @commands.command()
+    @naff.prefixed_command()
     @utils.proper_permissions()
     async def say(
         self,
-        ctx: commands.Context,
+        ctx: naff.PrefixedContext,
         *,
         message: str,
     ):
@@ -59,8 +59,8 @@ class SayCMDS(commands.Cog, name="Say"):
         first_argument = message.split(" ")[0]
 
         try:
-            channel = await commands.TextChannelConverter().convert(ctx, first_argument)
-        except commands.BadArgument:
+            channel = await naff.GuildTextConverter().convert(ctx, first_argument)
+        except naff.errors.BadArgument:
             channel = ctx.channel
 
         rest_of_message = (
@@ -79,16 +79,13 @@ class SayCMDS(commands.Cog, name="Say"):
                 )
 
             try:
-                is_spoiler = ctx.message.attachments[0].is_spoiler()
-
                 image_data = await self.get_file_bytes(
                     ctx.message.attachments[0].url, 8388608, equal_to=False
                 )  # 8 MiB
                 file_io = io.BytesIO(image_data)
-                file_to_send = disnake.File(
+                file_to_send = naff.File(
                     file_io,
-                    filename=ctx.message.attachments[0].filename,
-                    spoiler=is_spoiler,
+                    file_name=ctx.message.attachments[0].filename,
                 )
             except:
                 if file_io:
@@ -114,12 +111,19 @@ class SayCMDS(commands.Cog, name="Say"):
             )
             await ctx.reply(f"Done! Check out {channel.mention}!")
 
-    @commands.command()
+    class _BasicColorConverter(naff.Converter):
+        async def convert(self, ctx: naff.PrefixedContext, arg: str):
+            try:
+                return naff.Color(arg)
+            except TypeError:
+                raise naff.errors.BadArgument("Invalid color argument!")
+
+    @naff.prefixed_command()
     @utils.proper_permissions()
     async def embed_say(self, ctx):
         """Allows people with Manage Server permissions to speak with the bot with a fancy embed. Will open a wizard-like prompt."""
 
-        wizard = custom_classes.WizardManager(
+        wizard = cclasses.WizardManager(
             "Embed Say Wizard", "Setup complete.", pass_self=True
         )
 
@@ -134,9 +138,9 @@ class SayCMDS(commands.Cog, name="Say"):
         async def chan_convert(ctx, content):
             if content.lower() == "skip":
                 return None
-            return await commands.TextChannelConverter().convert(ctx, content)
+            return await naff.GuildTextConverter().convert(ctx, content)
 
-        def chan_action(ctx, converted, self):
+        def chan_action(self, ctx, converted):
             self.optional_channel = converted
 
         wizard.add_question(question_1, chan_convert, chan_action)
@@ -152,9 +156,9 @@ class SayCMDS(commands.Cog, name="Say"):
                 return None
             if not content.startswith("#"):
                 content = f"#{content}"
-            return await commands.ColourConverter().convert(ctx, content.lower())
+            return await self._BasicColorConverter().convert(ctx, content.lower())
 
-        def color_action(ctx, converted, self):
+        def color_action(self, ctx, converted):
             self.optional_color = converted
 
         wizard.add_question(question_2, color_convert, color_action)
@@ -167,11 +171,11 @@ class SayCMDS(commands.Cog, name="Say"):
 
         def title_convert(ctx, content):
             if len(content) > 256:
-                raise commands.BadArgument("The title is too large!")
+                raise naff.errors.BadArgument("The title is too large!")
             return content
 
-        def title_action(ctx, converted, self):
-            self.say_embed = disnake.Embed()
+        def title_action(self, ctx, converted):
+            self.say_embed = naff.Embed()
             self.say_embed.title = converted
 
         wizard.add_question(question_3, title_convert, title_action)
@@ -184,7 +188,7 @@ class SayCMDS(commands.Cog, name="Say"):
         def no_convert(ctx, content):
             return content
 
-        async def final_action(ctx, converted, self):
+        async def final_action(self, ctx, converted):
             self.say_embed.description = converted
 
             if getattr(self, "optional_color", None):
@@ -200,15 +204,13 @@ class SayCMDS(commands.Cog, name="Say"):
 
         await wizard.run(ctx)
 
-    class RawEmbedSayConverter(commands.Converter, list):
-        async def convert(self, ctx: commands.Context, argument: str):
+    class RawEmbedSayConverter(naff.Converter, list):
+        async def convert(self, ctx: naff.PrefixedContext, argument: str):
             first_argument = argument.split(" ")[0]
 
             try:
-                channel = await commands.TextChannelConverter().convert(
-                    ctx, first_argument
-                )
-            except commands.BadArgument:
+                channel = await naff.GuildTextConverter().convert(ctx, first_argument)
+            except naff.errors.BadArgument:
                 channel = ctx.channel
 
             rest_of_argument = (
@@ -228,43 +230,47 @@ class SayCMDS(commands.Cog, name="Say"):
                             argument_json["timestamp"]
                         )
                     except ValueError:
-                        raise commands.BadArgument(
+                        raise naff.errors.BadArgument(
                             "The timestamp provided was not valid!"
                         )
                     argument_json["timestamp"] = timestamp_date.isoformat()
             except ValueError:
-                raise commands.BadArgument(
+                raise naff.errors.BadArgument(
                     "The argument provided was not valid embed JSON!"
                 )
 
             try:
-                return channel, disnake.Embed.from_dict(argument_json)
+                return channel, naff.Embed.from_dict(argument_json)
             except ValueError:
-                raise commands.BadArgument(
+                raise naff.errors.BadArgument(
                     "Could not convert argument to an embed. Is it invalid?"
                 )
 
-    @commands.command()
+    @naff.prefixed_command()
     @utils.proper_permissions()
     async def raw_embed_say(
         self,
-        ctx: commands.Context,
+        ctx: naff.PrefixedContext,
         *,
         data: RawEmbedSayConverter,
     ):
-        """Allows people with Manage Server permissions to speak with the bot with a fancy embed with the JSON provided.
+        """
+        Allows people with Manage Server permissions to speak with the bot with a fancy embed with the JSON provided.
         This is a more low-level alternative to embed-say. If you know Discord Embed JSON, this allows you to use that.
         See https://discord.com/developers/docs/resources/channel#embed-object for the valid format.
         Do not use this if you have no idea what the above means. embed-say works fine.
-        If you mention a channel before the embed data, the bot will send it to that channel."""
+        If you mention a channel before the embed data, the bot will send it to that channel.
+        """
 
-        chan: disnake.TextChannel = data[0]
-        embed: disnake.Embed = data[1]
+        chan: naff.GuildText = data[0]
+        embed: naff.Embed = data[1]
 
         if embed.to_dict() == {}:
-            raise commands.BadArgument("The data provided is either invalid or empty!")
+            raise naff.errors.BadArgument(
+                "The data provided is either invalid or empty!"
+            )
         elif not utils.embed_check(embed):
-            raise commands.BadArgument(
+            raise naff.errors.BadArgument(
                 "The embed violates one or more of Discord's limits.\n"
                 + "See https://discord.com/developers/docs/resources/channel#embed-limits"
                 " for more information."
@@ -276,6 +282,6 @@ class SayCMDS(commands.Cog, name="Say"):
 
 
 def setup(bot):
-    importlib.reload(custom_classes)
     importlib.reload(utils)
-    bot.add_cog(SayCMDS(bot))
+    importlib.reload(cclasses)
+    SayCMDS(bot)

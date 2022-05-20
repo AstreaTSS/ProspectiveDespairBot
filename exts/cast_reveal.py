@@ -5,56 +5,58 @@ from copy import deepcopy
 from datetime import timedelta
 from random import shuffle
 
-import disnake
-from disnake.ext import commands
+import naff
 
 import common.cards as cards
+import common.custom_classes as cclasses
+import common.utils as utils
 
 
-class CastReveal(commands.Cog, name="Cast Reveal"):
+class CastReveal(utils.Extension):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot: naff.Client = bot
+        self.display_name = "Cast Reveal"
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="cast-reveal",
         description="A command that automates the cast reveal.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
+        default_member_permissions=naff.Permissions.ADMINISTRATOR,
     )
-    @commands.guild_permissions(786609181855318047, owner=True)
-    async def cast_reveal(self, inter: disnake.GuildCommandInteraction):
-        await inter.send(
+    async def cast_reveal(self, ctx: naff.InteractionContext):
+        await ctx.send(
             "Preparing cast reveal. One person will be revealed roughly every minute. "
             + "All entries were randomly shuffled beforehand.\n```\n \n```"
         )
 
-        applied = disnake.Object(786619063023566899)
-        alive_player = disnake.Object(786610731826544670)
+        applied = naff.SnowflakeObject(id=786619063023566899)
+        alive_player = naff.SnowflakeObject(id=786610731826544670)
 
         shuffled_participants = deepcopy(cards.participants)
         shuffle(shuffled_participants)
 
-        async with inter.channel.typing():
+        channel_typing = cclasses.Typing(ctx.channel)
+        async with channel_typing:
             await asyncio.sleep(20)  # because otherwise it would be done a bit too fast
 
             for index, card in enumerate(shuffled_participants):
-                after_cooldown = disnake.utils.utcnow() + timedelta(seconds=60)
+                after_cooldown = naff.Timestamp.utcnow() + timedelta(seconds=60)
 
                 embed = await card.as_embed(self.bot)
-                await inter.channel.send(
+                await ctx.channel.send(
                     f"**Welcome {card.title_name}!**\nRPed by: {card.mention}",
                     embed=embed,
                 )
-                await inter.channel.send("```\n \n```")  # looks neater
+                await ctx.channel.send("```\n \n```")  # looks neater
 
-                if member := inter.guild.get_member(card.user_id):
+                if member := ctx.guild.get_member(card.user_id):
                     await member.remove_roles(applied)
                     await member.add_roles(alive_player)
 
                 if index != len(shuffled_participants) - 1:
-                    await disnake.utils.sleep_until(after_cooldown)
+                    await utils.sleep_until(after_cooldown)
 
-        await inter.channel.send(
+        await ctx.channel.send(
             "**All participants have been revealed.**\nWe apologize if you didn't get"
             " in, "
             + "but there were *a lot* of applications this season. We sadly can't"
@@ -65,4 +67,6 @@ class CastReveal(commands.Cog, name="Cast Reveal"):
 
 
 def setup(bot):
-    bot.add_cog(CastReveal(bot))
+    importlib.reload(utils)
+    importlib.reload(cclasses)
+    CastReveal(bot)

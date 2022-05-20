@@ -1,5 +1,6 @@
-#!/usr/bin/env python3.8
+import asyncio
 import collections
+import datetime
 import logging
 import traceback
 import typing
@@ -8,41 +9,44 @@ from decimal import InvalidOperation
 from pathlib import Path
 
 import aiohttp
-import disnake
-from disnake.ext import commands
+import naff
 
 
-class DecimalConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, argument: str) -> Decimal:
+class DecimalConverter(naff.Converter):
+    async def convert(self, ctx: naff.Context, argument: str) -> Decimal:
         try:
             return Decimal(argument)
         except InvalidOperation:
-            raise commands.BadArgument("This is not a decimal!")
+            raise naff.errors.BadArgument("This is not a decimal!")
 
 
-class CustomCheckFailure(commands.CheckFailure):
+class CustomCheckFailure(naff.errors.BadArgument):
     # custom classs for custom prerequisite failures outside of normal command checks
     pass
 
 
-async def error_handle(
-    bot,
-    error,
-    ctx: typing.Union[commands.Context, disnake.Interaction, None] = None,
-):
+def proper_permissions() -> typing.Any:
+    async def predicate(ctx: naff.Context):
+        return ctx.author.has_permission(
+            naff.Permissions.ADMINISTRATOR, naff.Permissions.MANAGE_GUILD
+        )
+
+    return naff.check(predicate)
+
+
+async def error_handle(bot: naff.Client, error: Exception, ctx: naff.Context = None):
     # handles errors and sends them to owner
     if isinstance(error, aiohttp.ServerDisconnectedError):
         to_send = "Disconnected from server!"
         split = True
     else:
         error_str = error_format(error)
-        logging.getLogger("disnake").error(error_str)
+        logging.getLogger(naff.const.logger_name).error(error_str)
 
-        error_split = error_str.splitlines()
-        chunks = [error_split[x : x + 20] for x in range(0, len(error_split), 20)]
-        for chunk_ in chunks:
-            chunk_[0] = f"```py\n{chunk_[0]}"
-            chunk_[len(chunk_) - 1] += "\n```"
+        chunks = line_split(error_str)
+        for i in range(len(chunks)):
+            chunks[i][0] = f"```py\n{chunks[i][0]}"
+            chunks[i][len(chunks[i]) - 1] += "\n```"
 
         final_chunks = ["\n".join(chunk) for chunk in chunks]
         if ctx and hasattr(ctx, "message") and hasattr(ctx.message, "jump_url"):
@@ -54,27 +58,33 @@ async def error_handle(
     await msg_to_owner(bot, to_send, split)
 
     if ctx:
-        if isinstance(ctx, commands.Context):
+        if isinstance(ctx, naff.PrefixedContext):
             await ctx.reply(
                 "An internal error has occured. The bot owner has been notified."
             )
-        else:
+        elif isinstance(ctx, naff.InteractionContext):
             await ctx.send(
                 content=(
                     "An internal error has occured. The bot owner has been notified."
-                ),
-                ephemeral=True,
+                )
             )
 
 
-async def msg_to_owner(bot, content, split=True):
+async def msg_to_owner(bot: naff.Client, content, split=True):
     # sends a message to the owner
-    owner = bot.owner
     string = str(content)
 
     str_chunks = string_split(string) if split else content
     for chunk in str_chunks:
-        await owner.send(f"{chunk}")
+        await bot.owner.send(f"{chunk}")
+
+
+async def sleep_until(dt: datetime.datetime):
+    if dt.tzinfo is None:
+        dt = dt.astimezone()
+    now = datetime.datetime.now(datetime.timezone.utc)
+    time_to_sleep = max((dt - now).total_seconds(), 0)
+    await asyncio.sleep(time_to_sleep)
 
 
 def line_split(content: str, split_by=20):
@@ -84,7 +94,7 @@ def line_split(content: str, split_by=20):
     ]
 
 
-def embed_check(embed: disnake.Embed) -> bool:
+def embed_check(embed: naff.Embed) -> bool:
     """Checks if an embed is valid, as per Discord's guidelines.
     See https://discord.com/developers/docs/resources/channel#embed-limits for details."""
     if len(embed) > 6000:
@@ -112,14 +122,14 @@ def embed_check(embed: disnake.Embed) -> bool:
 
 def deny_mentions(user):
     # generates an AllowedMentions object that only pings the user specified
-    return disnake.AllowedMentions(everyone=False, users=[user], roles=False)
+    return naff.AllowedMentions(users=[user])
 
 
-def error_format(error):
+def error_format(error: Exception):
     # simple function that formats an exception
     return "".join(
-        traceback.format_exception(
-            etype=type(error), value=error, tb=error.__traceback__
+        traceback.format_exception(  # type: ignore
+            type(error), value=error, tb=error.__traceback__
         )
     )
 
@@ -136,10 +146,10 @@ def file_to_ext(str_path, base_path):
     return str_path.replace(".py", "")
 
 
-def get_all_extensions(str_path, folder="cogs"):
+def get_all_extensions(str_path, folder="exts"):
     # gets all extensions in a folder
     ext_files = collections.deque()
-    loc_split = str_path.split("cogs")
+    loc_split = str_path.split(folder)
     base_path = loc_split[0]
 
     if base_path == str_path:
@@ -154,7 +164,7 @@ def get_all_extensions(str_path, folder="cogs"):
         str_path = str(path.as_posix())
         str_path = file_to_ext(str_path, base_path)
 
-        if str_path != "cogs.db_handler":
+        if str_path != "exts.db_handler":
             ext_files.append(str_path)
 
     return ext_files
@@ -169,62 +179,51 @@ def yesno_friendly_str(bool_to_convert):
 
 
 def error_embed_generate(error_msg):
-    return disnake.Embed(colour=disnake.Colour.red(), description=error_msg)
+    return naff.Embed(color=naff.MaterialColors.RED, description=error_msg)
 
 
-def generate_mentions(ctx: commands.Context):
-    # sourcery skip: remove-unnecessary-else
+def generate_mentions(ctx: naff.Context):
     # generates an AllowedMentions object that is similar to what a user can usually use
 
     permissions = ctx.channel.permissions_for(ctx.author)
-    if can_mention := permissions.administrator or permissions.mention_everyone:
-        # i could use a default AllowedMentions object, but this is more clear
-        return disnake.AllowedMentions(everyone=True, users=True, roles=True)
-    else:
-        pingable_roles = tuple(r for r in ctx.guild.roles if r.mentionable)
-        return disnake.AllowedMentions(everyone=False, users=True, roles=pingable_roles)
+    if (
+        naff.Permissions.ADMINISTRATOR in permissions
+        or naff.Permissions.MENTION_EVERYONE in permissions
+    ):
+        return naff.AllowedMentions.all()
+
+    pingable_roles = tuple(r for r in ctx.guild.roles if r.mentionable)
+    return naff.AllowedMentions(parse=["users"], roles=pingable_roles)
 
 
-def get_icon_url(asset: disnake.Asset, size=128):
-    if asset.is_animated():
-        return str(asset.replace(format="gif", size=size))
-    else:
-        return str(asset.replace(format="png", size=size))
+def role_check(ctx: naff.Context, role: naff.Role):
+    top_role = ctx.guild.me.top_role
 
-
-def proper_permissions():
-    async def predicate(ctx: commands.Context):
-        # checks if author has admin or manage guild perms or is the owner
-        permissions = ctx.channel.permissions_for(ctx.author)
-        return permissions.administrator or permissions.manage_guild
-
-    return commands.check(predicate)
-
-
-def deprecated_cmd():
-    async def predicate(ctx: commands.Context):
-        await ctx.reply(
-            embed=error_embed_generate(
-                "This command is deprecated, "
-                + "and will be removed in a later release. Please use "
-                + f"`/{ctx.command.qualified_name.replace('_', '-')}`` instead."
-            )
+    if role.position > top_role.position:
+        raise CustomCheckFailure(
+            "The role provided is a role that is higher than the roles I can edit. "
+            + "Please move either that role or my role so that "
+            + "my role is higher than the role you want to use."
         )
-        return True
 
-    return commands.check(predicate)
+    return True
 
 
-ADMIN_PERMS = {786610218133094420: True, 229350299909881876: True}
+async def _global_checks(ctx: naff.Context):
+    if not ctx.bot.is_ready:
+        return False
 
-ALIVE_PLAYER_PERMS = {
-    786610218133094420: True,
-    786610731826544670: True,
-    229350299909881876: True,
-}
+    if ctx.bot.init_load:
+        return False
 
-MINI_KG_PERMS = {
-    786610218133094420: True,
-    939993631140495360: True,
-    229350299909881876: True,
-}
+    if not ctx.guild:
+        return False
+
+    return ctx.guild.id == 786609181855318047 or ctx.author.id == ctx.bot.app.owner_id
+
+
+class Extension(naff.Extension):
+    def __new__(cls, bot: naff.Client, *args, **kwargs):
+        new_cls = super().__new__(cls, bot, *args, **kwargs)
+        new_cls.add_ext_check(_global_checks)
+        return new_cls

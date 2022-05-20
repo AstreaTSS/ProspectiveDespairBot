@@ -3,9 +3,8 @@ import time
 from typing import TYPE_CHECKING
 
 import dateutil.parser
-import disnake
+import naff
 import pytz
-from disnake.ext import commands
 
 import common.utils as utils
 
@@ -19,37 +18,38 @@ if TYPE_CHECKING:
 
 else:
 
-    class TimeParser(commands.Converter):
-        async def convert(self, ctx: commands.Context, argument: str):
+    class TimeParser(naff.Converter):
+        async def convert(self, ctx: naff.Context, argument: str):
             try:
                 the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
                 the_time = et.localize(the_time)
                 return the_time.astimezone(pytz.utc)
             except dateutil.parser.ParserError:
-                raise commands.BadArgument(
+                raise naff.errors.BadArgument(
                     "The argument provided could not be parsed as a time!"
                 )
 
 
-class Etc(commands.Cog, name="Misc."):
-    def __init__(self, bot: commands.Bot):
+class Etc(utils.Extension):
+    def __init__(self, bot: naff.Client):
         self.bot = bot
+        self.display_name = "Misc."
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="ping",
         description=(
             "Pings the bot. Great way of finding out if the bot’s working, but has no"
             " real use."
         ),
-        guild_ids=[786609181855318047],
+        scopes=[786609181855318047],
     )
-    async def ping(self, inter: disnake.GuildCommandInteraction):
-        await inter.response.defer()
+    async def ping(self, ctx: naff.InteractionContext):
+        await ctx.defer()
 
         start_time = time.perf_counter()
         ping_discord = round((self.bot.latency * 1000), 2)
 
-        mes = await inter.edit_original_message(
+        mes = await ctx.send(
             content=(
                 f"Pong!\n`{ping_discord}` ms from Discord.\nCalculating personal"
                 " ping..."
@@ -66,15 +66,17 @@ class Etc(commands.Cog, name="Misc."):
             )
         )
 
-    @commands.command(aliases=["format_time"])
+    @naff.prefixed_command(aliases=["format_time"])
     @utils.proper_permissions()
-    async def time_format(self, ctx: commands.Context, *, time_str: TimeParser):
+    async def time_format(self, ctx: naff.PrefixedContext, *, time: TimeParser):
         """Formats the time given into the fancy Discord timestamp markdown.
         Every time is assumed to be in ET.
         Times with no dates are assumed to be taking place today."""
-        await ctx.send(disnake.utils.format_dt(time_str))
+        timestamp = naff.Timestamp.fromdatetime(time)
+        time_str = timestamp.format("f")
+        await ctx.send(time_str)
 
 
 def setup(bot):
     importlib.reload(utils)
-    bot.add_cog(Etc(bot))
+    Etc(bot)

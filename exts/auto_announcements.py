@@ -3,36 +3,29 @@ import datetime
 import importlib
 import os
 
-import aiohttp
-import disnake
+import naff
 import pytz
 from dateutil.relativedelta import relativedelta
-from disnake.ext import commands
 
 import common.utils as utils
 
 et = pytz.timezone("US/Eastern")
 
 
-class AutoAnnouncements(commands.Cog):
+class AutoAnnouncements(utils.Extension):
     def __init__(self, bot):
-        self.bot: commands.Bot = bot
+        self.bot: naff.Client = bot
 
-        self.webhook_session = aiohttp.ClientSession()
-
-        self.webhook = disnake.Webhook.from_url(
-            os.environ.get("WEBHOOK_URL"),
-            session=self.webhook_session,
-        )
+        self.webhook = naff.Webhook.from_url(os.environ["WEBHOOK_URL"], self.bot)
 
         # self.task = self.bot.loop.create_task(self.auto_run())
 
-    def cog_unload(self):
+    def drop(self):
         # self.task.cancel()
-        self.bot.loop.create_task(self.webhook_session.close())
+        super().drop()
 
     def gen_embed(self, day: bool = True):
-        embed = disnake.Embed(title="Announcement from Drake Aelius", color=11779669)
+        embed = naff.Embed(title="Announcement from Drake Aelius", color=11779669)
         if day:
             str_builder = [
                 "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
@@ -53,27 +46,25 @@ class AutoAnnouncements(commands.Cog):
         embed.description = "".join(str_builder)
         return embed
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="run-night-announcement",
         description="Runs the nighttime announcement automatically.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
+        default_member_permissions=naff.Permissions.ADMINISTRATOR,
     )
-    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
-    async def run_night_announcement(self, inter: disnake.GuildCommandInteraction):
+    async def run_night_announcement(self, ctx: naff.InteractionContext):
         await self.webhook.send(embed=self.gen_embed(day=False))
-        await inter.send("Done!")
+        await ctx.send("Done!")
 
-    @commands.slash_command(
+    @naff.slash_command(
         name="run-day-announcement",
         description="Runs the daytime announcement automatically.",
-        guild_ids=[786609181855318047],
-        default_permission=False,
+        scopes=[786609181855318047],
+        default_member_permissions=naff.Permissions.ADMINISTRATOR,
     )
-    @commands.guild_permissions(786609181855318047, roles=utils.ADMIN_PERMS)
-    async def run_day_announcement(self, inter: disnake.GuildCommandInteraction):
+    async def run_day_announcement(self, ctx: naff.InteractionContext):
         await self.webhook.send(embed=self.gen_embed(day=True))
-        await inter.send("Done!")
+        await ctx.send("Done!")
 
     async def auto_run(self):
         while True:
@@ -93,7 +84,7 @@ class AutoAnnouncements(commands.Cog):
                     hour=23, minute=0, second=0, microsecond=0
                 )
 
-            await disnake.utils.sleep_until(sleep_till)
+            await utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
 
             embed = self.gen_embed(day=et_now.hour < 12)
@@ -103,4 +94,4 @@ class AutoAnnouncements(commands.Cog):
 
 def setup(bot):
     importlib.reload(utils)
-    bot.add_cog(AutoAnnouncements(bot))
+    AutoAnnouncements(bot)
