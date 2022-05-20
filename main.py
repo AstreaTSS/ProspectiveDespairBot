@@ -189,7 +189,8 @@ bot = PDBot(
     generate_prefixes=generate_prefixes,
     allowed_mentions=mentions,
     intents=intents,
-    auto_defer=naff.AutoDefer(enabled=False),  # we already handle deferring
+    delete_unused_application_cmds=True,
+    auto_defer=False,  # we already handle deferring
 )
 bot.init_load = True
 bot.color = naff.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
