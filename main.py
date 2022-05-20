@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 import os
 import typing
@@ -61,6 +62,14 @@ class PDBot(naff.Client):
         )
 
         await self.change_presence(activity=activity)
+
+    @naff.listen("disconnect")
+    async def on_disconnect(self):
+        # basically, this needs to be done as otherwise, when the bot reconnects,
+        # redis may complain that a connection was closed by a peer
+        # this isnt a great solution, but it should work
+        with contextlib.suppress(Exception):
+            await self.redis.connection_pool.disconnect(inuse_connections=True)
 
     @naff.listen("resume")
     async def on_resume(self):
