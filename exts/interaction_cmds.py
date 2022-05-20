@@ -57,7 +57,8 @@ user_options = [
     ),
 ]
 
-user_and_count = user_options.copy().append(
+user_and_count = user_options.copy()
+user_and_count.append(
     naff.SlashCommandOption(
         "count",  # type: ignore
         naff.OptionTypes.NUMBER,
