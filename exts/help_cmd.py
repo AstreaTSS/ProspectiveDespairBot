@@ -78,13 +78,12 @@ class HelpCMD(utils.Extension):
     ):
         embeds: list[naff.Embed] = []
 
-        command_name_set = {
-            c.name for c in commands if await self._custom_can_run(ctx, c)
-        }
+        command_name_set = {c.name for c in commands}
         commands = [
             c
             for c in commands
             if getattr(c.parent, "name", None) not in command_name_set
+            and await self._custom_can_run(ctx, c)
         ]
         if not commands:
             return []
