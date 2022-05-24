@@ -13,8 +13,6 @@ from naff.ext import paginators
 from naff.ext.debug_extension.utils import debug_embed
 from naff.ext.debug_extension.utils import get_cache_state
 
-import common.custom_classes as cclasses
-
 log = logging.getLogger(naff.const.logger_name)
 
 
@@ -22,7 +20,7 @@ class DebugScale(naff.Extension):
     """A reimplementation of naff's native debug commands."""
 
     def __init__(self, bot):
-        self.display_name = "Debug"
+        self.name = "Debug"
         self.add_ext_check(naff.checks.is_owner())
 
     @naff.prefixed_command(aliases=["jsk"])
@@ -200,7 +198,7 @@ class DebugScale(naff.Extension):
     @debug.subcommand()
     async def shell(self, ctx: naff.PrefixedContext, *, cmd: str):
         """Executes statements in the system shell."""
-        async with cclasses.Typing(ctx.channel):
+        async with ctx.channel.typing:
             process = await asyncio.create_subprocess_shell(
                 cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
             )
@@ -229,5 +227,4 @@ class DebugScale(naff.Extension):
 
 
 def setup(bot) -> None:
-    importlib.reload(cclasses)
     DebugScale(bot)

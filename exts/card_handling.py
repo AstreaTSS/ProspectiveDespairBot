@@ -13,7 +13,7 @@ import common.utils as utils
 class CardHandling(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Card Handling"
+        self.name = "Card Handling"
 
     @naff.slash_command(
         name="update-card-data",

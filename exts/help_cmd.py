@@ -3,7 +3,6 @@ import typing
 
 import naff
 
-import common.custom_classes as cclasses
 import common.help_paginator as paginator
 import common.utils as utils
 
@@ -12,7 +11,7 @@ class HelpCMD(utils.Extension):
     """The cog that handles the help command."""
 
     def __init__(self, bot: naff.Client):
-        self.display_name = "Help"
+        self.name = "Help"
         self.bot = bot
 
     def get_command(self, name: str) -> typing.Optional[naff.PrefixedCommand]:
@@ -123,7 +122,7 @@ class HelpCMD(utils.Extension):
         if not msg_cmds:
             return []
 
-        name = getattr(ext, "display_name", ext.name) + " Commands"
+        name = f"{ext.name} Commands"
         return await self.get_multi_command_embeds(ctx, msg_cmds, name, ext.description)
 
     async def get_all_cmd_embeds(self, ctx: naff.PrefixedContext, bot: naff.Client):
@@ -170,9 +169,7 @@ class HelpCMD(utils.Extension):
     @naff.cooldown(naff.Buckets.MEMBER, 1, 3)  # type: ignore
     async def help(self, ctx: naff.PrefixedContext, *, query: typing.Optional[str]):
         """Shows help about the bot, a command, or a category."""
-        channel_typing = cclasses.Typing(ctx.channel)
-
-        async with channel_typing:
+        async with ctx.channel.typing:
             embeds: list[naff.Embed] = []
 
             if not query:
@@ -213,5 +210,4 @@ class HelpCMD(utils.Extension):
 def setup(bot):
     importlib.reload(utils)
     importlib.reload(paginator)
-    importlib.reload(cclasses)
     HelpCMD(bot)

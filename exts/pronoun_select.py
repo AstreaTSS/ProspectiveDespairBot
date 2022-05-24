@@ -8,7 +8,7 @@ import common.utils as utils
 class PronounSelect(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Pronoun Select"
+        self.name = "Pronoun Select"
 
         self.pronoun_select = naff.Select(
             options=[
@@ -90,15 +90,11 @@ class PronounSelect(utils.Extension):
                 member_roles.add(pronoun_role)
                 add_list.append(f"`{pronoun_name}`")
 
-            await self.bot.http.modify_guild_member(
-                member.guild.id, member.id, roles=list(member_roles)
-            )
+            await member.edit(roles=list(member_roles))
             await ctx.send(f"New Pronouns: {', '.join(add_list)}.", ephemeral=True)
 
         else:
-            await self.bot.http.modify_guild_member(
-                member.guild.id, member.id, roles=list(member_roles)
-            )
+            await member.edit(roles=list(member_roles))
             await ctx.send("All pronouns removed.", ephemeral=True)
 
 

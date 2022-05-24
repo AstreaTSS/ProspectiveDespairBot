@@ -8,14 +8,13 @@ from random import shuffle
 import naff
 
 import common.cards as cards
-import common.custom_classes as cclasses
 import common.utils as utils
 
 
 class CastReveal(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Cast Reveal"
+        self.name = "Cast Reveal"
 
     @naff.slash_command(
         name="cast-reveal",
@@ -35,8 +34,7 @@ class CastReveal(utils.Extension):
         shuffled_participants = deepcopy(cards.participants)
         shuffle(shuffled_participants)
 
-        channel_typing = cclasses.Typing(ctx.channel)
-        async with channel_typing:
+        async with ctx.channel.typing:
             await asyncio.sleep(20)  # because otherwise it would be done a bit too fast
 
             for index, card in enumerate(shuffled_participants):
@@ -68,5 +66,4 @@ class CastReveal(utils.Extension):
 
 def setup(bot):
     importlib.reload(utils)
-    importlib.reload(cclasses)
     CastReveal(bot)

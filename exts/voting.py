@@ -6,7 +6,6 @@ import typing
 import naff
 
 import common.cards as cards
-import common.custom_classes as cclasses
 import common.utils as utils
 
 
@@ -18,7 +17,7 @@ def convert_name(name: typing.Any):
 class Voting(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Voting"
+        self.name = "Voting"
         self.is_voting = False
 
     async def _handle_input(
@@ -121,8 +120,7 @@ class Voting(utils.Extension):
         )
         self.is_voting = True
 
-        channel_typing = cclasses.Typing(ctx.channel)
-        async with channel_typing:
+        async with ctx.channel.typing:
             try:
                 await asyncio.wait_for(
                     self.handle_voting(voting_select, cards.participants, "oc_name"),
@@ -155,5 +153,4 @@ class Voting(utils.Extension):
 
 def setup(bot):
     importlib.reload(utils)
-    importlib.reload(cclasses)
     Voting(bot)

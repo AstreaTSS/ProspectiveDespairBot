@@ -33,7 +33,7 @@ else:
 class Etc(utils.Extension):
     def __init__(self, bot: naff.Client):
         self.bot = bot
-        self.display_name = "Misc."
+        self.name = "Misc."
 
     @naff.slash_command(
         name="ping",

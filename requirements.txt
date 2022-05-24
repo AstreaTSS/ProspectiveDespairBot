@@ -1,4 +1,4 @@
-git+https://github.com/NAFTeam/NAFF.git@50d601a6763b87f29b7baa1927b389989aba4fc5
+naff==1.0.0
 asyncpg==0.25.0
 tortoise-orm==0.19.0
 pytz==2022.1

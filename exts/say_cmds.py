@@ -15,7 +15,7 @@ import common.utils as utils
 class SayCMDS(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Say"
+        self.name = "Say"
 
     async def get_file_bytes(self, url: str, limit: int, equal_to=True):
         # gets a file as long as it's under the limit (in bytes)

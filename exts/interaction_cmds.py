@@ -71,7 +71,7 @@ user_and_count.append(
 class InteractionCMDs(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
-        self.display_name = "Interaction"
+        self.name = "Interaction"
 
     @naff.slash_command(
         name="add-interaction",

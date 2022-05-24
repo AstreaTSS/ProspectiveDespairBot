@@ -6,36 +6,6 @@ import attrs
 import naff
 
 
-class Typing:
-    """A port of discord.py's typing context manager."""
-
-    def __init__(self, channel: naff.MessageableMixin) -> None:
-        self.channel = channel
-        self.loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
-
-    def _typing_done_callback(self, fut: asyncio.Future) -> None:
-        with contextlib.suppress(asyncio.CancelledError, Exception):
-            fut.exception()
-
-    async def do_typing(self) -> None:
-        while True:
-            await asyncio.sleep(5)
-            await self.channel.trigger_typing()
-
-    async def __aenter__(self) -> None:
-        await self.channel.trigger_typing()
-        self.task: asyncio.Task[None] = self.loop.create_task(self.do_typing())
-        self.task.add_done_callback(self._typing_done_callback)
-
-    async def __aexit__(
-        self,
-        exc_type,
-        exc,
-        traceback,
-    ) -> None:
-        self.task.cancel()
-
-
 @attrs.define()
 class WizardQuestion:
     question: str = attrs.field()
