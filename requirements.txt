@@ -1,4 +1,4 @@
-naff==1.0.0
+git+https://github.com/Astrea49/NAFF.git@8ae91c805cdc3a38dfe0171ac99fa25fa8001802
 asyncpg==0.25.0
 tortoise-orm==0.19.0
 pytz==2022.1
