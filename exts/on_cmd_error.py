@@ -18,13 +18,16 @@ class OnCMDError(naff.Extension):
     async def on_command_error(
         self, ctx: naff.Context, error: Exception, *args, **kwargs
     ):
-        if not ctx.bot.is_ready or not isinstance(ctx, naff.PrefixedContext):
+        if not ctx.bot.is_ready:
             return
+
+        if not isinstance(ctx, (naff.PrefixedContext, naff.InteractionContext)):
+            return await utils.error_handle(self.bot, error)
 
         if isinstance(error, naff.errors.CommandOnCooldown):
             delta_wait = datetime.timedelta(seconds=error.cooldown.get_cooldown_time())
-            await ctx.reply(
-                embed=self.error_embed_generate(
+            await ctx.send(
+                embeds=self.error_embed_generate(
                     "You're doing that command too fast! "
                     + "Try again in"
                     f" `{humanize.precisedelta(delta_wait, format='%0.0f')}`."
@@ -34,13 +37,13 @@ class OnCMDError(naff.Extension):
             error,
             naff.errors.BadArgument,
         ):
-            await ctx.reply(embed=self.error_embed_generate(str(error)))
+            await ctx.send(embeds=self.error_embed_generate(str(error)))
         elif isinstance(error, utils.CustomCheckFailure):
-            await ctx.reply(embed=self.error_embed_generate(str(error)))
+            await ctx.send(embeds=self.error_embed_generate(str(error)))
         elif isinstance(error, naff.errors.CommandCheckFailure):
             if ctx.guild:
-                await ctx.reply(
-                    embed=self.error_embed_generate(
+                await ctx.send(
+                    embeds=self.error_embed_generate(
                         "You do not have the proper permissions to use that command."
                     )
                 )
