@@ -163,7 +163,7 @@ class Welcome(utils.Extension):
             color=host_welcome.color,
             timestamp=naff.Timestamp.utcnow(),
         )
-        embed.set_footer("Sent at")
+        embed.set_footer("Sent by the Prospective Despair Bot")
         embed.set_author(
             name=event.guild.name,
             icon_url=event.guild.icon.url if event.guild.icon else None,
