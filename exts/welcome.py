@@ -13,6 +13,7 @@ class HostWelcome:
     name: str = attrs.field()
     avatar_url: str = attrs.field()
     color: naff.Color = attrs.field()
+    status: str = attrs.field()
     description: str = attrs.field()
     description_no_applications: str = attrs.field()
 
@@ -26,6 +27,7 @@ host_welcomes.append(
         name="Blake Fleming",
         avatar_url="https://cdn.discordapp.com/attachments/786610535005159425/786715251617038386/image0.png",
         color=naff.Color(0x9B9B9B),
+        status="a previous",
         description=(
             "...welcome to this server, {member}... this server is quite interesting. I"
             " do suggest reading the {rules} of course. You may also be interested in"
@@ -51,6 +53,7 @@ host_welcomes.append(
         name="Drake Aelius",
         avatar_url="https://cdn.discordapp.com/attachments/675038207955697665/730969036183044106/image0.jpg",
         color=naff.Color(0xB3BE55),
+        status="a previous",
         description=(
             "Ugh, do I have to do this? Fine... welcome to this dumb server, {member}."
             " The {rules} are right there, make sure to read it. You can get some"
@@ -75,6 +78,7 @@ host_welcomes.append(
         name="Talia Aelius",
         avatar_url="https://cdn.discordapp.com/attachments/429720487678050308/808461328083058700/taliav2.png",
         color=naff.Color(0x155F60),
+        status="a previous",
         description=(
             "Welcome, {member}~ I hope you have a wonderful time here. The {rules} are"
             " very important, of course! After that, you may want to get some roles at"
@@ -98,6 +102,7 @@ host_welcomes.append(
         name="Mayumi Takimura",
         avatar_url="https://media.discordapp.net/attachments/786610508614598696/866495567206678528/image0.jpg",
         color=naff.Color(0xF4AEA2),
+        status="the current",
         description=(
             "Oh, like welcome {member}! I can't wait to show you around~ there's the"
             " rules at {rules}, you can get some roles at {self_roles}, there's"
@@ -153,7 +158,7 @@ class Welcome(utils.Extension):
         )
 
         embed = naff.Embed(
-            title="Welcome! Here's a greeting from one of our hosts:",
+            title=f"Welcome! Here's a greeting from {host_welcome.status} host:",
             description=filled_in_welcome,
             color=host_welcome.color,
             timestamp=naff.Timestamp.utcnow(),
