@@ -129,14 +129,13 @@ class Welcome(utils.Extension):
         self.general = "<#786609182291132437>"
         self.applications = None
 
+        self.webhook = naff.Webhook.from_url(os.environ["WELCOME_WEBHOOK_URL"], bot)
         self.welcome_channel: naff.GuildText = bot.get_channel(824263193303187566)  # type: ignore
 
     @naff.listen("member_add")
     async def on_member_add(self, event: naff.events.MemberAdd):
         if not self.bot.is_ready or int(event.guild_id) != 786609181855318047:
             return
-
-        webhook = naff.Webhook.from_url(os.environ["WELCOME_WEBHOOK_URL"], self.bot)
 
         host_welcome = random.choice(host_welcomes)
         filled_in_welcome = (
@@ -166,7 +165,7 @@ class Welcome(utils.Extension):
         )
         embed.set_thumbnail(event.member.display_avatar.url)
 
-        await webhook.send(
+        await self.webhook.send(
             content=event.member.user.mention,
             embeds=embed,
             username=host_welcome.name,
