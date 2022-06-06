@@ -160,7 +160,7 @@ class Welcome(utils.Extension):
         )
         embed.set_footer("Sent at")
         embed.set_author(
-            name="Danganronpa: Prospective Despair",
+            name=event.guild.name,
             icon_url=event.guild.icon.url if event.guild.icon else None,
         )
         embed.set_thumbnail(event.member.display_avatar.url)
