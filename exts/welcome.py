@@ -57,15 +57,15 @@ host_welcomes.append(
             " pathetic roles in {self_roles}, and in case you're a nerd, {kg_info} is"
             " there I guess. If you just want to be done with me, {applications} are"
             " there. Right, you can talk to people in {general}. Can I go now?\n\n[*OOC"
-            " Note: This is from an OC/host who, by all measures, was a dick.*]"
+            " Note: This host, by all measures, was a dick during their KG.*]"
         ),
         description_no_applications=(
             "Ugh, do I have to do this? Fine... welcome to this dumb server, {member}."
             " The {rules} are right there, make sure to read it. You can get some"
             " pathetic roles in {self_roles}, and in case you're a nerd, {kg_info} is"
             " there I guess. Right, you can talk to people in {general}. Can I go"
-            " now?\n\n[*OOC Note: This is from an OC/host who, by all measures, was a"
-            " dick.*]"
+            " now?\n\n[*OOC Note: This host, by all measures, was a dick during their"
+            " KG.*]"
         ),
     )
 )
