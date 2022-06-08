@@ -135,7 +135,10 @@ class Welcome(utils.Extension):
         self.applications = None
 
         self.webhook = naff.Webhook.from_url(os.environ["WELCOME_WEBHOOK_URL"], bot)
-        self.welcome_channel: naff.GuildText = bot.get_channel(824263193303187566)  # type: ignore
+        # little hack to create a somewhat partial messagable
+        self.welcome_channel = naff.DMChannel(
+            _client=bot, id=824263193303187566, type=0
+        )
 
     @naff.listen("member_add")
     async def on_member_add(self, event: naff.events.MemberAdd):
