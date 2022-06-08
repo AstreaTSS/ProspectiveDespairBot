@@ -137,7 +137,7 @@ class Welcome(utils.Extension):
         self.webhook = naff.Webhook.from_url(os.environ["WELCOME_WEBHOOK_URL"], bot)
         # little hack to create a somewhat partial messagable
         self.welcome_channel = naff.DMChannel(
-            _client=bot, id=824263193303187566, type=0
+            client=bot, id=824263193303187566, type=0  # type: ignore
         )
 
     @naff.listen("member_add")
