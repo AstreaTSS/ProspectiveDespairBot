@@ -17,10 +17,13 @@ class ApplicationExtensions(utils.Extension):
         self.bot: naff.Client = bot
         self.name = "Application Extensions"
 
-        self.app_channel: naff.GuildText = bot.get_channel(866667283094962196)  # type: ignore
-        self.admin_channel: naff.GuildText = bot.get_channel(786610508614598696)  # type: ignore
-        self.asked_for_ext: naff.Role = self.admin_channel.guild.get_role(819913170196889602)  # type: ignore
-        self.has_ext: naff.Role = self.admin_channel.guild.get_role(986462545516843068)  # type: ignore
+        self.bot.register_function(self._get_required_info())
+
+    async def _get_required_info(self):
+        self.app_channel: naff.GuildText = await self.bot.fetch_channel(866667283094962196)  # type: ignore
+        self.admin_channel: naff.GuildText = await self.bot.fetch_channel(786610508614598696)  # type: ignore
+        self.asked_for_ext: naff.Role = await self.admin_channel.guild.fetch_role(819913170196889602)  # type: ignore
+        self.has_ext: naff.Role = await self.admin_channel.guild.fetch_role(986462545516843068)  # type: ignore
 
     @naff.prefixed_command()
     @utils.proper_permissions()

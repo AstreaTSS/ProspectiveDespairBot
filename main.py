@@ -42,6 +42,9 @@ class PDBot(naff.Client):
             os.environ.get("REDIS_URL"), decode_responses=True
         )
 
+        for function in self._functions:
+            asyncio.create_task(function)
+
     @naff.listen("ready")
     async def on_ready(self):
         utcnow = naff.Timestamp.utcnow()
@@ -181,6 +184,12 @@ class PDBot(naff.Client):
         await Tortoise.close_connections()  # this will complain a bit, just ignore it
         return await super().stop()
 
+    def register_function(self, function: typing.Coroutine):
+        if not self.is_ready:
+            self._functions.add(function)
+        else:
+            asyncio.create_task(function)
+
 
 intents = naff.Intents.ALL
 mentions = naff.AllowedMentions.all()
@@ -194,6 +203,7 @@ bot = PDBot(
 )
 bot.init_load = True
 bot.color = naff.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
+bot._functions = set()
 
 cogs_list = utils.get_all_extensions(os.environ.get("DIRECTORY_OF_FILE"))
 for cog in cogs_list:
