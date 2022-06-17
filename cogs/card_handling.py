@@ -73,9 +73,13 @@ class CardHandling(commands.Cog, name="Card Handling"):
         embed.set_footer(text="Last Updated")
 
         await profile_chan.send(
-            "All participant cards should be in alphabetical order. They can be searched through via `/card-search`.\n"
-            + "If any information is wrong, ping or DM Astrea about it and she'll change it ASAP.\n"
-            "If you want to get the individual, transparent image, you can also ping or DM Astrea for that too.",
+            "All participant cards should be in alphabetical order. They can be"
+            " searched through via `/card-search`.\n"
+            + "If a user's mention is just a bunch of numbers, that's a Discord glitch"
+            " that we can't fix - sorry about that!"
+            + "If any information is wrong, ping or DM Astrea about it and she'll"
+            " change it ASAP.\nIf you want to get the individual, transparent image,"
+            " you can also ping or DM Astrea for that too.",
             embed=embed,
         )
 
