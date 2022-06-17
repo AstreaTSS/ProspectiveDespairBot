@@ -76,7 +76,7 @@ class CardHandling(commands.Cog, name="Card Handling"):
             "All participant cards should be in alphabetical order. They can be"
             " searched through via `/card-search`.\n"
             + "If a user's mention is just a bunch of numbers, that's a Discord glitch"
-            " that we can't fix - sorry about that!\n"
+            " that we can't fix - sorry about that!\n\n"
             + "If any information is wrong, ping or DM Astrea about it and she'll"
             " change it ASAP.\nIf you want to get the individual, transparent image,"
             " you can also ping or DM Astrea for that too.",
