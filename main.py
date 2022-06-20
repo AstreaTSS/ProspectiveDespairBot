@@ -4,8 +4,8 @@ import logging
 import os
 import typing
 
-import aioredis
 import naff
+import redis.asyncio as aioredis
 from dotenv import load_dotenv
 from tortoise import Tortoise
 
