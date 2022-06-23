@@ -8,7 +8,7 @@ rapidfuzz==2.0.11
 python-dateutil==2.8.2
 flask==2.1.2
 orjson==3.7.2
-humanize==4.1.0
+humanize==4.2.1
 attrs==21.4.0
 tomli==2.0.1
 redis[hiredis]==4.3.3
