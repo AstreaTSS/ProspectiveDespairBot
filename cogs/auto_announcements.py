@@ -39,17 +39,17 @@ class AutoAnnouncements(commands.Cog):
 
         if day:
             str_builder = [
-                "Ahem, ahem. Wakey, wakey! The sun is shining and everything is ",
-                "beautiful. It is 8 AM and now officially daytime. Wake up, ",
-                "get up, and get out there to greet another exciting day!",
+                "Ahem, ahem. This is an important announcement. Wake up! ",
+                "It's time to greet a beautiful and shining day! Don't forget ",
+                "to say good morning to the sun~! It watched over you at night. ",
+                "It is now officially 8AM, and nighttime is officially over.",
             ]
         else:
             str_builder = [
                 "Helloooo...? Helloooo? This is an important announcement. ",
-                "Can't you see? It's 10 PM, and the moon's already out. ",
-                "As such, it is officially nighttime. Sweet dreams, everyone! ",
-                "Good night, sleep tight... You never know what creatures are out ",
-                "in the jungle~",
+                "It's 10 PM, and daytime is over. As such, it is officially ",
+                "nighttime. Sweet dreams, everyone! Don't worry, the sun will ",
+                "still be there when you wake up.",
             ]
         embed.description = "".join(str_builder)
         return embed
@@ -97,7 +97,7 @@ class AutoAnnouncements(commands.Cog):
             await disnake.utils.sleep_until(sleep_till)
             et_now = datetime.datetime.now(et)
 
-            embed = self.gen_embed(day=bool(et_now.hour < 12))
+            embed = self.gen_embed(day=et_now.hour < 12)
             await self.webhook.send(embed=embed)
             await asyncio.sleep(3600)
 
