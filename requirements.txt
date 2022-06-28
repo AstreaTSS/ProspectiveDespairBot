@@ -7,7 +7,7 @@ python-dotenv==0.20.0
 rapidfuzz==2.0.11
 python-dateutil==2.8.2
 flask==2.1.2
-orjson==3.7.2
+orjson==3.7.4
 humanize==4.1.0
 attrs==21.4.0
 tomli==2.0.1
