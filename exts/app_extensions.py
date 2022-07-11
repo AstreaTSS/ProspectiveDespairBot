@@ -211,7 +211,6 @@ class ApplicationExtensions(utils.Extension):
         ctx = event.context
 
         if ctx.custom_id.startswith("pd-modal:ext_reject|"):
-
             no_prefix = ctx.custom_id.removeprefix("pd-modal:ext_reject|")
 
             message_id, member_id = no_prefix.split("-")

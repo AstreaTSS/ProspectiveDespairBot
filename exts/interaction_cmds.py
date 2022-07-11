@@ -208,7 +208,6 @@ class InteractionCMDs(utils.Extension):
         async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-
             interact.interactions -= actual_count
             if interact.interactions < Decimal(0):
                 interact.interactions == Decimal(0)
@@ -438,7 +437,6 @@ class InteractionCMDs(utils.Extension):
         async for interact in models.UserInteraction.filter(
             user_id__in=frozenset(m.id for m in members)
         ).select_for_update():
-
             interact.total_interactions -= actual_count
             if interact.total_interactions < Decimal(0):
                 interact.total_interactions == Decimal(0)

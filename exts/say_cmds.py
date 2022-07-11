@@ -121,7 +121,8 @@ class SayCMDS(utils.Extension):
     @naff.prefixed_command()
     @utils.proper_permissions()
     async def embed_say(self, ctx):
-        """Allows people with Manage Server permissions to speak with the bot with a fancy embed. Will open a wizard-like prompt."""
+        """Allows people with Manage Server permissions to speak with the bot with a fancy embed. Will open a wizard-like prompt.
+        """
 
         wizard = cclasses.WizardManager(
             "Embed Say Wizard", "Setup complete.", pass_self=True
