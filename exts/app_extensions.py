@@ -1,5 +1,6 @@
 import importlib
 from enum import Enum
+from tkinter import E
 
 import naff
 
@@ -178,7 +179,7 @@ class ApplicationExtensions(utils.Extension):
                 embeds=embed,
                 components=actionrow,
             )
-            await ctx.send("Approved!")
+            await ctx.send("Approved!", ephemeral=True)
         elif ctx.custom_id.startswith("pd-button:approval_extension|deny-"):
             member_id = int(
                 ctx.custom_id.removeprefix("pd-button:approval_extension|deny-")
@@ -247,7 +248,7 @@ class ApplicationExtensions(utils.Extension):
                 embeds=embed,
                 components=actionrow,
             )
-            await ctx.send("Denied.")
+            await ctx.send("Denied.", ephemeral=True)
 
 
 def setup(bot):
