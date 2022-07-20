@@ -127,7 +127,7 @@ class ApplicationExtensions(utils.Extension):
             naff.Button(
                 style=naff.ButtonStyles.RED,
                 label="Deny",
-                emoji="❌",
+                emoji="✖️",
                 custom_id=f"pd-button:approval_extension|deny-{member.id}",
                 disabled=disabled,
             ),
