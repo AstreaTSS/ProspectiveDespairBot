@@ -69,7 +69,7 @@ class ApplicationExtensions(utils.Extension):
     @naff.component_callback("pd-button:extension_ask")  # type: ignore
     async def on_extension_ask_button(self, ctx: naff.ComponentContext):
         if ctx.author.has_role(self.asked_for_ext):
-            await ctx.send("You already asked for an extension!")
+            await ctx.send("You already asked for an extension!", ephemeral=True)
         else:
             modal = naff.Modal(
                 title="Application for Extension",
@@ -78,10 +78,7 @@ class ApplicationExtensions(utils.Extension):
                         label="Why do you need an extension?",
                         custom_id="ext_reasoning",
                         placeholder=(
-                            "Whatever you put will be admin to the mods for"
-                            " approval. While we will try to be generous, please"
-                            " understand that extensions are only meant for special"
-                            " circumstances."
+                            "Whatever you put will be admin to the mods for approval."
                         ),
                         max_length=3900,
                     )
@@ -146,6 +143,7 @@ class ApplicationExtensions(utils.Extension):
             )
             actionrow = self.generate_actionrow(ctx.author)
             await self.admin_channel.send(embed=embed, components=actionrow)
+            await ctx.send("Sent!", ephemeral=True)
 
     @naff.listen("component")
     async def on_extension_accept_deny(self, event: naff.events.Component):
@@ -174,12 +172,13 @@ class ApplicationExtensions(utils.Extension):
                 status=ExtAppStatus.ACCEPTED,
             )
             actionrow = self.generate_actionrow(member, disabled=True)
+            embed.add_field(name="Accepted by", value=ctx.author.mention, inline=True)
             await ctx.message.edit(
                 content=f"Approved by {ctx.author.mention}.",
                 embeds=embed,
                 components=actionrow,
             )
-            await ctx.send(f"Approved!")
+            await ctx.send("Approved!")
         elif ctx.custom_id.startswith("pd-button:approval_extension|deny-"):
             member_id = int(
                 ctx.custom_id.removeprefix("pd-button:approval_extension|deny-")
@@ -197,13 +196,14 @@ class ApplicationExtensions(utils.Extension):
                 title=f"Rejecting {member.display_name}",
                 components=[
                     naff.ParagraphText(
-                        label=f"Why did you reject {member.display_name}?",
+                        label="Why did you reject them?",
                         custom_id="reject_reason",
                         max_length=1000,
                     )
                 ],
                 custom_id=f"pd-modal:ext_reject|{ctx.message.id}-{member_id}",
             )
+
             await ctx.send_modal(modal)
 
     @naff.listen("modal_response")
@@ -211,7 +211,6 @@ class ApplicationExtensions(utils.Extension):
         ctx = event.context
 
         if ctx.custom_id.startswith("pd-modal:ext_reject|"):
-
             no_prefix = ctx.custom_id.removeprefix("pd-modal:ext_reject|")
 
             message_id, member_id = no_prefix.split("-")
@@ -240,16 +239,15 @@ class ApplicationExtensions(utils.Extension):
                 desc,
                 status=ExtAppStatus.DENIED,
             )
+            embed.add_field(name="Denied by", value=ctx.author.mention, inline=False)
+            embed.add_field(name="Reason", value=ctx.responses["reject_reason"])
             actionrow = self.generate_actionrow(member, disabled=True)
-            await ctx.message.edit(
-                content=(
-                    f"Denied by {ctx.author.mention}. Reason:"
-                    f" {ctx.responses['reject_reason']}"
-                ),
+            await message.edit(
+                content=f"Denied by {ctx.author.mention}.",
                 embeds=embed,
                 components=actionrow,
             )
-            await ctx.send(f"Denied.")
+            await ctx.send("Denied.")
 
 
 def setup(bot):
