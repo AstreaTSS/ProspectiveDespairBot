@@ -11,6 +11,8 @@ from websockets.exceptions import ConnectionClosedOK
 import common.utils as utils
 from common.help_cmd import PaginatedHelpCommand
 
+load_dotenv()
+
 logger = logging.getLogger("disnake")
 logger.setLevel(logging.INFO)
 handler = logging.FileHandler(
