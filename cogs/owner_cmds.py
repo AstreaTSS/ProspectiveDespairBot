@@ -36,14 +36,15 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
         self, ctx: commands.Context[commands.Bot], guild: typing.Optional[disnake.Guild]
     ):
 
-        if not guild:
-            slash_cmds = [s for s in ctx.bot.slash_commands if not s.guild_only]
-        else:
-            slash_cmds = [
+        slash_cmds = (
+            [
                 s
                 for s in ctx.bot.slash_commands
                 if s.guild_ids and guild.id in s.guild_ids
             ]
+            if guild
+            else [s for s in ctx.bot.slash_commands if not s.guild_ids]
+        )
 
         slash_entries = []
 
@@ -67,7 +68,8 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
                     option_type = option.type.name.upper()
                     required_txt = ", required" if option.required else ""
                     entry_str_list.append(
-                        f"{option.name} (type {option_type}{required_txt}) - {option.description}"
+                        f"{option.name} (type {option_type}{required_txt}) -"
+                        f" {option.description}"
                     )
 
             slash_entries.append(
@@ -106,7 +108,7 @@ class OwnerCMDs(commands.Cog, name="Owner", command_attrs=dict(hidden=True)):
                     ctx.bot.user.id, guild.id, cmd.body.id
                 )
         else:
-            slash_cmds = [s for s in ctx.bot.slash_commands if not s.guild_only]
+            slash_cmds = [s for s in ctx.bot.slash_commands if not s.guild_ids]
             for cmd in slash_cmds:
                 await ctx.bot.http.delete_global_command(ctx.bot.user.id, cmd.body.id)
 

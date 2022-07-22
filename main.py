@@ -6,15 +6,10 @@ import disnake
 from disnake.ext import commands
 from dotenv import load_dotenv
 from tortoise import Tortoise
-from websockets import ConnectionClosedOK
+from websockets.exceptions import ConnectionClosedOK
 
 import common.utils as utils
-import keep_alive
 from common.help_cmd import PaginatedHelpCommand
-
-
-load_dotenv()
-os.system("git pull")  # stupid way of getting around replit stuff
 
 logger = logging.getLogger("disnake")
 logger.setLevel(logging.INFO)
@@ -150,5 +145,4 @@ bot.init_load = True
 bot.color = disnake.Color(int(os.environ.get("BOT_COLOR")))  # #D92C43, aka 14232643
 
 bot.loop.create_task(on_init_load())
-# keep_alive.keep_alive()
 bot.run(os.environ.get("MAIN_TOKEN"))

@@ -21,7 +21,7 @@ class AutoAnnouncements(commands.Cog):
         self.webhook_session = aiohttp.ClientSession()
 
         self.webhook = disnake.Webhook.from_url(
-            os.environ.get("WEBHOOK_URL"), session=self.webhook_session,
+            os.environ["WEBHOOK_URL"], session=self.webhook_session,
         )
 
         self.task = self.bot.loop.create_task(self.auto_run())
@@ -57,9 +57,8 @@ class AutoAnnouncements(commands.Cog):
         name="run-night-announcement",
         description="Runs the nighttime announcement automatically.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def run_night_announcement(self, inter: disnake.GuildCommandInteraction):
         await self.webhook.send(embed=self.gen_embed(day=False))
         await inter.send("Done!")
@@ -68,9 +67,8 @@ class AutoAnnouncements(commands.Cog):
         name="run-day-announcement",
         description="Runs the daytime announcement automatically.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def run_day_announcement(self, inter: disnake.GuildCommandInteraction):
         await self.webhook.send(embed=self.gen_embed(day=True))
         await inter.send("Done!")

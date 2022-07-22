@@ -20,9 +20,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="add-interaction",
         description="Adds an interaction to the members specified.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def add_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -127,9 +126,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="remove-interaction",
         description="Removes an interaction from the members specified.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def remove_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -241,9 +239,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="add-event",
         description="Gives an event point to the users specified.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def add_event(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -333,9 +330,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="add-to-total",
         description="Adds an interaction to the members' total interactions.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def add_to_total(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -439,9 +435,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="remove-from-total",
         description="Removes an interaction from the members' total interactions.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def remove_from_total(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -552,9 +547,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="list-interactions",
         description="Lists out interactions for everyone still alive.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def list_interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer(ephemeral=True)
 
@@ -577,9 +571,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="reset-interactions",
         description="Resets everyone's interaction counts.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def reset_interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
@@ -597,9 +590,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="remove-player-from-interaction",
         description="Removes a player from the interaction tracker.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def remove_player_from_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -621,9 +613,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="add-player-to-interaction",
         description="Adds a player to the interaction tracker.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def add_player_to_interaction(
         self,
         inter: disnake.GuildCommandInteraction,
@@ -647,9 +638,8 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="refresh-players-for-interactions",
         description="COMPLETELY deletes old interaction data and adds in new players.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def refresh_players_for_interactions(
         self, inter: disnake.GuildCommandInteraction
     ):
@@ -670,9 +660,10 @@ class InteractionCMDs(commands.Cog, name="Interaction"):
         name="interactions",
         description="List your interactions for this activity cycle.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ALIVE_PLAYER_PERMS)
+    @commands.default_member_permissions(
+        manage_guild=True
+    )  # shoyld be adjusted so alive players can use it
     async def interactions(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer(ephemeral=True)
 

@@ -20,9 +20,8 @@ class CardHandling(commands.Cog, name="Card Handling"):
         name="update-card-data",
         description="Updates the internal card data.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, owner=True)
+    @commands.default_member_permissions(administrator=True)
     async def update_card_data(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
@@ -38,9 +37,8 @@ class CardHandling(commands.Cog, name="Card Handling"):
         name="update-cast",
         description="Updates the cards for the cast.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def update_cast(self, inter: disnake.GuildCommandInteraction):
         await inter.response.defer()
 
@@ -89,7 +87,6 @@ class CardHandling(commands.Cog, name="Card Handling"):
         name="card-search",
         description="Gets you a specific person's card based on the query provided.",
         guild_ids=[673355251583025192],
-        default_permission=True,
     )
     async def card_search(
         self,

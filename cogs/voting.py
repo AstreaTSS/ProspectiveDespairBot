@@ -84,9 +84,8 @@ class Voting(commands.Cog, name="Voting"):
         name="vote",
         description="Starts the automatic voting system for trials.",
         guild_ids=[673355251583025192],
-        default_permission=False,
     )
-    @commands.guild_permissions(673355251583025192, roles=utils.ADMIN_PERMS)
+    @commands.default_member_permissions(administrator=True)
     async def vote(self, inter: disnake.GuildCommandInteraction):
         if (
             self.is_voting
