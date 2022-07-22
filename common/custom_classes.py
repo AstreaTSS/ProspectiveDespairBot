@@ -15,7 +15,8 @@ class WizardQuestion:
 
 @attrs.define(slots=False)
 class WizardManager:
-    """A class that allows you to make a wizard of sorts, allowing a more intuitive way of getting multiple inputs from a user."""
+    """A class that allows you to make a wizard of sorts, allowing a more intuitive way of getting multiple inputs from a user.
+    """
 
     embed_title: str = attrs.field()
     final_text: str = attrs.field()
