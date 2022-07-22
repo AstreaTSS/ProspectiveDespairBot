@@ -1,6 +1,5 @@
 import importlib
 from enum import Enum
-from tkinter import E
 
 import naff
 
