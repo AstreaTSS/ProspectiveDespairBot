@@ -14,7 +14,7 @@ import common.utils as utils
 load_dotenv()
 
 
-logger = logging.getLogger("dis.naff")
+logger = logging.getLogger("pdbot")
 logger.setLevel(logging.INFO)
 handler = logging.FileHandler(
     filename=os.environ.get("LOG_FILE_PATH"), encoding="utf-8", mode="a"
@@ -200,6 +200,7 @@ bot = PDBot(
     intents=intents,
     delete_unused_application_cmds=True,
     auto_defer=False,  # we already handle deferring
+    logger=logger,
 )
 bot.init_load = True
 bot.color = naff.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
