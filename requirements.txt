@@ -1,4 +1,4 @@
-naff==1.6.0
+naff==1.7.1
 asyncpg==0.26.0
 tortoise-orm==0.19.2
 pytz==2022.1
