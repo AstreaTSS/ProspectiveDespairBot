@@ -11,7 +11,7 @@ import tomli
 
 
 class Status(Enum):
-    ALIVE = naff.Color(0xFFA1F2)
+    ALIVE = naff.Color(0xFFC0FC)
     DEAD = naff.Color(0xE74C3C)
     ESCAPED = naff.Color(0x95A5A6)
     HOST = naff.Color(0x546E7A)
