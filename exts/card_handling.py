@@ -1,6 +1,6 @@
 import asyncio
 import importlib
-from datetime import datetime
+import os
 from typing import Optional
 
 import naff
@@ -26,7 +26,7 @@ class CardHandling(utils.Extension):
 
         importlib.reload(cards)
 
-        extensions = list(self.bot.ext.keys())
+        extensions = utils.get_all_extensions(os.environ.get("DIRECTORY_OF_FILE"))
         for extension in extensions:
             self.bot.reload_extension(extension)
 

@@ -1,8 +1,8 @@
 import asyncio
 import contextlib
-import importlib
 import io
 import logging
+import os
 import platform
 import textwrap
 import traceback
@@ -12,6 +12,8 @@ import naff
 from naff.ext import paginators
 from naff.ext.debug_extension.utils import debug_embed
 from naff.ext.debug_extension.utils import get_cache_state
+
+import common.utils as utils
 
 log = logging.getLogger("pdbot")
 
@@ -83,7 +85,7 @@ class DebugScale(naff.Extension):
 
     @naff.prefixed_command(aliases=["reloadallextensions"])
     async def reload_all_extensions(self, ctx: naff.PrefixedContext):
-        for ext in self.bot.ext:
+        for ext in utils.get_all_extensions(os.environ.get("DIRECTORY_OF_FILE")):
             self.bot.reload_extension(ext)
         await ctx.reply("All extensions reloaded!")
 
