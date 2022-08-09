@@ -3,6 +3,7 @@ import ssl
 import typing
 import urllib.request
 from enum import Enum
+from enum import IntEnum
 
 import attrs
 import naff
@@ -16,13 +17,19 @@ class Status(Enum):
     HOST = naff.Color(0x546E7A)
 
 
+class Artist(IntEnum):
+    CILANTRO = 426951636490125321
+    CURDS = 463875652718821377
+    SAGA = 475324575815565332
+
+
 @attrs.define()
 class Card:
     user_id: int
     oc_name: str
     oc_talent: str
+    artist: Artist
     card_url: str
-    pronouns: str
     status: Status = Status.ALIVE
 
     @property
@@ -39,10 +46,11 @@ class Card:
 
     async def as_embed(self, bot: naff.Client):
         user: naff.User = await bot.fetch_user(self.user_id)  # type: ignore
+        artist: naff.User = await bot.fetch_user(self.artist.value)  # type: ignore
 
         desc = [
             f"**OC By:** {user.mention} ({user.tag})",
-            f"**Pronouns:** {self.pronouns}",
+            f"**Drawn by:** {artist.mention} ({artist.tag})",
             f"**Status:** {self.display_status.title()}",
         ]
 
@@ -81,8 +89,8 @@ if cards_url:
                     card_data["user_id"],
                     card_data["oc_name"],
                     card_data["oc_talent"],
+                    Artist[card_data["artist"].upper()],
                     card_data["card_url"],
-                    card_data["pronouns"],
                     Status[card_data["status"]],
                 )
             )

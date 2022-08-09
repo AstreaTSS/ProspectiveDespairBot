@@ -46,7 +46,7 @@ class CardHandling(utils.Extension):
         def is_valid(m: naff.Message):
             return m.author.id == self.bot.user.id
 
-        reference_date = naff.Timestamp(2021, 9, 2).to_snowflake()
+        reference_date = naff.Timestamp(2022, 1, 1).to_snowflake()
         await profile_chan.purge(
             search_limit=100, predicate=is_valid, after=reference_date
         )
@@ -72,12 +72,13 @@ class CardHandling(utils.Extension):
         embed.set_footer(text="Last Updated")
 
         await profile_chan.send(
-            "All participant cards should be in alphabetical order and easily"
-            " searchable.\n"
-            + "All host cards should be displayed in the order in which they were"
-            " revealed.\n"
+            "All participant cards should be in alphabetical order. They can be"
+            " searched through via `/card-search`.\n"
+            + "If a user's mention is just a bunch of numbers, that's a Discord glitch"
+            " that we can't fix - sorry about that!\n\n"
             + "If any information is wrong, ping or DM Astrea about it and she'll"
-            " change it ASAP.",
+            " change it ASAP.\nIf you want to get the individual, transparent image,"
+            " you can also ping or DM Astrea for that too.",
             embed=embed,
         )
 
