@@ -66,7 +66,16 @@ class Card:
 # https://stackoverflow.com/questions/44629631/while-using-pandas-got-error-urlopen-error-ssl-certificate-verify-failed-cert
 ssl._create_default_https_context = ssl._create_unverified_context
 
-hosts: typing.List[Card] = []
+hosts: typing.List[Card] = [
+    Card(
+        user_id=229350299909881876,
+        oc_name="Mayumi Takimura",
+        oc_talent="Tennis Player",
+        artist=Artist.SAGA,
+        card_url="https://cdn.discordapp.com/attachments/968999545621078089/1006651564716474419/MayumiTakimuraCard.png",
+        status=Status.HOST,
+    ),
+]
 
 participants: typing.List[Card] = []
 cards_url: typing.Optional[str] = os.environ.get("CARD_FILE_URL")
