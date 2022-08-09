@@ -213,4 +213,9 @@ for cog in cogs_list:
     except naff.errors.ExtensionLoadException:
         raise
 
+with contextlib.suppress(ImportError):
+    import uvloop
+
+    uvloop.install()
+
 asyncio.run(bot.astart(os.environ.get("MAIN_TOKEN")))

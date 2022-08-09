@@ -11,3 +11,4 @@ humanize==4.2.3
 attrs==22.1.0
 tomli==2.0.1
 redis[hiredis]==4.3.4
+uvloop==0.16.0; platform_system == "Linux"
