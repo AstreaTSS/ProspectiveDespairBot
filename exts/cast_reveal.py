@@ -133,7 +133,7 @@ class CastReveal(utils.Extension):
 
             if member := ctx.guild.get_member(card.user_id):
                 await member.remove_role(int(applied.id))
-                # await member.add_role(int(alive_player.id))
+                await member.add_role(int(alive_player.id))
 
             await component_event.context.edit_origin(components=next_component)
             component_event = await self.bot.wait_for_component(
