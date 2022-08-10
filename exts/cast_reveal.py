@@ -82,11 +82,13 @@ class CastReveal(utils.Extension):
         )
 
         await asyncio.sleep(3)
-        welcome_embed = naff.Embed(title="Welcome!", color=self.bot.color)
+        welcome_embed = naff.Embed(color=self.bot.color)
         welcome_embed.set_image(
             url="https://cdn.discordapp.com/attachments/968999545621078089/1006651613261349015/WelcomeMayumi.png"
         )
-        await ctx.channel.send(embeds=welcome_embed)
+        await ctx.channel.send(
+            embeds=[welcome_embed]
+        )  # the embed would otherwise be falsey
         await ctx.channel.send("```\n \n```")
 
         send_component = self._generate_components(sent=False)
