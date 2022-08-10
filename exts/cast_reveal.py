@@ -150,6 +150,17 @@ class CastReveal(utils.Extension):
             " other details."
         )
 
+    @naff.prefixed_command()
+    @utils.proper_permissions()
+    async def fix_card(
+        self, ctx: naff.PrefixedContext, message: naff.Message, user_id: int
+    ):
+        new_card = next(c for c in cards.participants if c.user_id == user_id)
+        embed = await new_card.as_embed(self.bot)
+        await message.edit(embeds=embed)
+
+        await ctx.reply("Fixed!")
+
 
 def setup(bot):
     importlib.reload(utils)
