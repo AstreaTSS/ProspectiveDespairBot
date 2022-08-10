@@ -66,6 +66,11 @@ class CastReveal(utils.Extension):
         await ctx.channel.send(embeds=warning_embed)
 
         await asyncio.sleep(3)
+        await ctx.channel.send(
+            embeds=naff.Embed(title="Shutting down...", color=naff.MaterialColors.RED)
+        )
+
+        await asyncio.sleep(0.2)
         beyond_reasoning = ("BEYOND REASONING. " * 30).strip()
         beyond_embed = utils.error_embed_generate(beyond_reasoning)
         beyonds = []
@@ -78,7 +83,7 @@ class CastReveal(utils.Extension):
 
         await asyncio.sleep(10)
         await ctx.channel.send(
-            embeds=naff.Embed(title="Restarting...", color=self.bot.color)
+            embeds=naff.Embed(title="Loading...", color=self.bot.color)
         )
 
         await asyncio.sleep(3)
