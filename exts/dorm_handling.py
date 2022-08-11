@@ -25,6 +25,11 @@ class DormHandling(utils.Extension):
         self.dorm_category: naff.GuildCategory = base_room.category  # type: ignore
         self.dorm_channel_format = base_room.name.split("base-room")  # type: ignore
 
+    async def _delete_last_msg(self, channel: naff.GuildText):
+        await asyncio.sleep(5)
+        async for msg in channel.history(limit=1):
+            await msg.delete()
+
     @naff.slash_command(
         name="create-dorms",
         description="A command that creates all of the dorms needed.",
@@ -35,7 +40,9 @@ class DormHandling(utils.Extension):
         await ctx.defer()
 
         for participant in cards.participants:
-            name_friendly = participant.oc_name.lower().replace(" ", "-")
+            name_friendly = (
+                participant.oc_name.lower().replace(" ", "-").replace('"', "")
+            )
             channel_name = f"{self.dorm_channel_format[0]}{name_friendly}{self.dorm_channel_format[1]}"
 
             new_chan = await self.dorm_category.create_text_channel(
@@ -47,7 +54,9 @@ class DormHandling(utils.Extension):
             desc_msg = await new_chan.send(
                 room_description, allowed_mentions=naff.AllowedMentions.none()
             )
+
             await desc_msg.pin()
+            asyncio.create_task(self._delete_last_msg(new_chan))
 
         await ctx.send("Done!")
 
@@ -74,7 +83,9 @@ class DormHandling(utils.Extension):
         }
 
         for participant in cards.participants:
-            name_friendly = participant.oc_name.lower().replace(" ", "-")
+            name_friendly = (
+                participant.oc_name.lower().replace(" ", "-").replace('"', "")
+            )
             channel_name = f"{self.dorm_channel_format[0]}{name_friendly}{self.dorm_channel_format[1]}"
 
             if dorm := dorm_mapping.get(channel_name):
@@ -83,7 +94,8 @@ class DormHandling(utils.Extension):
                 room_description = self.room_description.format(
                     name=participant.oc_name, talent=participant.oc_talent
                 )
-                await desc_msg.edit(content=room_description)
+                if desc_msg.content != room_description:
+                    await desc_msg.edit(content=room_description)
 
         await ctx.send("Done!")
 
@@ -102,7 +114,9 @@ class DormHandling(utils.Extension):
         }
 
         for participant in cards.participants:
-            name_friendly = participant.oc_name.lower().replace(" ", "-")
+            name_friendly = (
+                participant.oc_name.lower().replace(" ", "-").replace('"', "")
+            )
             channel_name = f"{self.dorm_channel_format[0]}{name_friendly}{self.dorm_channel_format[1]}"
 
             if not dorm_mapping.get(channel_name):
@@ -115,7 +129,9 @@ class DormHandling(utils.Extension):
                 desc_msg = await new_chan.send(
                     room_description, allowed_mentions=naff.AllowedMentions.none()
                 )
+
                 await desc_msg.pin()
+                asyncio.create_task(self._delete_last_msg(new_chan))
 
         await ctx.send("Done!")
 
