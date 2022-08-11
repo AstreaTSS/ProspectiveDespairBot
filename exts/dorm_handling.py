@@ -16,6 +16,8 @@ class DormHandling(utils.Extension):
         asyncio.create_task(self.async_init())
 
     async def async_init(self):
+        await self.bot.wait_until_ready()
+
         base_room: naff.GuildText = self.bot.get_channel(921453015595118612)  # type: ignore
         message: naff.Message = await base_room.fetch_message(1007124865469390939)  # type: ignore
 
