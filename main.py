@@ -206,16 +206,21 @@ bot.init_load = True
 bot.color = naff.Color(int(os.environ.get("BOT_COLOR")))  # 2ebae1, aka 3062497
 bot._functions = set()
 
-cogs_list = utils.get_all_extensions(os.environ.get("DIRECTORY_OF_FILE"))
-for cog in cogs_list:
-    try:
-        bot.load_extension(cog)
-    except naff.errors.ExtensionLoadException:
-        raise
-
 with contextlib.suppress(ImportError):
     import uvloop
 
     uvloop.install()
 
-asyncio.run(bot.astart(os.environ.get("MAIN_TOKEN")))
+
+async def start():
+    ext_list = utils.get_all_extensions(os.environ.get("DIRECTORY_OF_FILE"))
+    for ext in ext_list:
+        try:
+            bot.load_extension(ext)
+        except naff.errors.ExtensionLoadException:
+            raise
+
+    await bot.astart(os.environ.get("MAIN_TOKEN"))
+
+
+asyncio.run(start())
