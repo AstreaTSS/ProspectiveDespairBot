@@ -15,15 +15,17 @@ class DormHandling(utils.Extension):
 
         asyncio.create_task(self.async_init())
 
-    async def async_init(self):
-        await self.bot.wait_until_ready()
-
+    async def _update_dorm_data(self):
         base_room: naff.GuildText = self.bot.get_channel(921453015595118612)  # type: ignore
         message: naff.Message = await base_room.fetch_message(1007124865469390939)  # type: ignore
 
         self.room_description = message.content
         self.dorm_category: naff.GuildCategory = base_room.category  # type: ignore
-        self.dorm_channel_format = base_room.name.split("base-room")  # type: ignore
+        self.dorm_channel_format = base_room.name.split("aaa-base-room")  # type: ignore
+
+    async def async_init(self):
+        await self.bot.wait_until_ready()
+        await self._update_dorm_data()
 
     async def _delete_last_msg(self, channel: naff.GuildText):
         await asyncio.sleep(5)
@@ -59,14 +61,6 @@ class DormHandling(utils.Extension):
             asyncio.create_task(self._delete_last_msg(new_chan))
 
         await ctx.send("Done!")
-
-    async def _update_dorm_data(self):
-        base_room: naff.GuildText = self.bot.get_channel(921453015595118612)  # type: ignore
-        message: naff.Message = await base_room.fetch_message(1007124865469390939)  # type: ignore
-
-        self.room_description = message.content
-        self.dorm_category: naff.GuildCategory = base_room.category  # type: ignore
-        self.dorm_channel_format = base_room.name.split("base-room")  # type: ignore
 
     @naff.slash_command(
         name="edit-dorms",
