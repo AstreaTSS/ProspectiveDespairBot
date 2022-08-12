@@ -1,7 +1,7 @@
 naff==1.7.1
 asyncpg==0.26.0
 tortoise-orm==0.19.2
-pytz==2022.1
+pytz==2022.2
 websockets==10.3
 python-dotenv==0.20.0
 rapidfuzz==2.4.3
