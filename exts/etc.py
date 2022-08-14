@@ -10,25 +10,6 @@ import common.utils as utils
 
 et = pytz.timezone("US/Eastern")
 
-if TYPE_CHECKING:
-    from datetime import datetime
-
-    class TimeParser(datetime):
-        ...
-
-else:
-
-    class TimeParser(naff.Converter):
-        async def convert(self, ctx: naff.Context, argument: str):
-            try:
-                the_time = dateutil.parser.parse(argument, ignoretz=True, fuzzy=True)
-                the_time = et.localize(the_time)
-                return the_time.astimezone(pytz.utc)
-            except dateutil.parser.ParserError:
-                raise naff.errors.BadArgument(
-                    "The argument provided could not be parsed as a time!"
-                )
-
 
 class Etc(utils.Extension):
     def __init__(self, bot: naff.Client):
@@ -65,16 +46,6 @@ class Etc(utils.Extension):
                 " personally."
             )
         )
-
-    @naff.prefixed_command(aliases=["format_time"])
-    @utils.proper_permissions()
-    async def time_format(self, ctx: naff.PrefixedContext, *, time: TimeParser):
-        """Formats the time given into the fancy Discord timestamp markdown.
-        Every time is assumed to be in ET.
-        Times with no dates are assumed to be taking place today."""
-        timestamp = naff.Timestamp.fromdatetime(time)
-        time_str = timestamp.format("f")
-        await ctx.send(time_str)
 
 
 def setup(bot):
