@@ -18,10 +18,10 @@ class AutoAnnouncements(utils.Extension):
 
         self.webhook = naff.Webhook.from_url(os.environ["WEBHOOK_URL"], self.bot)
 
-        # self.task = self.bot.loop.create_task(self.auto_run())
+        self.task = self.bot.loop.create_task(self.auto_run())
 
     def drop(self):
-        # self.task.cancel()
+        self.task.cancel()
         super().drop()
 
     def gen_embed(self, day: bool = True):
