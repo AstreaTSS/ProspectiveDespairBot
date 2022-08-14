@@ -25,23 +25,23 @@ class AutoAnnouncements(utils.Extension):
         super().drop()
 
     def gen_embed(self, day: bool = True):
-        embed = naff.Embed(title="Announcement from Drake Aelius", color=11779669)
+        embed = naff.Embed(title="Announcement from Mayumi Takimura", color=0xF4AEA2)
         if day:
             str_builder = [
-                "Wake up, idiots.\nIt's now 9 AM. Unless you're a lazy ass, ",
-                "you should probably get ready for the day.\n",
-                "And yeah, the cafeteria and kitchen has been unlocked too.",
-                "\n\nRemember: if you want to escape, all you have to do is ",
-                "kill. If you can't convince yourself to do that... how weak.",
+                "Good morning~ but, like, if you're hearing this, you survived and now"
+                " it's 9 AM, which is lame.\nI *guess* you can get ready for the day."
+                " Like, brush your teeth, take a shower... but like, do whatever you"
+                " need to do to get ready for murder! That's the most important part,"
+                " hehe...\n\nRemember: if guys wanna escape or whatever, you just"
+                " gotta kill!"
             ]
         else:
             str_builder = [
-                "It's 11 PM. Go to sleep.\n",
-                "The cafeteria and kitchen will close in a few minutes. Move out"
-                " of it ",
-                "quickly: it would be rather pathetic if you died just by being in it.",
-                "\n\nRemember: all you have to do to escape is kill... ",
-                "and I heard night time's the *perfect* time to kill.",
+                "OMG guys, it's 11 PM, it's night time!\nI would say like go to sleep"
+                " or whatever, but now's the perfect time to kill! Like, come on,"
+                " imagine all of the murder plans you could do in the dark! *No would"
+                " even know that you did it...*\n\nWell, if you're going to sleep"
+                " anyways, good night or whatever, I guess."
             ]
         embed.description = "".join(str_builder)
         return embed
