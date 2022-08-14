@@ -19,21 +19,24 @@ class Etc(utils.Extension):
     async def async_init(self):
         await self.bot.wait_until_ready()
 
-        CATEGORIES = {921451746897829938}
-        CHANNELS = {1007124952736079893}
-        EXCLUDE = {}
+        try:
+            CATEGORIES = {921451402927161444}
+            CHANNELS = {1007124952736079893}
+            EXCLUDE = {}
 
-        for category_id in CATEGORIES:
-            category: naff.GuildCategory = self.bot.get_channel(category_id)  # type: ignore
+            for category_id in CATEGORIES:
+                category: naff.GuildCategory = self.bot.get_channel(category_id)  # type: ignore
 
-            for channel in category.text_channels:
+                for channel in category.text_channels:
+                    if int(channel.id) not in EXCLUDE:
+                        self.rp_channels.add(channel)
+
+            for channel_id in CHANNELS:
+                channel: naff.GuildText = self.bot.get_channel(channel_id)  # type: ignore
                 if int(channel.id) not in EXCLUDE:
                     self.rp_channels.add(channel)
-
-        for channel_id in CHANNELS:
-            channel: naff.GuildText = self.bot.get_channel(channel_id)  # type: ignore
-            if int(channel.id) not in EXCLUDE:
-                self.rp_channels.add(channel)
+        except Exception as e:
+            await utils.error_handle(self.bot, e)
 
     @naff.slash_command(
         name="ping",
@@ -72,7 +75,7 @@ class Etc(utils.Extension):
         scopes=[786609181855318047],
     )
     async def pick_location(self, ctx: naff.InteractionContext):
-        chan = random.choice(tuple(self.rp_channels))
+        chan = random.choice(list(self.rp_channels))
         await ctx.send(chan.mention)
 
 
