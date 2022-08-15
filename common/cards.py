@@ -75,6 +75,14 @@ hosts: typing.List[Card] = [
         card_url="https://cdn.discordapp.com/attachments/968999545621078089/1006651564716474419/MayumiTakimuraCard.png",
         status=Status.HOST,
     ),
+    Card(
+        user_id=328149026266677248,
+        oc_name="Pika Churu",
+        oc_talent="Ultimate Collector",
+        artist=Artist.SAGA,
+        card_url="https://cdn.discordapp.com/attachments/968999545621078089/1008564467375804446/PikaChuruCard.png",
+        status=Status.HOST,
+    ),
 ]
 
 participants: typing.List[Card] = []
