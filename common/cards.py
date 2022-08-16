@@ -83,6 +83,14 @@ hosts: typing.List[Card] = [
         card_url="https://cdn.discordapp.com/attachments/968999545621078089/1008564467375804446/PikaChuruCard.png",
         status=Status.HOST,
     ),
+    Card(
+        user_id=588749122643951616,
+        oc_name="Madelyn Connor",
+        oc_talent="Impersonator",
+        artist=Artist.CILANTRO,
+        card_url="https://cdn.discordapp.com/attachments/968999545621078089/1008923493750014022/MadelynConnorCard.png",
+        status=Status.HOST,
+    ),
 ]
 
 participants: typing.List[Card] = []
