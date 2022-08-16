@@ -50,8 +50,8 @@ class Card:
 
         desc = [
             f"**OC By:** {user.mention} ({user.tag})",
-            f"**Drawn by:** {artist.mention} ({artist.tag})",
-            f"**Status:** {self.display_status.title()}",
+            f"**Drawn By:** {artist.mention} ({artist.tag})",
+            f"**Status:** {self.display_status}",
         ]
 
         embed = naff.Embed(title=self.title_name, description="\n".join(desc))
