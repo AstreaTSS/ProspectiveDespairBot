@@ -1,12 +1,12 @@
-naff==1.7.1
+naff==1.8.1
 asyncpg==0.26.0
 tortoise-orm==0.19.2
-pytz==2022.1
+pytz==2022.2.1
 websockets==10.3
 python-dotenv==0.20.0
-rapidfuzz==2.4.3
+rapidfuzz==2.5.0
 python-dateutil==2.8.2
-orjson==3.7.11
+orjson==3.7.12
 humanize==4.3.0
 attrs==22.1.0
 tomli==2.0.1
