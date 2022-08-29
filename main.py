@@ -24,6 +24,10 @@ handler.setFormatter(
 )
 logger.addHandler(handler)
 
+naff_logger = logging.getLogger("naff")
+naff_logger.setLevel(logging.DEBUG)
+naff_logger.addHandler(handler)
+
 
 async def generate_prefixes(bot: naff.Client, msg: naff.Message):
     # here for future-proofing
