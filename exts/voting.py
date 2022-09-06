@@ -105,8 +105,10 @@ class Voting(utils.Extension):
         voting_select = naff.Select(options=options)
         prompt_builder = [
             "It's time to vote! Please use this drop-down menu in order to do so.",
-            "Participants have 5 minutes to vote. You may change your vote before the"
-            " timer runs out.",
+            (
+                "Participants have 5 minutes to vote. You may change your vote before"
+                " the timer runs out."
+            ),
         ]
 
         alive_people_role = ctx.guild.get_role(786610731826544670)  # alive player role
