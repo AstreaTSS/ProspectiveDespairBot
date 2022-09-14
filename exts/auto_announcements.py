@@ -16,12 +16,12 @@ class AutoAnnouncements(utils.Extension):
     def __init__(self, bot):
         self.bot: naff.Client = bot
 
-        self.webhook = naff.Webhook.from_url(os.environ["WEBHOOK_URL"], self.bot)
+        # self.webhook = naff.Webhook.from_url(os.environ["WEBHOOK_URL"], self.bot)
 
-        self.task = asyncio.create_task(self.auto_run())
+        # self.task = asyncio.create_task(self.auto_run())
 
     def drop(self):
-        self.task.cancel()
+        # self.task.cancel()
         super().drop()
 
     def gen_embed(self, day: bool = True):
