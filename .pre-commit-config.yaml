@@ -1,10 +1,10 @@
 repos:
 - repo: https://github.com/asottile/reorder_python_imports
-  rev: v3.8.2
+  rev: v3.9.0
   hooks:
     - id: reorder-python-imports
 - repo: https://github.com/psf/black
-  rev: 22.8.0
+  rev: 22.10.0
   hooks:
     - id: black
       args: [--target-version, py310, --preview]
